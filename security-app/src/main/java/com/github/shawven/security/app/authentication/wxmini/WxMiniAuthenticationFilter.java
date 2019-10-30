@@ -1,7 +1,7 @@
 package com.github.shawven.security.app.authentication.wxmini;
 
 import com.github.shawven.security.app.config.social.AppSingUpUtils;
-import com.github.shawven.security.base.InvalidArgumentException;
+import com.github.shawven.security.social.InvalidArgumentException;
 import com.github.shawven.security.social.MyJdbcConnectionRepository;
 import com.github.shawven.security.social.properties.SocialProperties;
 import com.github.shawven.security.social.properties.WeixinProperties;

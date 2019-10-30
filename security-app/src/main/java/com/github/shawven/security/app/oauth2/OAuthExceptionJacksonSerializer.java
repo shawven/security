@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import com.github.shawven.security.app.exception.OAuth2Exception;
-import com.github.shawven.security.base.ResponseData;
+import com.github.shawven.security.verification.ResponseData;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.util.HtmlUtils;
 

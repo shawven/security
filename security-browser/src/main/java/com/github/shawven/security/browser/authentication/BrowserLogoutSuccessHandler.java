@@ -2,7 +2,7 @@
 package com.github.shawven.security.browser.authentication;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.shawven.security.base.ResponseData;
+import com.github.shawven.security.verification.ResponseData;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;

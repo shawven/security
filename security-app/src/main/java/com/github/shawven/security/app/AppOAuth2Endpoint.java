@@ -1,7 +1,7 @@
 package com.github.shawven.security.app;
 
 import com.github.shawven.security.app.config.social.AppSingUpUtils;
-import com.github.shawven.security.base.ResponseData;
+import com.github.shawven.security.verification.ResponseData;
 import com.github.shawven.security.social.properties.OAuth2Constants;
 import com.github.shawven.security.social.SocialInfoMethod;
 import com.github.shawven.security.social.support.SocialUserInfo;

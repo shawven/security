@@ -17,12 +17,7 @@ import java.util.Map;
  * 社交账号绑定状态视图
  *
  */
-@Component("connect/status")
 public class AppConnectionStatusView extends AbstractView {
-
-	@Autowired
-	private ObjectMapper objectMapper;
-
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -37,7 +32,7 @@ public class AppConnectionStatusView extends AbstractView {
 		}
         response.setCharacterEncoding("UTF-8");
 		response.setContentType("application/json;charset=UTF-8");
-		response.getWriter().write(objectMapper.writeValueAsString(result));
+		response.getWriter().write(new ObjectMapper().writeValueAsString(result));
 	}
 
 }

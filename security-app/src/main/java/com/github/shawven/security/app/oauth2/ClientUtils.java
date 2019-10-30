@@ -1,7 +1,7 @@
 package com.github.shawven.security.app.oauth2;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.shawven.security.base.ResponseData;
+import com.github.shawven.security.verification.ResponseData;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;

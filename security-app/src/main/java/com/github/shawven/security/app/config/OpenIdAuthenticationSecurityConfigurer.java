@@ -15,19 +15,14 @@ import org.springframework.social.connect.UsersConnectionRepository;
 import org.springframework.social.security.SocialUserDetailsService;
 import org.springframework.stereotype.Component;
 
-@Component
 public class OpenIdAuthenticationSecurityConfigurer extends SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity> {
 
-    @Autowired
 	private AuthenticationSuccessHandler appAuthenticationSuccessHandler;
 
-    @Autowired
 	private AuthenticationFailureHandler appAuthenticationFailureHandler;
 
-    @Autowired
 	private SocialUserDetailsService userDetailsService;
 
-    @Autowired
 	private UsersConnectionRepository usersConnectionRepository;
 
     @Override
@@ -47,4 +42,35 @@ public class OpenIdAuthenticationSecurityConfigurer extends SecurityConfigurerAd
 
 	}
 
+    public AuthenticationSuccessHandler getAppAuthenticationSuccessHandler() {
+        return appAuthenticationSuccessHandler;
+    }
+
+    public void setAppAuthenticationSuccessHandler(AuthenticationSuccessHandler appAuthenticationSuccessHandler) {
+        this.appAuthenticationSuccessHandler = appAuthenticationSuccessHandler;
+    }
+
+    public AuthenticationFailureHandler getAppAuthenticationFailureHandler() {
+        return appAuthenticationFailureHandler;
+    }
+
+    public void setAppAuthenticationFailureHandler(AuthenticationFailureHandler appAuthenticationFailureHandler) {
+        this.appAuthenticationFailureHandler = appAuthenticationFailureHandler;
+    }
+
+    public SocialUserDetailsService getUserDetailsService() {
+        return userDetailsService;
+    }
+
+    public void setUserDetailsService(SocialUserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
+
+    public UsersConnectionRepository getUsersConnectionRepository() {
+        return usersConnectionRepository;
+    }
+
+    public void setUsersConnectionRepository(UsersConnectionRepository usersConnectionRepository) {
+        this.usersConnectionRepository = usersConnectionRepository;
+    }
 }

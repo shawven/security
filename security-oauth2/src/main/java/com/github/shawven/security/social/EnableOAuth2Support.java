@@ -1,8 +1,7 @@
 package com.github.shawven.security.social;
 
-import com.github.shawven.security.social.config.OAuth2Configuration;
-import com.github.shawven.security.social.config.SocialConfiguration;
-import com.github.shawven.security.social.config.SocialSecurityConfigurer;
+import com.github.shawven.security.social.autoconfigure.OAuth2Configuration;
+import com.github.shawven.security.social.autoconfigure.SocialConfiguration;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.*;
@@ -14,6 +13,6 @@ import java.lang.annotation.*;
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Import(value = {SocialConfiguration.class, SocialSecurityConfigurer.class, OAuth2Configuration.class})
+@Import(value = {SocialConfiguration.class, SocialConfiguration.class, OAuth2Configuration.class})
 public @interface EnableOAuth2Support {
 }

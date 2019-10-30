@@ -16,22 +16,16 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.social.security.SocialUserDetailsService;
 import org.springframework.stereotype.Component;
 
-@Component
 public class WxMiniAuthenticationSecurityConfigurer extends SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity> {
 
-    @Autowired
     private AuthenticationSuccessHandler appAuthenticationSuccessHandler;
 
-    @Autowired
     private AuthenticationFailureHandler appAuthenticationFailureHandler;
 
-    @Autowired
 	private SocialUserDetailsService userDetailsService;
 
-    @Autowired
     private AppSingUpUtils appSingUpUtils;
 
-    @Autowired
     private SocialProperties socialProperties;
 
 	@Override
@@ -53,4 +47,43 @@ public class WxMiniAuthenticationSecurityConfigurer extends SecurityConfigurerAd
 
 	}
 
+    public AuthenticationSuccessHandler getAppAuthenticationSuccessHandler() {
+        return appAuthenticationSuccessHandler;
+    }
+
+    public void setAppAuthenticationSuccessHandler(AuthenticationSuccessHandler appAuthenticationSuccessHandler) {
+        this.appAuthenticationSuccessHandler = appAuthenticationSuccessHandler;
+    }
+
+    public AuthenticationFailureHandler getAppAuthenticationFailureHandler() {
+        return appAuthenticationFailureHandler;
+    }
+
+    public void setAppAuthenticationFailureHandler(AuthenticationFailureHandler appAuthenticationFailureHandler) {
+        this.appAuthenticationFailureHandler = appAuthenticationFailureHandler;
+    }
+
+    public SocialUserDetailsService getUserDetailsService() {
+        return userDetailsService;
+    }
+
+    public void setUserDetailsService(SocialUserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
+
+    public AppSingUpUtils getAppSingUpUtils() {
+        return appSingUpUtils;
+    }
+
+    public void setAppSingUpUtils(AppSingUpUtils appSingUpUtils) {
+        this.appSingUpUtils = appSingUpUtils;
+    }
+
+    public SocialProperties getSocialProperties() {
+        return socialProperties;
+    }
+
+    public void setSocialProperties(SocialProperties socialProperties) {
+        this.socialProperties = socialProperties;
+    }
 }

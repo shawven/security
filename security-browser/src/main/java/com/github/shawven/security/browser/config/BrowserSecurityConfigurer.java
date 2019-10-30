@@ -7,6 +7,9 @@ import com.github.shawven.security.social.config.SmsAuthenticationSecurityConfig
 import com.github.shawven.security.verification.config.VerificationSecurityConfigurer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
+import org.springframework.security.config.annotation.web.configurers.ExceptionHandlingConfigurer;
+import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
+import org.springframework.security.config.annotation.web.configurers.SessionManagementConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
@@ -65,30 +68,49 @@ public class BrowserSecurityConfigurer {
     }
 
 	public void configureHttp(HttpSecurity http) throws Exception {
-		http
-            .exceptionHandling()
-                .authenticationEntryPoint(browserAuthenticationExceptionEntryPoint)
-                .accessDeniedHandler(browserAccessDeniedHandler)
-                .and()
-            .apply(verificationSecurityConfigurer)
-				.and()
-			.apply(smsAuthenticationSecurityConfigurer)
-				.and()
-			.apply(springSocialConfigurer)
-		        .and()
-			.sessionManagement()
-//				.invalidSessionStrategy(invalidSessionStrategy)
-				.maximumSessions(browserProperties.getSession().getMaximumSessions())
-				.maxSessionsPreventsLogin(browserProperties.getSession().isMaxSessionsPreventsLogin())
-				.expiredSessionStrategy(sessionInformationExpiredStrategy)
-				.and()
-				.and()
-			.logout()
-				.logoutUrl(browserProperties.getSignOutProcessingUrl())
-				.logoutSuccessHandler(logoutSuccessHandler)
-				.deleteCookies("JSESSIONID")
-				.and()
-			.csrf().disable();
+        ExceptionHandlingConfigurer<HttpSecurity> exceptionHandling = http.exceptionHandling();
+        if (browserAuthenticationExceptionEntryPoint != null) {
+            exceptionHandling.authenticationEntryPoint(browserAuthenticationExceptionEntryPoint);
+        }
+        if (browserAccessDeniedHandler != null) {
+            exceptionHandling.accessDeniedHandler(browserAccessDeniedHandler);
+        }
+
+        if (verificationSecurityConfigurer != null) {
+            http.apply(verificationSecurityConfigurer);
+        }
+		if (verificationSecurityConfigurer != null) {
+            http.apply(verificationSecurityConfigurer);
+        }
+        if (smsAuthenticationSecurityConfigurer != null) {
+            http.apply(smsAuthenticationSecurityConfigurer);
+        }
+        if (springSocialConfigurer != null) {
+            http.apply(springSocialConfigurer);
+        }
+
+        SessionManagementConfigurer<HttpSecurity> sessionManagement = http.sessionManagement();
+        if (invalidSessionStrategy != null) {
+            sessionManagement.invalidSessionStrategy(invalidSessionStrategy);
+        }
+        SessionManagementConfigurer<HttpSecurity>.ConcurrencyControlConfigurer controlConfigurer = sessionManagement
+                .maximumSessions(browserProperties.getSession().getMaximumSessions())
+                .maxSessionsPreventsLogin(browserProperties.getSession().isMaxSessionsPreventsLogin());
+        if (sessionInformationExpiredStrategy != null) {
+            controlConfigurer.expiredSessionStrategy(sessionInformationExpiredStrategy);
+        }
+
+        LogoutConfigurer<HttpSecurity> logoutConfigurer = http.logout();
+        String signOutProcessingUrl = browserProperties.getSignOutProcessingUrl();
+        if (signOutProcessingUrl != null) {
+            logoutConfigurer .logoutUrl(signOutProcessingUrl);
+        }
+        logoutConfigurer .deleteCookies("JSESSIONID");
+        if (logoutSuccessHandler != null) {
+            logoutConfigurer.logoutSuccessHandler(logoutSuccessHandler);
+        }
+
+        http .csrf().disable();
 
         //记住我配置，如果想在'记住我'登录时记录日志，可以注册一个InteractiveAuthenticationSuccessEvent事件的监听器
         int rememberMeSeconds = browserProperties.getRememberMeSeconds();
@@ -111,7 +133,6 @@ public class BrowserSecurityConfigurer {
 	public PersistentTokenRepository persistentTokenRepository() {
 		JdbcTokenRepositoryImpl tokenRepository = new JdbcTokenRepositoryImpl();
 		tokenRepository.setDataSource(dataSource);
-//		tokenRepository.setCreateTableOnStartup(true);
 		return tokenRepository;
 	}
 

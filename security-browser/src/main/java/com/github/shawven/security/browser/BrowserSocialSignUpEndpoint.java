@@ -3,8 +3,7 @@ package com.github.shawven.security.browser;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.shawven.security.base.ResponseData;
-import com.github.shawven.security.base.ResponseType;
+import com.github.shawven.security.verification.ResponseData;
 import com.github.shawven.security.browser.properties.BrowserProperties;
 import com.github.shawven.security.social.SocialInfoMethod;
 import com.github.shawven.security.social.properties.SocialConstants;

@@ -1,6 +1,6 @@
 package com.github.shawven.security.app.authentication;
 
-import com.github.shawven.security.base.ResponseData;
+import com.github.shawven.security.verification.ResponseData;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 import org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler;

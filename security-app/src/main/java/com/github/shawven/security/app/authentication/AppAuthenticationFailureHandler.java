@@ -2,7 +2,7 @@
 package com.github.shawven.security.app.authentication;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.shawven.security.base.ResponseData;
+import com.github.shawven.security.verification.ResponseData;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;

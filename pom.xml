@@ -50,5 +50,8 @@
         <module>security-oauth2</module>
         <module>security-verification</module>
         <module>security-base</module>
+        <module>security-app-spring-boot-starter</module>
+        <module>security-browser-spring-boot-starter</module>
+        <module>security-verification-spring-boot-starter</module>
     </modules>
 </project>

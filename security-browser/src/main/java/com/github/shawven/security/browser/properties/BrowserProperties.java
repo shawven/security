@@ -1,7 +1,7 @@
 
 package com.github.shawven.security.browser.properties;
 
-import com.github.shawven.security.base.ResponseType;
+import com.github.shawven.security.browser.ResponseType;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**

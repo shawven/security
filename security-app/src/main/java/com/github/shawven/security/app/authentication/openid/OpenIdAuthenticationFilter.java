@@ -1,7 +1,7 @@
 
 package com.github.shawven.security.app.authentication.openid;
 
-import com.github.shawven.security.base.InvalidArgumentException;
+import com.github.shawven.security.social.InvalidArgumentException;
 import com.github.shawven.security.social.properties.SocialConstants;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.AuthenticationServiceException;

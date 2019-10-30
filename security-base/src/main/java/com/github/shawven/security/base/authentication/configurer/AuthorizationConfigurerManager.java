@@ -2,10 +2,10 @@
 package com.github.shawven.security.base.authentication.configurer;
 
 import com.github.shawven.security.base.properties.SecurityProperties;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -49,8 +49,9 @@ public class AuthorizationConfigurerManager {
 
 	public void configWhitelist(ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry config) {
         String whitelistStr = securityProperties.getWhitelist();
-        String[] whitelist = StringUtils.split(whitelistStr, ",");
-        if (whitelist != null) {
+        if (whitelistStr != null) {
+            String[] whitelist = whitelistStr.split(",");
+            whitelist = Arrays.stream(whitelist).filter(s -> !s.isEmpty()).toArray(String[]::new);
             config.antMatchers(whitelist).permitAll();
         }
     }

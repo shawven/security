@@ -2,7 +2,7 @@
 package com.github.shawven.security.social.weixin.connect;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.shawven.security.base.InvalidArgumentException;
+import com.github.shawven.security.social.InvalidArgumentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.converter.StringHttpMessageConverter;

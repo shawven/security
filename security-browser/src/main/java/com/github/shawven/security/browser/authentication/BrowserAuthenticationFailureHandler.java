@@ -2,8 +2,8 @@
 package com.github.shawven.security.browser.authentication;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.shawven.security.base.ResponseData;
-import com.github.shawven.security.base.ResponseType;
+import com.github.shawven.security.verification.ResponseData;
+import com.github.shawven.security.browser.ResponseType;
 import com.github.shawven.security.browser.properties.BrowserProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;

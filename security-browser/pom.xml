@@ -16,6 +16,11 @@
 	<dependencies>
         <dependency>
             <groupId>com.github.shawven</groupId>
+            <artifactId>security-base</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.shawven</groupId>
             <artifactId>security-oauth2</artifactId>
             <version>1.0.0</version>
         </dependency>
