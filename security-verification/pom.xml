@@ -12,6 +12,13 @@
 
     <artifactId>security-verification</artifactId>
     <version>1.0.0</version>
+    <description>
+        基于Spring Security体系安全模块
+        包括:
+        APP环境（Spring Security、Spring Social社交登陆、token验证）
+        WEB环境下(Spring Security、Spring Social社交登陆)，
+        验证码验证（图形、短信）
+    </description>
 
     <dependencies>
         <dependency>
