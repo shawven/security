@@ -11,7 +11,7 @@
 
     <groupId>com.github.shawven</groupId>
     <artifactId>security</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
     <packaging>pom</packaging>
 
     <name>security</name>
@@ -22,9 +22,44 @@
             WEB环境下(Spring Security、Spring Social社交登陆)，
             验证码验证（图形、短信）
     </description>
+    <url>https://github.com/shawven/security</url>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>shoven</name>
+            <email>441653192@qq.com</email>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git@github.com:shawven/security.git</connection>
+        <developerConnection>scm:git:git@github.com:shawven/security.git</developerConnection>
+        <url>https://github.com/shawven/security</url>
+    </scm>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <name>OSS Snapshots Repository</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <name>OSS Staging Repository</name>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
 
     <properties>
-        <security.version>1.0.0</security.version>
+        <spring.security.version>5.1.6.RELEASE</spring.security.version>
+        <security.version>1.1.0</security.version>
     </properties>
 
     <dependencyManagement>
@@ -44,12 +79,66 @@
         </dependencies>
     </dependencyManagement>
 
+<!--    <build>-->
+<!--        <plugins>-->
+<!--            &lt;!&ndash; Source &ndash;&gt;-->
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-source-plugin</artifactId>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <phase>package</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>jar-no-fork</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
+<!--            &lt;!&ndash; Javadoc &ndash;&gt;-->
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-javadoc-plugin</artifactId>-->
+<!--                <configuration>-->
+<!--                    <additionalOptions>-->
+<!--                        <additionalOption>-Xdoclint:none</additionalOption>-->
+<!--                    </additionalOptions>-->
+<!--                </configuration>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <phase>package</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>jar</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
+<!--            &lt;!&ndash; GPG mvn clean deploy -P release -Dgpg.passphrase=YourPassphase&ndash;&gt;-->
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-gpg-plugin</artifactId>-->
+<!--                <version>1.6</version>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <phase>verify</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>sign</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
+<!--        </plugins>-->
+<!--    </build>-->
+
     <modules>
         <module>security-app</module>
         <module>security-browser</module>
         <module>security-oauth2</module>
+        <module>security-connect</module>
         <module>security-verification</module>
-        <module>security-base</module>
+        <module>security-authorization</module>
+        <module>security-oauth2-autoconfigure</module>
+        <module>security-authorization-autoconfigure</module>
+        <module>security-connect-autoconfigure</module>
         <module>security-app-spring-boot-starter</module>
         <module>security-browser-spring-boot-starter</module>
         <module>security-verification-spring-boot-starter</module>

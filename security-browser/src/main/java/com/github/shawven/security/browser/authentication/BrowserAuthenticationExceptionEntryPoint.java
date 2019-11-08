@@ -3,7 +3,7 @@ package com.github.shawven.security.browser.authentication;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.shawven.security.verification.ResponseData;
 import com.github.shawven.security.browser.ResponseType;
-import com.github.shawven.security.browser.properties.BrowserProperties;
+import com.github.shawven.security.browser.properties.BrowserConfiguration;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
@@ -24,21 +24,21 @@ public class BrowserAuthenticationExceptionEntryPoint extends LoginUrlAuthentica
 
     private static final String REQUIRE_LOGIN = "Require login";
 
-    private BrowserProperties browserProperties;
+    private BrowserConfiguration browserConfiguration;
 
     private ObjectMapper objectMapper;
 
-    public BrowserAuthenticationExceptionEntryPoint(BrowserProperties browserProperties) {
-        super(browserProperties.getSignInUrl());
+    public BrowserAuthenticationExceptionEntryPoint(BrowserConfiguration browserConfiguration) {
+        super(browserConfiguration.getSignInUrl());
         this.objectMapper = new ObjectMapper();
-        this.browserProperties = browserProperties;
+        this.browserConfiguration = browserConfiguration;
     }
 
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException e)
             throws IOException, ServletException {
-        if (ResponseType.JSON.equals(browserProperties.getResponseType())) {
+        if (ResponseType.JSON.equals(browserConfiguration.getResponseType())) {
             String errorMessage = UNAUTHORIZED.equals(e.getMessage())
                     ? REQUIRE_LOGIN
                     : HttpStatus.UNAUTHORIZED.getReasonPhrase();

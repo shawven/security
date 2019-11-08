@@ -4,7 +4,7 @@ package com.github.shawven.security.browser.session;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.shawven.security.verification.ResponseData;
 import com.github.shawven.security.browser.ResponseType;
-import com.github.shawven.security.browser.properties.BrowserProperties;
+import com.github.shawven.security.browser.properties.BrowserConfiguration;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.web.DefaultRedirectStrategy;
@@ -30,7 +30,7 @@ public class AbstractSessionStrategy {
 	/**
 	 * 系统配置信息
 	 */
-	private BrowserProperties browserProperties;
+	private BrowserConfiguration browserConfiguration;
 	/**
 	 * 重定向策略
 	 */
@@ -43,11 +43,11 @@ public class AbstractSessionStrategy {
 	private ObjectMapper objectMapper = new ObjectMapper();
 
 
-	public AbstractSessionStrategy(BrowserProperties browserProperties) {
-		String invalidSessionUrl = browserProperties.getSession().getSessionInvalidUrl();
+	public AbstractSessionStrategy(BrowserConfiguration browserConfiguration) {
+		String invalidSessionUrl = browserConfiguration.getSession().getSessionInvalidUrl();
 		Assert.isTrue(UrlUtils.isValidRedirectUrl(invalidSessionUrl), "url must start with '/' or with 'http(s)'");
 		this.destinationUrl = invalidSessionUrl;
-		this.browserProperties = browserProperties;
+		this.browserConfiguration = browserConfiguration;
 	}
 
 	protected void onSessionInvalid(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -55,7 +55,7 @@ public class AbstractSessionStrategy {
 			request.getSession();
 		}
 
-		if (ResponseType.JSON.equals(browserProperties.getResponseType())) {
+		if (ResponseType.JSON.equals(browserConfiguration.getResponseType())) {
             Object result = buildResponseContent(request);
             response.setCharacterEncoding("UTF-8");
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
@@ -64,8 +64,8 @@ public class AbstractSessionStrategy {
         } else {
             String sourceUrl = request.getRequestURI();
             String targetUrl;
-            if(StringUtils.equals(sourceUrl, browserProperties.getSignInUrl())
-                    || StringUtils.equals(sourceUrl, browserProperties.getSignOutSuccessUrl())){
+            if(StringUtils.equals(sourceUrl, browserConfiguration.getSignInUrl())
+                    || StringUtils.equals(sourceUrl, browserConfiguration.getSignOutSuccessUrl())){
                 targetUrl = sourceUrl;
             }else{
                 targetUrl = destinationUrl;

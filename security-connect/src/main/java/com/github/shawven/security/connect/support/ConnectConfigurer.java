@@ -1,0 +1,49 @@
+
+package com.github.shawven.security.connect.support;
+
+import org.springframework.social.security.SocialAuthenticationFilter;
+import org.springframework.social.security.SpringSocialConfigurer;
+
+/**
+ * 继承默认的社交登录配置，加入自定义的后处理逻辑
+ */
+public class ConnectConfigurer extends SpringSocialConfigurer {
+
+	private String filterProcessesUrl;
+
+	private ConnectAuthenticationFilterPostProcessor connectAuthenticationFilterPostProcessor;
+
+	public ConnectConfigurer(String filterProcessesUrl) {
+		this.filterProcessesUrl = filterProcessesUrl;
+	}
+
+
+	@SuppressWarnings("unchecked")
+	@Override
+	protected <T> T postProcess(T object) {
+		SocialAuthenticationFilter filter = (SocialAuthenticationFilter) super.postProcess(object);
+		filter.setFilterProcessesUrl(filterProcessesUrl);
+		if (connectAuthenticationFilterPostProcessor != null) {
+			connectAuthenticationFilterPostProcessor.proceed(filter);
+		}
+		return (T) filter;
+	}
+
+	public String getFilterProcessesUrl() {
+		return filterProcessesUrl;
+	}
+
+	public void setFilterProcessesUrl(String filterProcessesUrl) {
+		this.filterProcessesUrl = filterProcessesUrl;
+	}
+
+	public ConnectAuthenticationFilterPostProcessor getConnectAuthenticationFilterPostProcessor() {
+		return connectAuthenticationFilterPostProcessor;
+	}
+
+	public void setConnectAuthenticationFilterPostProcessor(ConnectAuthenticationFilterPostProcessor
+                                                                    connectAuthenticationFilterPostProcessor) {
+		this.connectAuthenticationFilterPostProcessor = connectAuthenticationFilterPostProcessor;
+	}
+
+}

@@ -2,9 +2,10 @@
 package com.github.shawven.security.app.autoconfigure;
 
 import com.github.shawven.security.app.oauth2.TokenJwtEnhancer;
-import com.github.shawven.security.social.properties.OAuth2Properties;
+import com.github.shawven.security.oauth2.OAuth2Properties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -44,6 +45,7 @@ public class TokenStoreConfiguration {
 	 * 使用jwt时的配置，默认生效
 	 */
 	@Configuration
+    @ConditionalOnClass(OAuth2Properties.class)
 	@ConditionalOnProperty(prefix = "app.security.oauth2", name = "tokenStore", havingValue = "jwt", matchIfMissing = true)
 	public static class JwtConfig {
 
@@ -76,9 +78,5 @@ public class TokenStoreConfiguration {
 		public TokenEnhancer jwtTokenEnhancer(){
 			return new TokenJwtEnhancer();
 		}
-
 	}
-
-
-
 }

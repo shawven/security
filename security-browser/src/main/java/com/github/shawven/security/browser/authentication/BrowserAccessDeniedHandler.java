@@ -3,7 +3,7 @@ package com.github.shawven.security.browser.authentication;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.shawven.security.verification.ResponseData;
 import com.github.shawven.security.browser.ResponseType;
-import com.github.shawven.security.browser.properties.BrowserProperties;
+import com.github.shawven.security.browser.properties.BrowserConfiguration;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandlerImpl;
@@ -22,19 +22,19 @@ import java.io.IOException;
  */
 public class BrowserAccessDeniedHandler extends AccessDeniedHandlerImpl {
 
-    private BrowserProperties browserProperties;
+    private BrowserConfiguration browserConfiguration;
 
     private ObjectMapper objectMapper;
 
-    public BrowserAccessDeniedHandler(BrowserProperties browserProperties) {
-        this.browserProperties = browserProperties;
+    public BrowserAccessDeniedHandler(BrowserConfiguration browserConfiguration) {
+        this.browserConfiguration = browserConfiguration;
         this.objectMapper = new ObjectMapper();
     }
 
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException e)
             throws IOException, ServletException {
-        if (ResponseType.JSON.equals(browserProperties.getResponseType())) {
+        if (ResponseType.JSON.equals(browserConfiguration.getResponseType())) {
             int status = HttpStatus.FORBIDDEN.value();
             ResponseData rsp = new ResponseData()
                     .setCode(status)

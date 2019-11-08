@@ -1,4 +1,4 @@
 # Auto Configure
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.github.shawven.security.verification.autoconfigure.VerificationAutoConfiguration,\
+com.github.shawven.security.verification.VerificationAutoConfiguration,\
 com.github.shawven.security.verification.VerificationEndpoint

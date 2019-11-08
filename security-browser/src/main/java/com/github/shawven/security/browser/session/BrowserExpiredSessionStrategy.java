@@ -1,7 +1,7 @@
 
 package com.github.shawven.security.browser.session;
 
-import com.github.shawven.security.browser.properties.BrowserProperties;
+import com.github.shawven.security.browser.properties.BrowserConfiguration;
 import org.springframework.security.web.session.SessionInformationExpiredEvent;
 import org.springframework.security.web.session.SessionInformationExpiredStrategy;
 
@@ -16,7 +16,7 @@ import java.io.IOException;
  */
 public class BrowserExpiredSessionStrategy extends AbstractSessionStrategy implements SessionInformationExpiredStrategy {
 
-	public BrowserExpiredSessionStrategy(BrowserProperties securityPropertie) {
+	public BrowserExpiredSessionStrategy(BrowserConfiguration securityPropertie) {
 		super(securityPropertie);
 	}
 

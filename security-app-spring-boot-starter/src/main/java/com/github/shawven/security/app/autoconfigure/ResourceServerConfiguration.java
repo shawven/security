@@ -3,9 +3,9 @@ package com.github.shawven.security.app.autoconfigure;
 
 import com.github.shawven.security.app.config.OpenIdAuthenticationSecurityConfigurer;
 import com.github.shawven.security.app.config.WxMiniAuthenticationSecurityConfigurer;
-import com.github.shawven.security.base.authentication.configurer.AuthorizationConfigurerManager;
-import com.github.shawven.security.social.config.SmsAuthenticationSecurityConfigurer;
-import com.github.shawven.security.verification.config.VerificationSecurityConfigurer;
+import com.github.shawven.security.authorization.AuthorizationConfigurerManager;
+import com.github.shawven.security.oauth2.SmsAuthenticationSecurityConfigurer;
+import com.github.shawven.security.verification.VerificationSecurityConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;

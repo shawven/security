@@ -1,6 +1,6 @@
 package com.github.shawven.security.app.oauth2;
 
-import com.github.shawven.security.social.properties.OAuth2Constants;
+import com.github.shawven.security.oauth2.OAuth2Constants;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;

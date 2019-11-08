@@ -1,9 +1,8 @@
 
 package com.github.shawven.security.app.config;
 
-import com.github.shawven.security.app.authentication.openid.OpenIdAuthenticationFilter;
-import com.github.shawven.security.app.authentication.openid.OpenIdAuthenticationProvider;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.github.shawven.security.connect.openid.OpenIdAuthenticationFilter;
+import com.github.shawven.security.connect.openid.OpenIdAuthenticationProvider;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -13,7 +12,6 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.social.connect.UsersConnectionRepository;
 import org.springframework.social.security.SocialUserDetailsService;
-import org.springframework.stereotype.Component;
 
 public class OpenIdAuthenticationSecurityConfigurer extends SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity> {
 

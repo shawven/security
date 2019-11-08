@@ -1,11 +1,11 @@
 package com.github.shawven.security.app;
 
 import com.github.shawven.security.app.config.social.AppSingUpUtils;
+import com.github.shawven.security.connect.ConnectConstants;
+import com.github.shawven.security.connect.support.ConnectUserInfo;
+import com.github.shawven.security.connect.ConnectInfoExtendable;
+import com.github.shawven.security.oauth2.OAuth2Constants;
 import com.github.shawven.security.verification.ResponseData;
-import com.github.shawven.security.social.properties.OAuth2Constants;
-import com.github.shawven.security.social.SocialInfoMethod;
-import com.github.shawven.security.social.support.SocialUserInfo;
-import com.github.shawven.security.social.properties.SocialConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +26,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 
 @RestController
-public class AppOAuth2Endpoint extends SocialInfoMethod {
+public class AppOAuth2Endpoint extends ConnectInfoExtendable {
 
 	@Autowired
 	private ProviderSignInUtils providerSignInUtils;
@@ -82,19 +82,19 @@ public class AppOAuth2Endpoint extends SocialInfoMethod {
 	 * @param request
 	 * @return
 	 */
-	@GetMapping(SocialConstants.DEFAULT_CURRENT_SOCIAL_USER_INFO_URL)
+	@GetMapping(ConnectConstants.DEFAULT_CURRENT_USER_INFO_URL)
 	public ResponseEntity getSocialUserInfo(HttpServletRequest request) {
 	    // 从请求中拿用户信息
 		Connection<?> connection = providerSignInUtils.getConnectionFromSession(new ServletWebRequest(request));
 		// 用户信息存储到redis
 		appSingUpUtils.saveConnectionData(new ServletWebRequest(request), connection.createData());
 		// 构建用户信息
-        SocialUserInfo socialUserInfo = buildSocialUserInfo(connection);
+        ConnectUserInfo connectUserInfo = buildSocialUserInfo(connection);
 
         ResponseData response = new ResponseData()
                 .setCode(HttpStatus.UNAUTHORIZED.value())
                 .setMessage("第一次登录需要绑定账号，轻在30分钟内完成注册绑定")
-                .setData(socialUserInfo);
+                .setData(connectUserInfo);
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }

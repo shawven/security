@@ -1,10 +1,10 @@
 
 package com.github.shawven.security.browser.config;
 
-import com.github.shawven.security.base.authentication.configurer.AuthorizationConfigurerManager;
-import com.github.shawven.security.browser.properties.BrowserProperties;
-import com.github.shawven.security.social.config.SmsAuthenticationSecurityConfigurer;
-import com.github.shawven.security.verification.config.VerificationSecurityConfigurer;
+import com.github.shawven.security.authorization.AuthorizationConfigurerManager;
+import com.github.shawven.security.browser.properties.BrowserConfiguration;
+import com.github.shawven.security.oauth2.SmsAuthenticationSecurityConfigurer;
+import com.github.shawven.security.verification.VerificationSecurityConfigurer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configurers.ExceptionHandlingConfigurer;
@@ -32,7 +32,7 @@ import javax.sql.DataSource;
  */
 public class BrowserSecurityConfigurer {
 
-    private BrowserProperties browserProperties;
+    private BrowserConfiguration browserConfiguration;
 
 	private DataSource dataSource;
 
@@ -106,8 +106,8 @@ public class BrowserSecurityConfigurer {
             sessionManagement.invalidSessionStrategy(invalidSessionStrategy);
         }
         SessionManagementConfigurer<HttpSecurity>.ConcurrencyControlConfigurer controlConfigurer = sessionManagement
-                .maximumSessions(browserProperties.getSession().getMaximumSessions())
-                .maxSessionsPreventsLogin(browserProperties.getSession().isMaxSessionsPreventsLogin());
+                .maximumSessions(browserConfiguration.getSession().getMaximumSessions())
+                .maxSessionsPreventsLogin(browserConfiguration.getSession().isMaxSessionsPreventsLogin());
         if (sessionInformationExpiredStrategy != null) {
             controlConfigurer.expiredSessionStrategy(sessionInformationExpiredStrategy);
         }
@@ -116,15 +116,15 @@ public class BrowserSecurityConfigurer {
 
     public void configureFormLogin(HttpSecurity http) throws Exception {
         http.formLogin()
-                .loginPage(browserProperties.getSignInUrl())
-                .loginProcessingUrl(browserProperties.getSignInProcessingUrl())
+                .loginPage(browserConfiguration.getSignInUrl())
+                .loginProcessingUrl(browserConfiguration.getSignInProcessingUrl())
                 .successHandler(browserAuthenticationSuccessHandler)
                 .failureHandler(browserAuthenticationFailureHandler);
     }
 
     public void configureLogout(HttpSecurity http) throws Exception {
         LogoutConfigurer<HttpSecurity> logoutConfigurer = http.logout();
-        String signOutProcessingUrl = browserProperties.getSignOutProcessingUrl();
+        String signOutProcessingUrl = browserConfiguration.getSignOutProcessingUrl();
         if (signOutProcessingUrl != null) {
             logoutConfigurer .logoutUrl(signOutProcessingUrl);
         }
@@ -136,12 +136,12 @@ public class BrowserSecurityConfigurer {
 
     public void configureRememberMe(HttpSecurity http) throws Exception {
         //记住我配置，如果想在'记住我'登录时记录日志，可以注册一个InteractiveAuthenticationSuccessEvent事件的监听器
-        int rememberMeSeconds = browserProperties.getRememberMeSeconds();
+        int rememberMeSeconds = browserConfiguration.getRememberMeSeconds();
         if (rememberMeSeconds > 0) {
             http
                     .rememberMe()
                     .tokenRepository(persistentTokenRepository())
-                    .tokenValiditySeconds(browserProperties.getRememberMeSeconds())
+                    .tokenValiditySeconds(browserConfiguration.getRememberMeSeconds())
                     .userDetailsService(userDetailsService);
         }
     }
@@ -156,12 +156,12 @@ public class BrowserSecurityConfigurer {
 		return tokenRepository;
 	}
 
-    public BrowserProperties getBrowserProperties() {
-        return browserProperties;
+    public BrowserConfiguration getBrowserConfiguration() {
+        return browserConfiguration;
     }
 
-    public void setBrowserProperties(BrowserProperties browserProperties) {
-        this.browserProperties = browserProperties;
+    public void setBrowserConfiguration(BrowserConfiguration browserConfiguration) {
+        this.browserConfiguration = browserConfiguration;
     }
 
     public DataSource getDataSource() {
@@ -200,7 +200,7 @@ public class BrowserSecurityConfigurer {
         return springSocialConfigurer;
     }
 
-    public void setSpringSocialConfigurer(SpringSocialConfigurer springSocialConfigurer) {
+    public void setConnectConfigurer(SpringSocialConfigurer springSocialConfigurer) {
         this.springSocialConfigurer = springSocialConfigurer;
     }
 

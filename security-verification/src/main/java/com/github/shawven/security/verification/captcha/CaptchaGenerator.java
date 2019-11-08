@@ -1,8 +1,7 @@
 
 package com.github.shawven.security.verification.captcha;
 
-import com.github.shawven.security.verification.configuraion.CaptchaConfiguration;
-import com.github.shawven.security.verification.configuraion.VerificationConfiguration;
+import com.github.shawven.security.verification.config.CaptchaConfiguration;
 import com.github.shawven.security.verification.VerificationGenerator;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.web.bind.ServletRequestUtils;

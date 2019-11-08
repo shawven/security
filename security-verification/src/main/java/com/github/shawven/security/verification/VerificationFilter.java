@@ -2,7 +2,7 @@
 package com.github.shawven.security.verification;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.shawven.security.verification.configuraion.VerificationConfiguration;
+import com.github.shawven.security.verification.config.VerificationConfiguration;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

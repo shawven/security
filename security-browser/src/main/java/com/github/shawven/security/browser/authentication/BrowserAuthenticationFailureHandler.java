@@ -4,7 +4,7 @@ package com.github.shawven.security.browser.authentication;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.shawven.security.verification.ResponseData;
 import com.github.shawven.security.browser.ResponseType;
-import com.github.shawven.security.browser.properties.BrowserProperties;
+import com.github.shawven.security.browser.properties.BrowserConfiguration;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
@@ -24,14 +24,14 @@ public class BrowserAuthenticationFailureHandler extends SimpleUrlAuthentication
 
 	private ObjectMapper objectMapper;
 
-	private BrowserProperties browserProperties;
+	private BrowserConfiguration browserConfiguration;
 
     private BrowserLoginFailureHandler browserLoginFailureHandler;
 
-    public BrowserAuthenticationFailureHandler(BrowserProperties browserProperties,
+    public BrowserAuthenticationFailureHandler(BrowserConfiguration browserConfiguration,
                                                BrowserLoginFailureHandler browserLoginFailureHandler) {
         this.objectMapper = new ObjectMapper();
-        this.browserProperties = browserProperties;
+        this.browserConfiguration = browserConfiguration;
         this.browserLoginFailureHandler = browserLoginFailureHandler;
     }
 
@@ -42,7 +42,7 @@ public class BrowserAuthenticationFailureHandler extends SimpleUrlAuthentication
             browserLoginFailureHandler.onAuthenticationFailure(request, response, exception);
         }
 
-        if (ResponseType.JSON.equals(browserProperties.getResponseType())) {
+        if (ResponseType.JSON.equals(browserConfiguration.getResponseType())) {
             int status = HttpStatus.UNAUTHORIZED.value();
             ResponseData result = new ResponseData()
                     .setCode(status)

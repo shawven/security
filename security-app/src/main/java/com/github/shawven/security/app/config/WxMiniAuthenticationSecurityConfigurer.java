@@ -1,11 +1,10 @@
 
 package com.github.shawven.security.app.config;
 
-import com.github.shawven.security.app.authentication.wxmini.WxMiniAuthenticationFilter;
-import com.github.shawven.security.app.authentication.wxmini.WxMiniAuthenticationProvider;
+import com.github.shawven.security.app.wxmini.WxMiniAuthenticationFilter;
+import com.github.shawven.security.app.wxmini.WxMiniAuthenticationProvider;
 import com.github.shawven.security.app.config.social.AppSingUpUtils;
-import com.github.shawven.security.social.properties.SocialProperties;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.github.shawven.security.connect.config.ConnectConfiguration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -14,7 +13,6 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.social.security.SocialUserDetailsService;
-import org.springframework.stereotype.Component;
 
 public class WxMiniAuthenticationSecurityConfigurer extends SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity> {
 
@@ -26,7 +24,7 @@ public class WxMiniAuthenticationSecurityConfigurer extends SecurityConfigurerAd
 
     private AppSingUpUtils appSingUpUtils;
 
-    private SocialProperties socialProperties;
+    private ConnectConfiguration connectConfiguration;
 
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
@@ -36,7 +34,7 @@ public class WxMiniAuthenticationSecurityConfigurer extends SecurityConfigurerAd
         wxMiniAuthenticationFilter.setAuthenticationSuccessHandler(appAuthenticationSuccessHandler);
         wxMiniAuthenticationFilter.setAuthenticationFailureHandler(appAuthenticationFailureHandler);
         wxMiniAuthenticationFilter.setAppSingUpUtils(appSingUpUtils);
-        wxMiniAuthenticationFilter.setSecurityProperties(socialProperties);
+        wxMiniAuthenticationFilter.setConnectConfiguration(connectConfiguration);
 
         WxMiniAuthenticationProvider wxMiniAuthenticationProvider = new WxMiniAuthenticationProvider();
         wxMiniAuthenticationProvider.setUserDetailsService(userDetailsService);
@@ -79,11 +77,11 @@ public class WxMiniAuthenticationSecurityConfigurer extends SecurityConfigurerAd
         this.appSingUpUtils = appSingUpUtils;
     }
 
-    public SocialProperties getSocialProperties() {
-        return socialProperties;
+    public ConnectConfiguration getConnectConfiguration() {
+        return connectConfiguration;
     }
 
-    public void setSocialProperties(SocialProperties socialProperties) {
-        this.socialProperties = socialProperties;
+    public void setConnectConfiguration(ConnectConfiguration connectConfiguration) {
+        this.connectConfiguration = connectConfiguration;
     }
 }

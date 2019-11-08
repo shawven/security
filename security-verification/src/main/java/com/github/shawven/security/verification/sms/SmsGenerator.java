@@ -1,8 +1,7 @@
 
 package com.github.shawven.security.verification.sms;
 
-import com.github.shawven.security.verification.configuraion.SmsConfiguration;
-import com.github.shawven.security.verification.configuraion.VerificationConfiguration;
+import com.github.shawven.security.verification.config.SmsConfiguration;
 import com.github.shawven.security.verification.VerificationGenerator;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.web.context.request.ServletWebRequest;

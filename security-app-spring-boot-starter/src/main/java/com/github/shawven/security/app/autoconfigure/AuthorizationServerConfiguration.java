@@ -1,11 +1,12 @@
 
 package com.github.shawven.security.app.autoconfigure;
 
-import com.github.shawven.security.social.properties.OAuth2ClientProperties;
-import com.github.shawven.security.social.properties.OAuth2Constants;
-import com.github.shawven.security.social.properties.OAuth2Properties;
+import com.github.shawven.security.oauth2.OAuth2Constants;
+import com.github.shawven.security.oauth2.OAuth2Properties;
+import com.github.shawven.security.oauth2.config.OAuth2ClientConfiguration;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -31,6 +32,7 @@ import java.util.List;
  * 认证服务器配置
  */
 @Configuration
+@ConditionalOnClass(OAuth2Properties.class)
 @EnableAuthorizationServer
 public class AuthorizationServerConfiguration extends AuthorizationServerConfigurerAdapter {
 
@@ -110,7 +112,7 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
 		InMemoryClientDetailsServiceBuilder builder = clients.inMemory();
 
 		if (ArrayUtils.isNotEmpty(oAuth2Properties.getClients())) {
-			for (OAuth2ClientProperties client : oAuth2Properties.getClients()) {
+			for (OAuth2ClientConfiguration client : oAuth2Properties.getClients()) {
 				builder.withClient(client.getClientId())
 						.secret(passwordEncoder.encode(client.getClientSecret()))
 						.authorizedGrantTypes("password", "authorization_code", "refresh_token", "client_credentials")

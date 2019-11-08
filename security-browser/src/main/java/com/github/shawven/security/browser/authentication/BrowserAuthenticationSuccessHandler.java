@@ -4,7 +4,7 @@ package com.github.shawven.security.browser.authentication;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.shawven.security.verification.ResponseData;
 import com.github.shawven.security.browser.ResponseType;
-import com.github.shawven.security.browser.properties.BrowserProperties;
+import com.github.shawven.security.browser.properties.BrowserConfiguration;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -27,17 +27,17 @@ public class BrowserAuthenticationSuccessHandler extends SavedRequestAwareAuthen
 
 	private ObjectMapper objectMapper;
 
-	private BrowserProperties browserProperties;
+	private BrowserConfiguration browserConfiguration;
 
 	private RequestCache requestCache;
 
     private BrowserLoginSuccessHandler loginSuccessHandler;
 
-    public BrowserAuthenticationSuccessHandler(BrowserProperties browserProperties,
+    public BrowserAuthenticationSuccessHandler(BrowserConfiguration browserConfiguration,
                                                BrowserLoginSuccessHandler loginSuccessHandler) {
         this.objectMapper = new ObjectMapper();
         this.requestCache = new HttpSessionRequestCache();
-        this.browserProperties = browserProperties;
+        this.browserConfiguration = browserConfiguration;
         this.loginSuccessHandler = loginSuccessHandler;
     }
 
@@ -49,7 +49,7 @@ public class BrowserAuthenticationSuccessHandler extends SavedRequestAwareAuthen
             loginSuccessHandler.onAuthenticationSuccess(request, response, authentication);
         }
 
-		if (ResponseType.JSON.equals(browserProperties.getResponseType())) {
+		if (ResponseType.JSON.equals(browserConfiguration.getResponseType())) {
             ResponseData result = new ResponseData("登录成功");
 			response.setContentType("application/json;charset=UTF-8");
 			response.setStatus(HttpStatus.OK.value());
@@ -57,10 +57,10 @@ public class BrowserAuthenticationSuccessHandler extends SavedRequestAwareAuthen
 		} else {
 			// 如果设置了app.security.browser.singInSuccessUrl，总是跳到设置的地址上
 			// 如果没设置，则尝试跳转到登录之前访问的地址上，如果登录前访问地址为空，则跳到网站根路径上
-			if (StringUtils.isNotBlank(browserProperties.getSingInSuccessUrl())) {
+			if (StringUtils.isNotBlank(browserConfiguration.getSingInSuccessUrl())) {
 				requestCache.removeRequest(request, response);
 				setAlwaysUseDefaultTargetUrl(true);
-				setDefaultTargetUrl(browserProperties.getSingInSuccessUrl());
+				setDefaultTargetUrl(browserConfiguration.getSingInSuccessUrl());
 			}
 			super.onAuthenticationSuccess(request, response, authentication);
 		}

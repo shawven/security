@@ -5,12 +5,12 @@
     <parent>
         <groupId>com.github.shawven</groupId>
         <artifactId>security</artifactId>
-        <version>1.0.0</version>
+        <version>1.1.0</version>
         <relativePath>../</relativePath>
     </parent>
 
     <artifactId>security-verification-spring-boot-starter</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
     <name>security-verification-spring-boot-starter</name>
     <description>Demo project for Spring Boot</description>
 
@@ -18,7 +18,7 @@
         <dependency>
             <groupId>com.github.shawven</groupId>
             <artifactId>security-verification</artifactId>
-            <version>1.0.0</version>
+            <version>1.1.0</version>
         </dependency>
 
         <!-- Compile dependencies -->

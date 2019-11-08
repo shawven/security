@@ -90,7 +90,7 @@ app:
         url:
 
     #社交登录功能拦截的url,参见SocialProperties
-    social:
+    connect:
       # 拦截器处理的url
       filterProcessesUrl: /login/connect
 #      signUpUrl:

@@ -1,7 +1,7 @@
 
 package com.github.shawven.security.browser.session;
 
-import com.github.shawven.security.browser.properties.BrowserProperties;
+import com.github.shawven.security.browser.properties.BrowserConfiguration;
 import org.springframework.security.web.session.InvalidSessionStrategy;
 
 import javax.servlet.ServletException;
@@ -17,8 +17,8 @@ import java.io.IOException;
  */
 public class BrowserInvalidSessionStrategy extends AbstractSessionStrategy implements InvalidSessionStrategy {
 
-	public BrowserInvalidSessionStrategy(BrowserProperties browserProperties) {
-		super(browserProperties);
+	public BrowserInvalidSessionStrategy(BrowserConfiguration browserConfiguration) {
+		super(browserConfiguration);
 	}
 
 	@Override
