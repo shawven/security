@@ -13,6 +13,7 @@ import com.github.shawven.security.social.qq.connet.QQConnectionFactory;
 import com.github.shawven.security.social.support.SocialConfigurer;
 import com.github.shawven.security.social.support.SocialConfigurerProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -139,12 +140,14 @@ public class SocialConfiguration extends SocialConfigurerAdapter {
      * @return
      */
     @Bean
+    @ConditionalOnMissingBean
     public ProviderSignInUtils providerSignInUtils(ConnectionFactoryLocator connectionFactoryLocator) {
         return new ProviderSignInUtils(connectionFactoryLocator,
                 getUsersConnectionRepository(connectionFactoryLocator));
     }
 
     @Bean
+    @ConditionalOnMissingBean
     public ConnectController connectController(ConnectionFactoryLocator connectionFactoryLocator,
                                                ConnectionRepository connectionRepository) {
         return new ConnectController(connectionFactoryLocator, connectionRepository);
@@ -162,6 +165,7 @@ public class SocialConfiguration extends SocialConfigurerAdapter {
     }
 
     @Bean(name = "connect/status")
+    @ConditionalOnMissingBean
     public AppConnectionStatusView appConnectionStatusView() {
         return new AppConnectionStatusView();
     }

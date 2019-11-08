@@ -4,7 +4,7 @@ package com.github.shawven.security.social.mobile;
 import com.github.shawven.security.social.InvalidArgumentException;
 
 import com.github.shawven.security.social.properties.OAuth2Constants;
-import com.github.shawven.security.verification.properties.VerificationConstants;
+import com.github.shawven.security.verification.VerificationConstants;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;

@@ -87,7 +87,7 @@ public abstract class AbstractVerificationProcessor<T extends Verification> impl
 	 * @return
 	 */
 	public VerificationType getVerificationType(ServletWebRequest request) {
-		String type = StringUtils.substringBefore(getClass().getSimpleName(), "CodeProcessor");
+		String type = StringUtils.substringBefore(getClass().getSimpleName(), "Processor");
 		return VerificationType.valueOf(type.toUpperCase());
 	}
 }

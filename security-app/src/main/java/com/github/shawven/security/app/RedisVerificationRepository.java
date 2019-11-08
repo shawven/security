@@ -1,7 +1,7 @@
 
 package com.github.shawven.security.app;
 
-import com.github.shawven.security.verification.properties.VerificationConstants;
+import com.github.shawven.security.verification.VerificationConstants;
 import com.github.shawven.security.verification.Verification;
 import com.github.shawven.security.verification.VerificationException;
 import com.github.shawven.security.verification.VerificationRepository;

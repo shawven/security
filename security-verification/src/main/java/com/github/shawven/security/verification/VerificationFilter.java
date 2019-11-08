@@ -2,7 +2,7 @@
 package com.github.shawven.security.verification;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.shawven.security.verification.properties.VerificationProperties;
+import com.github.shawven.security.verification.configuraion.VerificationConfiguration;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -33,7 +34,7 @@ public class VerificationFilter extends OncePerRequestFilter implements Initiali
      */
     private VerificationProcessorHolder verificationProcessorHolder;
 
-    private VerificationProperties securityProperties;
+    private List<VerificationConfiguration> configurations;
 
     /**
      * 存放所有需要校验验证码的url
@@ -47,12 +48,12 @@ public class VerificationFilter extends OncePerRequestFilter implements Initiali
     private ObjectMapper objectMapper;
 
     public VerificationFilter(VerificationProcessorHolder verificationProcessorHolder,
-                              VerificationProperties verificationProperties) {
+                              List<VerificationConfiguration> configurations) {
         urlMap = new HashMap<>();
         pathMatcher = new AntPathMatcher();
         objectMapper = new ObjectMapper();
         this.verificationProcessorHolder = verificationProcessorHolder;
-        this.securityProperties = verificationProperties;
+        this.configurations = configurations;
     }
 
     /**
@@ -61,21 +62,23 @@ public class VerificationFilter extends OncePerRequestFilter implements Initiali
     @Override
     public void afterPropertiesSet() throws ServletException {
         super.afterPropertiesSet();
-        addUrlToMap(securityProperties.getCaptcha().getUrl(), VerificationType.CAPTCHA);
-        addUrlToMap(securityProperties.getSms().getUrl(), VerificationType.SMS);
+        addUrlToMap();
     }
 
     /**
-     * 讲系统中配置的需要校验验证码的URL根据校验的类型放入map
+     * 将系统中配置的需要校验验证码的URL根据校验的类型放入map
      *
-     * @param urlString
-     * @param type
      */
-    protected void addUrlToMap(String urlString, VerificationType type) {
-        if (StringUtils.isNotBlank(urlString)) {
-            String[] urls = StringUtils.split(urlString, ",");
-            for (String url : urls) {
-                urlMap.put(url, type);
+    protected void addUrlToMap() {
+        for (VerificationConfiguration configuration : configurations) {
+            String urlString = configuration.getUrl();
+            if (StringUtils.isNotBlank(urlString)) {
+                String[] urls = StringUtils.split(urlString, ",");
+                for (String url : urls) {
+                    String className = configuration.getClass().getSimpleName();
+                    String prefix = StringUtils.substringBefore(className, "Configuration").toUpperCase();
+                    urlMap.put(url, VerificationType.valueOf(prefix));
+                }
             }
         }
     }

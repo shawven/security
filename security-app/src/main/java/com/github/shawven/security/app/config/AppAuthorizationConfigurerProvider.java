@@ -3,7 +3,7 @@ package com.github.shawven.security.app.config;
 import com.github.shawven.security.base.authentication.configurer.AuthorizationConfigurerProvider;
 import com.github.shawven.security.social.properties.OAuth2Constants;
 import com.github.shawven.security.social.properties.SocialProperties;
-import com.github.shawven.security.verification.properties.VerificationConstants;
+import com.github.shawven.security.verification.VerificationConstants;
 import com.github.shawven.security.social.properties.SocialConstants;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;

@@ -1,9 +1,9 @@
-package com.github.shawven.security.verification.properties;
+package com.github.shawven.security.verification.configuraion;
 
 /**
  * 图片验证码配置项
  */
-public class CaptchaProperties {
+public class CaptchaConfiguration extends VerificationConfiguration{
     /**
      * 验证码长度
      */
@@ -13,11 +13,6 @@ public class CaptchaProperties {
      * 过期时间
      */
     private int expireIn = 60;
-
-    /**
-     * 要拦截的url，多个url用逗号隔开，ant pattern
-     */
-    private String url;
 
     /**
      * 图片宽
@@ -42,14 +37,6 @@ public class CaptchaProperties {
 
     public void setExpireIn(int expireIn) {
         this.expireIn = expireIn;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
     }
 
     public int getWidth() {

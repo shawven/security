@@ -1,7 +1,8 @@
 
 package com.github.shawven.security.verification.captcha;
 
-import com.github.shawven.security.verification.properties.VerificationProperties;
+import com.github.shawven.security.verification.configuraion.CaptchaConfiguration;
+import com.github.shawven.security.verification.configuraion.VerificationConfiguration;
 import com.github.shawven.security.verification.VerificationGenerator;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.web.bind.ServletRequestUtils;
@@ -20,19 +21,17 @@ public class CaptchaGenerator implements VerificationGenerator<Captcha> {
 	/**
 	 * 系统配置
 	 */
-	private VerificationProperties verificationProperties;
+	private CaptchaConfiguration configuration;
 
 
-    public CaptchaGenerator(VerificationProperties verificationProperties) {
-        this.verificationProperties = verificationProperties;
+    public CaptchaGenerator(CaptchaConfiguration configuration) {
+        this.configuration = configuration;
     }
 
     @Override
 	public Captcha generate(ServletWebRequest request) {
-		int width = ServletRequestUtils.getIntParameter(request.getRequest(), "width",
-                verificationProperties.getCaptcha().getWidth());
-		int height = ServletRequestUtils.getIntParameter(request.getRequest(), "height",
-                verificationProperties.getCaptcha().getHeight());
+		int width = ServletRequestUtils.getIntParameter(request.getRequest(), "width", configuration.getWidth());
+		int height = ServletRequestUtils.getIntParameter(request.getRequest(), "height", configuration.getHeight());
 
 		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
@@ -67,7 +66,7 @@ public class CaptchaGenerator implements VerificationGenerator<Captcha> {
 
 		g.dispose();
 
-		return new Captcha(image, randomString, verificationProperties.getCaptcha().getExpireIn());
+		return new Captcha(image, randomString, configuration.getExpireIn());
 	}
 
 	/**
@@ -94,7 +93,7 @@ public class CaptchaGenerator implements VerificationGenerator<Captcha> {
 	private String getRandomString() {
         String str;
         do {
-            str = RandomStringUtils.randomAlphanumeric(verificationProperties.getCaptcha().getLength());
+            str = RandomStringUtils.randomAlphanumeric(configuration.getLength());
             // 排除I l 1 这种模糊不清的
         } while (str.contains("I") || str.contains("l") || str.contains("1"));
         return str;

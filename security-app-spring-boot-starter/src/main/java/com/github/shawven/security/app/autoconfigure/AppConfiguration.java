@@ -115,6 +115,7 @@ public class AppConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean
     public AppSingUpUtils appSingUpUtils(RedisTemplate<Object, Object> redisTemplate,
                                          UsersConnectionRepository usersConnectionRepository,
                                          ConnectionFactoryLocator connectionFactoryLocator) {

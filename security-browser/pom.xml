@@ -23,6 +23,7 @@
             <groupId>com.github.shawven</groupId>
             <artifactId>security-oauth2</artifactId>
             <version>1.0.0</version>
+            <optional>true</optional>
         </dependency>
 	</dependencies>
 

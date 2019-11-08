@@ -1,10 +1,10 @@
-package com.github.shawven.security.verification.properties;
+package com.github.shawven.security.verification.configuraion;
 
 /**
  * @author Shoven
  * @date 2019-08-16
  */
-public class SmsProperties {
+public class SmsConfiguration extends VerificationConfiguration{
     /**
      * 验证码长度
      */
@@ -34,14 +34,6 @@ public class SmsProperties {
 
     public void setExpireIn(int expireIn) {
         this.expireIn = expireIn;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
     }
 }
 

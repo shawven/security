@@ -7,7 +7,6 @@ import com.github.shawven.security.browser.authentication.*;
 import com.github.shawven.security.browser.config.BrowserAuthorizationConfigurerProvider;
 import com.github.shawven.security.browser.config.BrowserSecurityConfigurer;
 import com.github.shawven.security.browser.config.BrowserSocialAuthenticationFilterPostProcessor;
-import com.github.shawven.security.browser.config.FormLoginSecurityConfigurer;
 import com.github.shawven.security.browser.properties.BrowserProperties;
 import com.github.shawven.security.browser.session.BrowserExpiredSessionStrategy;
 import com.github.shawven.security.browser.session.BrowserInvalidSessionStrategy;
@@ -22,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -133,20 +131,6 @@ public class BrowserConfiguration {
         return new BrowserAuthenticationExceptionEntryPoint(browserProperties);
     }
 
-    /**
-     * 表单登陆安全配置
-     *
-     * @param authenticationSuccessHandler
-     * @param authenticationFailureHandler
-     * @return
-     */
-    @Bean
-    @ConditionalOnMissingBean
-    public FormLoginSecurityConfigurer formLoginSecurityConfig(AuthenticationSuccessHandler authenticationSuccessHandler,
-                                                               AuthenticationFailureHandler authenticationFailureHandler) {
-	    return new FormLoginSecurityConfigurer(browserProperties, authenticationSuccessHandler, authenticationFailureHandler);
-    }
-
 
     @Bean
     @ConditionalOnMissingBean
@@ -171,7 +155,6 @@ public class BrowserConfiguration {
     @Bean
     public BrowserSecurityConfigurer browserSecurityConfigurer(
             DataSource dataSource,
-            BrowserProperties browserProperties,
             UserDetailsService userDetailsService,
             @Autowired(required = false)
             SessionInformationExpiredStrategy sessionInformationExpiredStrategy,
@@ -179,12 +162,13 @@ public class BrowserConfiguration {
             InvalidSessionStrategy invalidSessionStrategy,
             @Autowired(required = false)
             LogoutSuccessHandler logoutSuccessHandler,
+            AuthenticationSuccessHandler authenticationSuccessHandler,
+            AuthenticationFailureHandler authenticationFailureHandler,
             AuthorizationConfigurerManager authorizationConfigurerManager,
             @Autowired(required = false)
             AccessDeniedHandler browserAccessDeniedHandler,
             @Autowired(required = false)
             AuthenticationEntryPoint browserAuthenticationExceptionEntryPoint,
-            FormLoginSecurityConfigurer formLoginSecurityConfigurer,
             @Autowired(required = false)
             SpringSocialConfigurer springSocialConfigurer,
             @Autowired(required = false)
@@ -192,6 +176,11 @@ public class BrowserConfiguration {
             @Autowired(required = false)
             SmsAuthenticationSecurityConfigurer smsAuthenticationSecurityConfigurer) {
         BrowserSecurityConfigurer configurer = new BrowserSecurityConfigurer();
+        configurer.setAuthorizationConfigurerManager(authorizationConfigurerManager);
+        configurer.setVerificationSecurityConfigurer(verificationSecurityConfigurer);
+        configurer.setSmsAuthenticationSecurityConfigurer(smsAuthenticationSecurityConfigurer);
+        configurer.setSpringSocialConfigurer(springSocialConfigurer);
+
         configurer.setDataSource(dataSource);
         configurer.setBrowserProperties(browserProperties);
         configurer.setUserDetailsService(userDetailsService);
@@ -200,12 +189,9 @@ public class BrowserConfiguration {
         configurer.setLogoutSuccessHandler(logoutSuccessHandler);
         configurer.setBrowserAccessDeniedHandler(browserAccessDeniedHandler);
         configurer.setBrowserAuthenticationExceptionEntryPoint(browserAuthenticationExceptionEntryPoint);
+        configurer.setBrowserAuthenticationSuccessHandler(authenticationSuccessHandler);
+        configurer.setBrowserAuthenticationFailureHandler(authenticationFailureHandler);
 
-        configurer.setAuthorizationConfigurerManager(authorizationConfigurerManager);
-        configurer.setFormLoginSecurityConfigurer(formLoginSecurityConfigurer);
-        configurer.setSpringSocialConfigurer(springSocialConfigurer);
-        configurer.setVerificationSecurityConfigurer(verificationSecurityConfigurer);
-        configurer.setSmsAuthenticationSecurityConfigurer(smsAuthenticationSecurityConfigurer);
         return configurer;
     }
 }

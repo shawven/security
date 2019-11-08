@@ -4,7 +4,7 @@ import com.github.shawven.security.base.authentication.configurer.AuthorizationC
 import com.github.shawven.security.browser.properties.BrowserProperties;
 import com.github.shawven.security.social.properties.OAuth2Constants;
 import com.github.shawven.security.social.properties.SocialProperties;
-import com.github.shawven.security.verification.properties.VerificationConstants;
+import com.github.shawven.security.verification.VerificationConstants;
 import com.github.shawven.security.social.properties.SocialConstants;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;

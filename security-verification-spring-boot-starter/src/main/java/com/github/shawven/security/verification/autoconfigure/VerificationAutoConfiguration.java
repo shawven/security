@@ -3,11 +3,13 @@ package com.github.shawven.security.verification.autoconfigure;
 import com.github.shawven.security.verification.captcha.CaptchaGenerator;
 import com.github.shawven.security.verification.captcha.CaptchaProcessor;
 import com.github.shawven.security.verification.config.VerificationSecurityConfigurer;
-import com.github.shawven.security.verification.properties.VerificationProperties;
 import com.github.shawven.security.verification.VerificationFilter;
 import com.github.shawven.security.verification.VerificationProcessor;
 import com.github.shawven.security.verification.VerificationProcessorHolder;
 import com.github.shawven.security.verification.VerificationRepository;
+import com.github.shawven.security.verification.configuraion.CaptchaConfiguration;
+import com.github.shawven.security.verification.configuraion.SmsConfiguration;
+import com.github.shawven.security.verification.configuraion.VerificationConfiguration;
 import com.github.shawven.security.verification.sms.DefaultSmsSender;
 import com.github.shawven.security.verification.sms.SmsGenerator;
 import com.github.shawven.security.verification.sms.SmsProcessor;
@@ -19,6 +21,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,10 +30,10 @@ import java.util.List;
  */
 @Configuration
 @EnableConfigurationProperties(VerificationProperties.class)
-public class VerificationConfiguration {
+public class VerificationAutoConfiguration {
 
     @Autowired
-    private VerificationProperties verificationProperties;
+    private VerificationProperties properties;
 
     /**
      * 短信验证码生成器
@@ -39,7 +42,7 @@ public class VerificationConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public SmsGenerator smsCodeGenerator() {
-        return new SmsGenerator(verificationProperties);
+        return new SmsGenerator(properties.getSms());
     }
 
     /**
@@ -59,8 +62,9 @@ public class VerificationConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public CaptchaGenerator imageCodeGenerator() {
-        return new CaptchaGenerator(verificationProperties);
+        return new CaptchaGenerator(properties.getCaptcha());
     }
+
 
     /**
      * 短信验证码处理器
@@ -73,7 +77,7 @@ public class VerificationConfiguration {
     @Bean
     @ConditionalOnMissingBean
     @ConditionalOnBean(VerificationRepository.class)
-    public SmsProcessor smsCodeProcessor(VerificationRepository verificationRepository,
+    public SmsProcessor smsProcessor(VerificationRepository verificationRepository,
                                          SmsGenerator smsGenerator,
                                          SmsSender smsSender) {
         return new SmsProcessor(verificationRepository, smsGenerator, smsSender);
@@ -89,7 +93,7 @@ public class VerificationConfiguration {
     @Bean
     @ConditionalOnMissingBean
     @ConditionalOnBean(VerificationRepository.class)
-    public CaptchaProcessor imageCodeProcessor(VerificationRepository verificationRepository,
+    public CaptchaProcessor imageProcessor(VerificationRepository verificationRepository,
                                                CaptchaGenerator captchaGenerator) {
         return new CaptchaProcessor(verificationRepository, captchaGenerator);
     }
@@ -114,7 +118,10 @@ public class VerificationConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public VerificationFilter verificationFilter(VerificationProcessorHolder verificationProcessorHolder) {
-        return new VerificationFilter(verificationProcessorHolder, verificationProperties);
+        ArrayList<VerificationConfiguration> configurations = new ArrayList<>();
+        configurations.add(properties.getCaptcha());
+        configurations.add(properties.getSms());
+        return new VerificationFilter(verificationProcessorHolder, configurations);
     }
 
     @Bean
@@ -122,5 +129,6 @@ public class VerificationConfiguration {
     public VerificationSecurityConfigurer verificationSecurityConfig(VerificationFilter filter) {
         return new VerificationSecurityConfigurer(filter);
     }
+
 }
 

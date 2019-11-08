@@ -13,6 +13,8 @@ import org.springframework.security.config.annotation.web.configurers.SessionMan
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
@@ -50,32 +52,24 @@ public class BrowserSecurityConfigurer {
 
 	private AuthorizationConfigurerManager authorizationConfigurerManager;
 
-	private FormLoginSecurityConfigurer formLoginSecurityConfigurer;
-
     private AccessDeniedHandler browserAccessDeniedHandler;
 
     private AuthenticationEntryPoint browserAuthenticationExceptionEntryPoint;
 
-    public void configureWeb(WebSecurity web) throws Exception {
+    private AuthenticationSuccessHandler browserAuthenticationSuccessHandler;
+
+    private AuthenticationFailureHandler browserAuthenticationFailureHandler;
+
+    public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers(
+                "/error",
                 "/**/favicon.ico",
                 "/**/*.js",
-                "/**/*.css",
-                "/**/*.jpg",
-                "/**/*.png",
-                "/**/*.gif"
+                "/**/*.css"
         );
     }
 
-	public void configureHttp(HttpSecurity http) throws Exception {
-        ExceptionHandlingConfigurer<HttpSecurity> exceptionHandling = http.exceptionHandling();
-        if (browserAuthenticationExceptionEntryPoint != null) {
-            exceptionHandling.authenticationEntryPoint(browserAuthenticationExceptionEntryPoint);
-        }
-        if (browserAccessDeniedHandler != null) {
-            exceptionHandling.accessDeniedHandler(browserAccessDeniedHandler);
-        }
-
+	public void configure(HttpSecurity http) throws Exception {
         if (verificationSecurityConfigurer != null) {
             http.apply(verificationSecurityConfigurer);
         }
@@ -88,7 +82,25 @@ public class BrowserSecurityConfigurer {
         if (springSocialConfigurer != null) {
             http.apply(springSocialConfigurer);
         }
+        authorizationConfigurerManager.config(http.authorizeRequests());
 
+        configureExceptionHandler(http);
+        configureSession(http);
+        configureRememberMe(http);
+        configureFormLogin(http);
+	}
+
+    public void configureExceptionHandler(HttpSecurity http) throws Exception {
+        ExceptionHandlingConfigurer<HttpSecurity> exceptionHandling = http.exceptionHandling();
+        if (browserAuthenticationExceptionEntryPoint != null) {
+            exceptionHandling.authenticationEntryPoint(browserAuthenticationExceptionEntryPoint);
+        }
+        if (browserAccessDeniedHandler != null) {
+            exceptionHandling.accessDeniedHandler(browserAccessDeniedHandler);
+        }
+    }
+
+    public void configureSession(HttpSecurity http) throws Exception {
         SessionManagementConfigurer<HttpSecurity> sessionManagement = http.sessionManagement();
         if (invalidSessionStrategy != null) {
             sessionManagement.invalidSessionStrategy(invalidSessionStrategy);
@@ -100,6 +112,17 @@ public class BrowserSecurityConfigurer {
             controlConfigurer.expiredSessionStrategy(sessionInformationExpiredStrategy);
         }
 
+    }
+
+    public void configureFormLogin(HttpSecurity http) throws Exception {
+        http.formLogin()
+                .loginPage(browserProperties.getSignInUrl())
+                .loginProcessingUrl(browserProperties.getSignInProcessingUrl())
+                .successHandler(browserAuthenticationSuccessHandler)
+                .failureHandler(browserAuthenticationFailureHandler);
+    }
+
+    public void configureLogout(HttpSecurity http) throws Exception {
         LogoutConfigurer<HttpSecurity> logoutConfigurer = http.logout();
         String signOutProcessingUrl = browserProperties.getSignOutProcessingUrl();
         if (signOutProcessingUrl != null) {
@@ -109,22 +132,19 @@ public class BrowserSecurityConfigurer {
         if (logoutSuccessHandler != null) {
             logoutConfigurer.logoutSuccessHandler(logoutSuccessHandler);
         }
+    }
 
-        http .csrf().disable();
-
+    public void configureRememberMe(HttpSecurity http) throws Exception {
         //记住我配置，如果想在'记住我'登录时记录日志，可以注册一个InteractiveAuthenticationSuccessEvent事件的监听器
         int rememberMeSeconds = browserProperties.getRememberMeSeconds();
         if (rememberMeSeconds > 0) {
             http
-                .rememberMe()
-                .tokenRepository(persistentTokenRepository())
-                .tokenValiditySeconds(browserProperties.getRememberMeSeconds())
-                .userDetailsService(userDetailsService);
+                    .rememberMe()
+                    .tokenRepository(persistentTokenRepository())
+                    .tokenValiditySeconds(browserProperties.getRememberMeSeconds())
+                    .userDetailsService(userDetailsService);
         }
-
-        formLoginSecurityConfigurer.configure(http);
-        authorizationConfigurerManager.config(http.authorizeRequests());
-	}
+    }
 
 	/**
 	 * 记住我功能的token存取器配置
@@ -216,14 +236,6 @@ public class BrowserSecurityConfigurer {
         this.authorizationConfigurerManager = authorizationConfigurerManager;
     }
 
-    public FormLoginSecurityConfigurer getFormLoginSecurityConfigurer() {
-        return formLoginSecurityConfigurer;
-    }
-
-    public void setFormLoginSecurityConfigurer(FormLoginSecurityConfigurer formLoginSecurityConfigurer) {
-        this.formLoginSecurityConfigurer = formLoginSecurityConfigurer;
-    }
-
     public AccessDeniedHandler getBrowserAccessDeniedHandler() {
         return browserAccessDeniedHandler;
     }
@@ -238,5 +250,21 @@ public class BrowserSecurityConfigurer {
 
     public void setBrowserAuthenticationExceptionEntryPoint(AuthenticationEntryPoint browserAuthenticationExceptionEntryPoint) {
         this.browserAuthenticationExceptionEntryPoint = browserAuthenticationExceptionEntryPoint;
+    }
+
+    public AuthenticationSuccessHandler getBrowserAuthenticationSuccessHandler() {
+        return browserAuthenticationSuccessHandler;
+    }
+
+    public void setBrowserAuthenticationSuccessHandler(AuthenticationSuccessHandler browserAuthenticationSuccessHandler) {
+        this.browserAuthenticationSuccessHandler = browserAuthenticationSuccessHandler;
+    }
+
+    public AuthenticationFailureHandler getBrowserAuthenticationFailureHandler() {
+        return browserAuthenticationFailureHandler;
+    }
+
+    public void setBrowserAuthenticationFailureHandler(AuthenticationFailureHandler browserAuthenticationFailureHandler) {
+        this.browserAuthenticationFailureHandler = browserAuthenticationFailureHandler;
     }
 }

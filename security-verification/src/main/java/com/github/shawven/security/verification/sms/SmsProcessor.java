@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.shawven.security.verification.ResponseData;
 import com.github.shawven.security.verification.*;
 import com.github.shawven.security.verification.message.SmsMessage;
-import com.github.shawven.security.verification.properties.VerificationConstants;
+import com.github.shawven.security.verification.VerificationConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;

@@ -2,7 +2,6 @@
 package com.github.shawven.security.verification;
 
 import com.github.shawven.security.verification.message.MessageTemplate;
-import com.github.shawven.security.verification.properties.VerificationConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

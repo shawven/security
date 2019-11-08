@@ -22,6 +22,12 @@
         </dependency>
         <dependency>
             <groupId>com.github.shawven</groupId>
+            <artifactId>security-oauth2</artifactId>
+            <version>1.0.0</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.github.shawven</groupId>
             <artifactId>security-verification-spring-boot-starter</artifactId>
             <version>1.0.0</version>
         </dependency>

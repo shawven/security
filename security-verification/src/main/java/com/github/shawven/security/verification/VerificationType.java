@@ -2,8 +2,6 @@
 package com.github.shawven.security.verification;
 
 
-import com.github.shawven.security.verification.properties.VerificationConstants;
-
 /**
  *
  * 校验码类型

@@ -26,6 +26,8 @@ public class AuthorizationConfigurerManager {
     }
 
     public void config(ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry config) {
+        configWhitelist(config);
+
 		boolean existAnyRequestConfig = false;
 		String existAnyRequestConfigName = null;
 
@@ -40,8 +42,6 @@ public class AuthorizationConfigurerManager {
 				existAnyRequestConfigName = authorizeConfigProvider.getClass().getSimpleName();
 			}
 		}
-
-        configWhitelist(config);
 		if(!existAnyRequestConfig){
 			config.anyRequest().authenticated();
 		}

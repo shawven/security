@@ -1,5 +1,5 @@
 
-package com.github.shawven.security.verification.properties;
+package com.github.shawven.security.verification;
 
 
 /**

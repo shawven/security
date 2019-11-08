@@ -1,7 +1,8 @@
 
 package com.github.shawven.security.verification.sms;
 
-import com.github.shawven.security.verification.properties.VerificationProperties;
+import com.github.shawven.security.verification.configuraion.SmsConfiguration;
+import com.github.shawven.security.verification.configuraion.VerificationConfiguration;
 import com.github.shawven.security.verification.VerificationGenerator;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.web.context.request.ServletWebRequest;
@@ -11,16 +12,16 @@ import org.springframework.web.context.request.ServletWebRequest;
  */
 public class SmsGenerator implements VerificationGenerator<Sms> {
 
-	private com.github.shawven.security.verification.properties.VerificationProperties VerificationProperties;
+	private SmsConfiguration configuration;
 
-    public SmsGenerator(VerificationProperties VerificationProperties) {
-        this.VerificationProperties = VerificationProperties;
+    public SmsGenerator(SmsConfiguration configuration) {
+        this.configuration = configuration;
     }
 
     @Override
 	public Sms generate(ServletWebRequest request) {
-		String code = RandomStringUtils.randomNumeric(VerificationProperties.getSms().getLength());
-		return new Sms(code, VerificationProperties.getSms().getExpireIn());
+		String code = RandomStringUtils.randomNumeric(configuration.getLength());
+		return new Sms(code, configuration.getExpireIn());
 	}
 
 }
