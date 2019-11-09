@@ -2,6 +2,7 @@
 package com.github.shawven.security.browser;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * 浏览器环境配置项
@@ -12,6 +13,7 @@ public class BrowserProperties {
     /**
      * session管理配置项
      */
+    @NestedConfigurationProperty
     private SessionProperties session;
     /**
      * 登录url
@@ -45,9 +47,9 @@ public class BrowserProperties {
     private String signOutSuccessUrl = BrowserConstants.DEFAULT_SIGN_OUT_SUCCESS_URL;
 
     /**
-     * '记住我'功能的有效时间，默认1小时
+     * '记住我'功能的有效时间
      */
-    private int rememberMeSeconds = 3600;
+    private int rememberMeSeconds;
 
     /**
      * 登录响应的方式，默认是json

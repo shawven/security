@@ -24,4 +24,5 @@ public class VerificationSecurityConfigurer extends SecurityConfigurerAdapter<De
 		http.addFilterBefore(verificationFilter, AbstractPreAuthenticatedProcessingFilter.class);
 	}
 
+
 }

@@ -3,17 +3,13 @@ package com.github.shawven.security.browser;
 
 import com.github.shawven.security.authorization.AuthorizationConfigureProvider;
 import com.github.shawven.security.browser.authentication.*;
-import com.github.shawven.security.browser.config.BrowserConnectAuthenticationFilterPostProcessor;
 import com.github.shawven.security.browser.properties.BrowserConfiguration;
 import com.github.shawven.security.browser.properties.SessionConfiguration;
 import com.github.shawven.security.browser.session.BrowserExpiredSessionStrategy;
 import com.github.shawven.security.browser.session.BrowserInvalidSessionStrategy;
 import com.github.shawven.security.browser.session.SessionVerificationRepository;
-import com.github.shawven.security.connect.ConnectAutoConfiguration;
-import com.github.shawven.security.connect.support.ConnectAuthenticationFilterPostProcessor;
 import com.github.shawven.security.verification.VerificationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -84,7 +80,7 @@ public class BrowserAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	public LogoutSuccessHandler logoutSuccessHandler(){
-		return new BrowserLogoutSuccessHandler(properties.getSignOutSuccessUrl());
+		return new BrowserLogoutSuccessHandler(browserConfiguration());
 	}
 
     /**
@@ -134,17 +130,6 @@ public class BrowserAutoConfiguration {
     @ConditionalOnMissingBean
     public AuthorizationConfigureProvider browserAuthorizationConfigurerProvider() {
 	    return new BrowserAuthorizationConfigureProvider(browserConfiguration());
-    }
-
-
-
-    @Bean
-    @ConditionalOnClass(ConnectAutoConfiguration.class)
-    @ConditionalOnMissingBean
-    public ConnectAuthenticationFilterPostProcessor connectAuthenticationFilterPostProcessor(
-            AuthenticationSuccessHandler authenticationSuccessHandler,
-            AuthenticationFailureHandler authenticationFailureHandler) {
-        return new BrowserConnectAuthenticationFilterPostProcessor(authenticationSuccessHandler, authenticationFailureHandler);
     }
 
     @Bean

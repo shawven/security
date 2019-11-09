@@ -1,6 +1,7 @@
 package com.github.shawven.security.browser.authentication;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.shawven.security.browser.BrowserConstants;
 import com.github.shawven.security.verification.ResponseData;
 import com.github.shawven.security.browser.ResponseType;
 import com.github.shawven.security.browser.properties.BrowserConfiguration;
@@ -20,9 +21,7 @@ import java.io.IOException;
 
 public class BrowserAuthenticationExceptionEntryPoint extends LoginUrlAuthenticationEntryPoint {
 
-    private static final String UNAUTHORIZED = "Full authentication is required to access this resource";
 
-    private static final String REQUIRE_LOGIN = "Require login";
 
     private BrowserConfiguration browserConfiguration;
 
@@ -39,8 +38,8 @@ public class BrowserAuthenticationExceptionEntryPoint extends LoginUrlAuthentica
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException e)
             throws IOException, ServletException {
         if (ResponseType.JSON.equals(browserConfiguration.getResponseType())) {
-            String errorMessage = UNAUTHORIZED.equals(e.getMessage())
-                    ? REQUIRE_LOGIN
+            String errorMessage = BrowserConstants.UNAUTHORIZED.equals(e.getMessage())
+                    ? BrowserConstants.REQUIRE_LOGIN
                     : HttpStatus.UNAUTHORIZED.getReasonPhrase();
 
             int status = HttpStatus.UNAUTHORIZED.value();

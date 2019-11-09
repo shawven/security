@@ -20,8 +20,6 @@
         验证码验证（图形、短信）
     </description>
 
-
-
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>

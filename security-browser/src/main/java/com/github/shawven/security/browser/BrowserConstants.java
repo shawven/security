@@ -39,4 +39,8 @@ public class BrowserConstants {
      * session失效默认的跳转url
      */
     public static final String DEFAULT_SESSION_INVALID_URL = "/session-invalid.html";
+
+    public static final String UNAUTHORIZED = "Full authentication is required to access this resource";
+
+    public static final String REQUIRE_LOGIN = "Require login";
 }

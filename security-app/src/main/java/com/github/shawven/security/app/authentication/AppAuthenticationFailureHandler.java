@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.shawven.security.verification.ResponseData;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -14,14 +14,11 @@ import java.io.IOException;
 /**
  * APP环境下认证失败处理器
  */
-public class AppAuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler {
+public class AppAuthenticationFailureHandler implements AuthenticationFailureHandler {
 
 	private ObjectMapper objectMapper = new ObjectMapper();
 
-	/**
-	 *(non-Javadoc)
-	 * @see org.springframework.security.web.authentication.AuthenticationFailureHandler#onAuthenticationFailure(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, org.springframework.security.core.AuthenticationException)
-	 */
+
 	@Override
 	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
 			AuthenticationException e) throws IOException {

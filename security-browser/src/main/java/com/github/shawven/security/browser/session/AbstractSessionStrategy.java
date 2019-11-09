@@ -2,6 +2,7 @@
 package com.github.shawven.security.browser.session;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.shawven.security.browser.BrowserConstants;
 import com.github.shawven.security.verification.ResponseData;
 import com.github.shawven.security.browser.ResponseType;
 import com.github.shawven.security.browser.properties.BrowserConfiguration;
@@ -64,10 +65,11 @@ public class AbstractSessionStrategy {
         } else {
             String sourceUrl = request.getRequestURI();
             String targetUrl;
-            if(StringUtils.equals(sourceUrl, browserConfiguration.getSignInUrl())
+            // 登陆也或者退出页保持原来页面即可
+            if (StringUtils.equals(sourceUrl, browserConfiguration.getSignInUrl())
                     || StringUtils.equals(sourceUrl, browserConfiguration.getSignOutSuccessUrl())){
                 targetUrl = sourceUrl;
-            }else{
+            } else{
                 targetUrl = destinationUrl;
             }
             redirectStrategy.sendRedirect(request, response, targetUrl);
@@ -79,10 +81,7 @@ public class AbstractSessionStrategy {
 	 * @return
 	 */
 	protected Object buildResponseContent(HttpServletRequest request) {
-		String message = "用户会话已失效";
-		if (isConcurrency()) {
-			message = message + "，有可能是并发登录导致的";
-		}
+		String message = isConcurrency() ? "当前用户已在其地方登陆" : BrowserConstants.REQUIRE_LOGIN;
 		return new ResponseData()
                 .setCode(HttpStatus.UNAUTHORIZED.value())
                 .setMessage(message);

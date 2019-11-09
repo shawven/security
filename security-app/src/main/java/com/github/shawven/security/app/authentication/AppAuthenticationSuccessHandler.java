@@ -11,7 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.*;
 import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
-import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -21,7 +21,7 @@ import java.util.Collections;
 /**
  * APP环境下认证成功处理器
  */
-public class AppAuthenticationSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
+public class AppAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
 	private ObjectMapper objectMapper;
 

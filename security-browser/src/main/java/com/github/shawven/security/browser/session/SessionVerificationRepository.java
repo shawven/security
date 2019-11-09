@@ -4,9 +4,9 @@ package com.github.shawven.security.browser.session;
 import com.github.shawven.security.verification.Verification;
 import com.github.shawven.security.verification.VerificationRepository;
 import com.github.shawven.security.verification.VerificationType;
-import org.springframework.social.connect.web.HttpSessionSessionStrategy;
-import org.springframework.social.connect.web.SessionStrategy;
 import org.springframework.web.context.request.ServletWebRequest;
+
+import javax.servlet.http.HttpSession;
 
 
 /**
@@ -22,28 +22,26 @@ public class SessionVerificationRepository implements VerificationRepository {
 	 */
 	public static String SESSION_KEY_PREFIX = "SESSION_KEY_FOR_CODE_";
 
-	/**
-	 * 操作session的工具类
-	 */
-	private SessionStrategy sessionStrategy = new HttpSessionSessionStrategy();
-
 	@Override
 	public void save(ServletWebRequest request, Verification verification, VerificationType verificationCodeType) {
-		sessionStrategy.setAttribute(request, getKey(request, verificationCodeType), verification);
+        getSession(request).setAttribute(getKey(request, verificationCodeType), verification);
 	}
 
 	@Override
 	public Verification get(ServletWebRequest request, VerificationType verificationCodeType) {
-		return (Verification) sessionStrategy.getAttribute(request, getKey(request, verificationCodeType));
+		return (Verification) getSession(request).getAttribute(getKey(request, verificationCodeType));
 	}
 
 	@Override
 	public void remove(ServletWebRequest request, VerificationType codeType) {
-		sessionStrategy.removeAttribute(request, getKey(request, codeType));
+        getSession(request).removeAttribute(getKey(request, codeType));
 	}
 
     @Override
     public String getKey(ServletWebRequest request, VerificationType verificationCodeType) {
         return SESSION_KEY_PREFIX + verificationCodeType.toString().toUpperCase();
+    }
+    private HttpSession getSession(ServletWebRequest request) {
+	    return request.getRequest().getSession();
     }
 }

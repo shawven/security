@@ -2,6 +2,8 @@
 package com.github.shawven.security.browser.authentication;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.shawven.security.browser.ResponseType;
+import com.github.shawven.security.browser.properties.BrowserConfiguration;
 import com.github.shawven.security.verification.ResponseData;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.Authentication;
@@ -20,24 +22,28 @@ import java.io.IOException;
  */
 public class BrowserLogoutSuccessHandler implements LogoutSuccessHandler {
 
-	public BrowserLogoutSuccessHandler(String signOutSuccessUrl) {
-		this.signOutSuccessUrl = signOutSuccessUrl;
-	}
+    private BrowserConfiguration configuration;
 
-	private String signOutSuccessUrl;
+    private ObjectMapper objectMapper;
 
-	private ObjectMapper objectMapper = new ObjectMapper();
+	public BrowserLogoutSuccessHandler(BrowserConfiguration configuration) {
+        this.configuration = configuration;
+        this.objectMapper = new ObjectMapper();
+    }
 
 	@Override
 	public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
 			throws IOException {
-		if (StringUtils.isBlank(signOutSuccessUrl)) {
-			response.setContentType("application/json;charset=UTF-8");
-			response.getWriter().write(objectMapper.writeValueAsString(new ResponseData("退出成功")));
-		} else {
-			response.sendRedirect(signOutSuccessUrl);
-		}
-
+        if (ResponseType.JSON.equals(configuration.getResponseType())) {
+            response.setContentType("application/json;charset=UTF-8");
+            response.getWriter().write(objectMapper.writeValueAsString(new ResponseData("退出成功")));
+        } else {
+            String redirectUrl = configuration.getSignOutSuccessUrl();
+            if (StringUtils.isBlank(redirectUrl)) {
+                redirectUrl = configuration.getSignInUrl();
+            }
+            response.sendRedirect(redirectUrl);
+        }
 	}
 
 }

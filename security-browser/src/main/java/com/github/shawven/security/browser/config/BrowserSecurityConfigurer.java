@@ -5,6 +5,7 @@ import com.github.shawven.security.authorization.AuthorizationConfigurerManager;
 import com.github.shawven.security.browser.properties.BrowserConfiguration;
 import com.github.shawven.security.oauth2.SmsAuthenticationSecurityConfigurer;
 import com.github.shawven.security.verification.VerificationSecurityConfigurer;
+import org.springframework.security.config.annotation.SecurityConfigurer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configurers.ExceptionHandlingConfigurer;
@@ -12,6 +13,7 @@ import org.springframework.security.config.annotation.web.configurers.LogoutConf
 import org.springframework.security.config.annotation.web.configurers.SessionManagementConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -23,6 +25,7 @@ import org.springframework.security.web.session.SessionInformationExpiredStrateg
 import org.springframework.social.security.SpringSocialConfigurer;
 
 import javax.sql.DataSource;
+import java.util.List;
 
 /**
  * 浏览器环境下安全配置主类
@@ -38,19 +41,11 @@ public class BrowserSecurityConfigurer {
 
 	private UserDetailsService userDetailsService;
 
-	private SmsAuthenticationSecurityConfigurer smsAuthenticationSecurityConfigurer;
-
-    private VerificationSecurityConfigurer verificationSecurityConfigurer;
-
-	private SpringSocialConfigurer springSocialConfigurer;
-
 	private SessionInformationExpiredStrategy sessionInformationExpiredStrategy;
 
 	private InvalidSessionStrategy invalidSessionStrategy;
 
 	private LogoutSuccessHandler logoutSuccessHandler;
-
-	private AuthorizationConfigurerManager authorizationConfigurerManager;
 
     private AccessDeniedHandler browserAccessDeniedHandler;
 
@@ -60,8 +55,12 @@ public class BrowserSecurityConfigurer {
 
     private AuthenticationFailureHandler browserAuthenticationFailureHandler;
 
+    private AuthorizationConfigurerManager authorizationConfigurerManager;
+
+    private List<SecurityConfigurer<DefaultSecurityFilterChain, HttpSecurity>> configurers;
+
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers(
+        web.ignoring().mvcMatchers(
                 "/error",
                 "/**/favicon.ico",
                 "/**/*.js",
@@ -70,24 +69,19 @@ public class BrowserSecurityConfigurer {
     }
 
 	public void configure(HttpSecurity http) throws Exception {
-        if (verificationSecurityConfigurer != null) {
-            http.apply(verificationSecurityConfigurer);
+        if (configurers != null && !configurers.isEmpty()) {
+            for (SecurityConfigurer<DefaultSecurityFilterChain, HttpSecurity> configurer : configurers) {
+                http.apply(configurer);
+            }
         }
-		if (verificationSecurityConfigurer != null) {
-            http.apply(verificationSecurityConfigurer);
-        }
-        if (smsAuthenticationSecurityConfigurer != null) {
-            http.apply(smsAuthenticationSecurityConfigurer);
-        }
-        if (springSocialConfigurer != null) {
-            http.apply(springSocialConfigurer);
-        }
+
         authorizationConfigurerManager.config(http.authorizeRequests());
 
         configureExceptionHandler(http);
         configureSession(http);
         configureRememberMe(http);
         configureFormLogin(http);
+        configureLogout(http);
 	}
 
     public void configureExceptionHandler(HttpSecurity http) throws Exception {
@@ -126,9 +120,9 @@ public class BrowserSecurityConfigurer {
         LogoutConfigurer<HttpSecurity> logoutConfigurer = http.logout();
         String signOutProcessingUrl = browserConfiguration.getSignOutProcessingUrl();
         if (signOutProcessingUrl != null) {
-            logoutConfigurer .logoutUrl(signOutProcessingUrl);
+            logoutConfigurer.logoutUrl(signOutProcessingUrl);
         }
-        logoutConfigurer .deleteCookies("JSESSIONID");
+        logoutConfigurer.deleteCookies("JSESSIONID");
         if (logoutSuccessHandler != null) {
             logoutConfigurer.logoutSuccessHandler(logoutSuccessHandler);
         }
@@ -138,23 +132,18 @@ public class BrowserSecurityConfigurer {
         //记住我配置，如果想在'记住我'登录时记录日志，可以注册一个InteractiveAuthenticationSuccessEvent事件的监听器
         int rememberMeSeconds = browserConfiguration.getRememberMeSeconds();
         if (rememberMeSeconds > 0) {
+            if (dataSource == null) {
+                throw new IllegalStateException("Remember me that my feature must have a DataSource!");
+            }
+            JdbcTokenRepositoryImpl tokenRepository = new JdbcTokenRepositoryImpl();
+            tokenRepository.setDataSource(dataSource);
             http
                     .rememberMe()
-                    .tokenRepository(persistentTokenRepository())
-                    .tokenValiditySeconds(browserConfiguration.getRememberMeSeconds())
+                    .tokenRepository(tokenRepository)
+                    .tokenValiditySeconds(rememberMeSeconds)
                     .userDetailsService(userDetailsService);
         }
     }
-
-	/**
-	 * 记住我功能的token存取器配置
-	 * @return
-	 */
-	public PersistentTokenRepository persistentTokenRepository() {
-		JdbcTokenRepositoryImpl tokenRepository = new JdbcTokenRepositoryImpl();
-		tokenRepository.setDataSource(dataSource);
-		return tokenRepository;
-	}
 
     public BrowserConfiguration getBrowserConfiguration() {
         return browserConfiguration;
@@ -180,30 +169,6 @@ public class BrowserSecurityConfigurer {
         this.userDetailsService = userDetailsService;
     }
 
-    public SmsAuthenticationSecurityConfigurer getSmsAuthenticationSecurityConfigurer() {
-        return smsAuthenticationSecurityConfigurer;
-    }
-
-    public void setSmsAuthenticationSecurityConfigurer(SmsAuthenticationSecurityConfigurer smsAuthenticationSecurityConfigurer) {
-        this.smsAuthenticationSecurityConfigurer = smsAuthenticationSecurityConfigurer;
-    }
-
-    public VerificationSecurityConfigurer getVerificationSecurityConfigurer() {
-        return verificationSecurityConfigurer;
-    }
-
-    public void setVerificationSecurityConfigurer(VerificationSecurityConfigurer verificationSecurityConfigurer) {
-        this.verificationSecurityConfigurer = verificationSecurityConfigurer;
-    }
-
-    public SpringSocialConfigurer getSpringSocialConfigurer() {
-        return springSocialConfigurer;
-    }
-
-    public void setConnectConfigurer(SpringSocialConfigurer springSocialConfigurer) {
-        this.springSocialConfigurer = springSocialConfigurer;
-    }
-
     public SessionInformationExpiredStrategy getSessionInformationExpiredStrategy() {
         return sessionInformationExpiredStrategy;
     }
@@ -226,14 +191,6 @@ public class BrowserSecurityConfigurer {
 
     public void setLogoutSuccessHandler(LogoutSuccessHandler logoutSuccessHandler) {
         this.logoutSuccessHandler = logoutSuccessHandler;
-    }
-
-    public AuthorizationConfigurerManager getAuthorizationConfigurerManager() {
-        return authorizationConfigurerManager;
-    }
-
-    public void setAuthorizationConfigurerManager(AuthorizationConfigurerManager authorizationConfigurerManager) {
-        this.authorizationConfigurerManager = authorizationConfigurerManager;
     }
 
     public AccessDeniedHandler getBrowserAccessDeniedHandler() {
@@ -266,5 +223,21 @@ public class BrowserSecurityConfigurer {
 
     public void setBrowserAuthenticationFailureHandler(AuthenticationFailureHandler browserAuthenticationFailureHandler) {
         this.browserAuthenticationFailureHandler = browserAuthenticationFailureHandler;
+    }
+
+    public AuthorizationConfigurerManager getAuthorizationConfigurerManager() {
+        return authorizationConfigurerManager;
+    }
+
+    public void setAuthorizationConfigurerManager(AuthorizationConfigurerManager authorizationConfigurerManager) {
+        this.authorizationConfigurerManager = authorizationConfigurerManager;
+    }
+
+    public List<SecurityConfigurer<DefaultSecurityFilterChain, HttpSecurity>> getConfigurers() {
+        return configurers;
+    }
+
+    public void setConfigurers(List<SecurityConfigurer<DefaultSecurityFilterChain, HttpSecurity>> configurers) {
+        this.configurers = configurers;
     }
 }

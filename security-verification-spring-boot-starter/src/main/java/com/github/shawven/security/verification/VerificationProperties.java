@@ -4,6 +4,7 @@ package com.github.shawven.security.verification;
 import com.github.shawven.security.verification.config.CaptchaConfiguration;
 import com.github.shawven.security.verification.config.SmsConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 @ConfigurationProperties(prefix = "app.security.verification")
 public class VerificationProperties {
@@ -11,11 +12,13 @@ public class VerificationProperties {
     /**
      * 图片验证码配置
      */
+    @NestedConfigurationProperty
     private CaptchaConfiguration captcha;
 
     /**
      * 短信验证码配置
      */
+    @NestedConfigurationProperty
     private SmsConfiguration sms;
 
     public CaptchaConfiguration getCaptcha() {

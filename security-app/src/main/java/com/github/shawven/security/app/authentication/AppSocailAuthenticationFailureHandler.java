@@ -13,10 +13,6 @@ import java.io.IOException;
  */
 public class AppSocailAuthenticationFailureHandler extends AppAuthenticationFailureHandler {
 
-	/**
-	 *(non-Javadoc)
-	 * @see org.springframework.security.web.authentication.AuthenticationFailureHandler#onAuthenticationFailure(HttpServletRequest, HttpServletResponse, AuthenticationException)
-	 */
 	@Override
 	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
 			AuthenticationException e) throws IOException {
