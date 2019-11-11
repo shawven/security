@@ -1,5 +1,6 @@
 package com.github.shawven.security.verification;
 
+import com.github.shawven.security.authorization.AuthenticationFilterProvider;
 import com.github.shawven.security.verification.captcha.CaptchaGenerator;
 import com.github.shawven.security.verification.captcha.CaptchaProcessor;
 import com.github.shawven.security.verification.config.VerificationConfiguration;
@@ -8,11 +9,16 @@ import com.github.shawven.security.verification.sms.SmsGenerator;
 import com.github.shawven.security.verification.sms.SmsProcessor;
 import com.github.shawven.security.verification.sms.SmsSender;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,6 +65,30 @@ public class VerificationAutoConfiguration {
     }
 
 
+    @Configuration
+    @AutoConfigureOrder(1)
+    @ConditionalOnClass(RedisTemplate.class)
+    public static class RedisSupportConfiguration {
+
+        @ConditionalOnMissingBean
+        public VerificationRepository redisVerificationRepository(RedisTemplate<Object, Object> redisTemplate) {
+            return new RedisVerificationRepository(redisTemplate);
+        }
+    }
+
+    /**
+     * 基于session的验证码存取器
+     *
+     * @return
+     */
+    @Bean
+    @AutoConfigureOrder(2)
+    @ConditionalOnMissingBean
+    public VerificationRepository sessionVerificationRepository() {
+        return new SessionVerificationRepository();
+    }
+
+
     /**
      * 短信验证码处理器
      *
@@ -69,7 +99,6 @@ public class VerificationAutoConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean
-    @ConditionalOnBean(VerificationRepository.class)
     public SmsProcessor smsProcessor(VerificationRepository verificationRepository,
                                          SmsGenerator smsGenerator,
                                          SmsSender smsSender) {
@@ -85,7 +114,6 @@ public class VerificationAutoConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean
-    @ConditionalOnBean(VerificationRepository.class)
     public CaptchaProcessor imageProcessor(VerificationRepository verificationRepository,
                                                CaptchaGenerator captchaGenerator) {
         return new CaptchaProcessor(verificationRepository, captchaGenerator);
@@ -98,7 +126,6 @@ public class VerificationAutoConfiguration {
      * @return
      */
     @Bean
-    @ConditionalOnBean(VerificationProcessor.class)
     public VerificationProcessorHolder verificationProcessorHolder(List<VerificationProcessor> processors) {
         return new VerificationProcessorHolder(processors);
     }
@@ -119,8 +146,8 @@ public class VerificationAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public VerificationSecurityConfigurer verificationSecurityConfig(VerificationFilter filter) {
-        return new VerificationSecurityConfigurer(filter);
+    public AuthenticationFilterProvider verificationFilterProvider(VerificationFilter filter) {
+        return new VerificationFilterProvider(filter);
     }
 
 }

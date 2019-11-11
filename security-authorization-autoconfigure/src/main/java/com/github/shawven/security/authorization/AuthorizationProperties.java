@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author Shoven
  * @date 2019-10-28
  */
-@ConfigurationProperties("app.security")
+@ConfigurationProperties("security")
 public class AuthorizationProperties {
 
     private String whitelist;

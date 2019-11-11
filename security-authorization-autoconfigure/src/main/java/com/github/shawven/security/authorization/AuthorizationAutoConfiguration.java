@@ -19,11 +19,11 @@ public class AuthorizationAutoConfiguration {
     private AuthorizationProperties properties;
 
     @Autowired
-    private List<AuthorizationConfigureProvider> authorizationConfigureProviders;
+    private List<AuthorizationConfigureProvider> providers;
 
     @Bean
     public AuthorizationConfigurerManager authorizationConfigurerManager() {
-        return new AuthorizationConfigurerManager(authorizationConfigureProviders, authorizationConfiguration());
+        return new AuthorizationConfigurerManager(providers, authorizationConfiguration());
     }
 
     @Bean

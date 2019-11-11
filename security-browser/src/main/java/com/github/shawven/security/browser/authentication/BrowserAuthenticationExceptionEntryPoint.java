@@ -1,10 +1,10 @@
 package com.github.shawven.security.browser.authentication;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.shawven.security.browser.BrowserConstants;
-import com.github.shawven.security.verification.ResponseData;
+import com.github.shawven.security.authorization.MessageConstants;
+import com.github.shawven.security.authorization.ResponseData;
 import com.github.shawven.security.browser.ResponseType;
-import com.github.shawven.security.browser.properties.BrowserConfiguration;
+import com.github.shawven.security.browser.config.BrowserConfiguration;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
@@ -21,8 +21,6 @@ import java.io.IOException;
 
 public class BrowserAuthenticationExceptionEntryPoint extends LoginUrlAuthenticationEntryPoint {
 
-
-
     private BrowserConfiguration browserConfiguration;
 
     private ObjectMapper objectMapper;
@@ -38,8 +36,8 @@ public class BrowserAuthenticationExceptionEntryPoint extends LoginUrlAuthentica
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException e)
             throws IOException, ServletException {
         if (ResponseType.JSON.equals(browserConfiguration.getResponseType())) {
-            String errorMessage = BrowserConstants.UNAUTHORIZED.equals(e.getMessage())
-                    ? BrowserConstants.REQUIRE_LOGIN
+            String errorMessage = MessageConstants.UNAUTHORIZED.equals(e.getMessage())
+                    ? MessageConstants.REQUIRE_LOGIN
                     : HttpStatus.UNAUTHORIZED.getReasonPhrase();
 
             int status = HttpStatus.UNAUTHORIZED.value();

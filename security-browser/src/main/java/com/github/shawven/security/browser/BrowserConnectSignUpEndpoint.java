@@ -3,12 +3,12 @@ package com.github.shawven.security.browser;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.shawven.security.browser.properties.BrowserConfiguration;
+import com.github.shawven.security.browser.config.BrowserConfiguration;
 import com.github.shawven.security.connect.ConnectAutoConfiguration;
 import com.github.shawven.security.connect.ConnectConstants;
-import com.github.shawven.security.connect.support.ConnectUserInfo;
+import com.github.shawven.security.connect.ConnectUserInfo;
 import com.github.shawven.security.connect.ConnectInfoExtendable;
-import com.github.shawven.security.verification.ResponseData;
+import com.github.shawven.security.authorization.ResponseData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

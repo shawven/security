@@ -14,13 +14,13 @@ import java.util.List;
  */
 public class AuthorizationConfigurerManager {
 
-	private List<AuthorizationConfigureProvider> authorizationConfigureProviders;
+	private List<AuthorizationConfigureProvider> providers;
 
     private AuthorizationConfiguration configuration;
 
-    public AuthorizationConfigurerManager(List<AuthorizationConfigureProvider> authorizationConfigureProviders,
+    public AuthorizationConfigurerManager(List<AuthorizationConfigureProvider> providers,
                                           AuthorizationConfiguration configuration) {
-        this.authorizationConfigureProviders = authorizationConfigureProviders;
+        this.providers = providers;
         this.configuration = configuration;
     }
 
@@ -30,7 +30,7 @@ public class AuthorizationConfigurerManager {
 		boolean existAnyRequestConfig = false;
 		String existAnyRequestConfigName = null;
 
-		for (AuthorizationConfigureProvider authorizeConfigProvider : authorizationConfigureProviders) {
+		for (AuthorizationConfigureProvider authorizeConfigProvider : providers) {
 			boolean currentIsAnyRequestConfig = authorizeConfigProvider.config(config);
 
 			if (existAnyRequestConfig && currentIsAnyRequestConfig) {

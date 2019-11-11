@@ -1,7 +1,7 @@
 package com.github.shawven.security.browser;
 
 import com.github.shawven.security.authorization.AuthorizationConfigureProvider;
-import com.github.shawven.security.browser.properties.BrowserConfiguration;
+import com.github.shawven.security.browser.config.BrowserConfiguration;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;

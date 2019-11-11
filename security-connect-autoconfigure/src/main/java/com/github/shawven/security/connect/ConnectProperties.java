@@ -8,7 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 /**
  * 社交登录配置项
  */
-@ConfigurationProperties("app.security.social")
+@ConfigurationProperties("security.social")
 public class ConnectProperties {
 
 	/**

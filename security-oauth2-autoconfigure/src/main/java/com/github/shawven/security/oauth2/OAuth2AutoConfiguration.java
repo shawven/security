@@ -1,13 +1,15 @@
 
 package com.github.shawven.security.oauth2;
 
+import com.github.shawven.security.authorization.AuthenticationFilterProvider;
+import com.github.shawven.security.oauth2.sms.SmsFilterProvider;
 import com.github.shawven.security.verification.DefaultPhoneUserDetailsService;
 import com.github.shawven.security.verification.PhoneUserDetailsService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -24,9 +26,6 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 @Configuration
 @EnableConfigurationProperties(OAuth2Properties.class)
 public class OAuth2AutoConfiguration {
-
-    @Autowired
-    private OAuth2Properties oauth2Properties;
 
 	/**
 	 * 客户端密码处理器
@@ -51,12 +50,10 @@ public class OAuth2AutoConfiguration {
 	}
 
 	@Bean
-    public SmsAuthenticationSecurityConfigurer smsAuthenticationSecurityConfigurer(
-            PhoneUserDetailsService userDetailsService,
-            AuthenticationSuccessHandler authenticationSuccessHandler,
-            AuthenticationFailureHandler authenticationFailureHandler
-            ) {
-	    return new SmsAuthenticationSecurityConfigurer(userDetailsService, authenticationSuccessHandler,
+    public AuthenticationFilterProvider smsFilterProvider(PhoneUserDetailsService userDetailsService,
+                                                          AuthenticationSuccessHandler authenticationSuccessHandler,
+                                                          AuthenticationFailureHandler authenticationFailureHandler) {
+	    return new SmsFilterProvider(userDetailsService, authenticationSuccessHandler,
                 authenticationFailureHandler);
     }
 }

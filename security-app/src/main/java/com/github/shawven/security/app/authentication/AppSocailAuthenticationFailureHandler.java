@@ -4,6 +4,7 @@ package com.github.shawven.security.app.authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.social.security.SocialAuthenticationRedirectException;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -13,11 +14,21 @@ import java.io.IOException;
  */
 public class AppSocailAuthenticationFailureHandler extends AppAuthenticationFailureHandler {
 
-	@Override
+    private AppLoginFailureHandler loginFailureHandler;
+
+    public AppSocailAuthenticationFailureHandler(AppLoginFailureHandler loginFailureHandler) {
+        super(loginFailureHandler);
+        this.loginFailureHandler = loginFailureHandler;
+    }
+
+    @Override
 	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
-			AuthenticationException e) throws IOException {
+			AuthenticationException e) throws IOException, ServletException {
 
         if (e instanceof SocialAuthenticationRedirectException) {
+            if (loginFailureHandler != null) {
+                loginFailureHandler.onAuthenticationFailure(request, response, e);
+            }
             response.sendRedirect(((SocialAuthenticationRedirectException) e).getRedirectUrl());
             return;
         }

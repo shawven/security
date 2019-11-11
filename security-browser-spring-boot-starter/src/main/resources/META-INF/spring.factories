@@ -1,5 +1,6 @@
 # Auto Configure
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
 com.github.shawven.security.browser.BrowserAutoConfiguration,\
+com.github.shawven.security.browser.BrowserWebSecurityConfiguration,\
 com.github.shawven.security.browser.BrowserConnectSignUpEndpoint
 

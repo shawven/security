@@ -3,8 +3,8 @@ package com.github.shawven.security.browser.authentication;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.shawven.security.browser.ResponseType;
-import com.github.shawven.security.browser.properties.BrowserConfiguration;
-import com.github.shawven.security.verification.ResponseData;
+import com.github.shawven.security.browser.config.BrowserConfiguration;
+import com.github.shawven.security.authorization.ResponseData;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * 默认的退出成功处理器，如果设置了app.security.browser.signOutUrl，则跳到配置的地址上，
+ * 默认的退出成功处理器，如果设置了security.browser.signOutUrl，则跳到配置的地址上，
  * 如果没配置，则返回json格式的响应。
  *
  * @author Shoven

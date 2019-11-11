@@ -7,14 +7,14 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 /**
  * 浏览器环境配置项
  */
-@ConfigurationProperties("app.security.browser")
+@ConfigurationProperties("security.browser")
 public class BrowserProperties {
 
     /**
      * session管理配置项
      */
     @NestedConfigurationProperty
-    private SessionProperties session;
+    private SessionProperties session = new SessionProperties();
     /**
      * 登录url
      */
@@ -54,7 +54,7 @@ public class BrowserProperties {
     /**
      * 登录响应的方式，默认是json
      */
-    private ResponseType responseType = ResponseType.JSON;
+    private ResponseType responseType = ResponseType.REDIRECT;
 
     public SessionProperties getSession() {
         return session;

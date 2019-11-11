@@ -1,7 +1,6 @@
 
 package com.github.shawven.security.connect;
 
-import com.github.shawven.security.connect.support.ConnectUserInfo;
 import org.springframework.social.connect.Connection;
 
 /**

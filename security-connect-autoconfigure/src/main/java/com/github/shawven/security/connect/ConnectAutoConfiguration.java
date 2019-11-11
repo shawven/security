@@ -1,22 +1,23 @@
 
 package com.github.shawven.security.connect;
 
+import com.github.shawven.security.authorization.AuthenticationFilterProvider;
 import com.github.shawven.security.connect.config.ConnectConfiguration;
 import com.github.shawven.security.connect.config.QQConfiguration;
 import com.github.shawven.security.connect.config.WeixinConfiguration;
 import com.github.shawven.security.connect.provider.qq.connet.QQConnectionFactory;
 import com.github.shawven.security.connect.provider.weixin.connect.WeixinConnectionFactory;
-import com.github.shawven.security.connect.support.ConnectAuthenticationFilterPostProcessor;
-import com.github.shawven.security.connect.support.ConnectConfigurer;
-import com.github.shawven.security.connect.support.ConnectConfigurerProcessor;
 import com.github.shawven.security.authorization.AuthorizationConfigureProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.encrypt.Encryptors;
 import org.springframework.social.UserIdSource;
 import org.springframework.social.config.annotation.ConnectionFactoryConfigurer;
@@ -62,9 +63,6 @@ public class ConnectAutoConfiguration extends SocialConfigurerAdapter {
         return new AuthenticationNameUserIdSource();
     }
 
-	/** (non-Javadoc)
-	 * @see org.springframework.social.config.annotation.SocialConfigurerAdapter#getUsersConnectionRepository(org.springframework.social.connect.ConnectionFactoryLocator)
-	 */
 	@Override
 	public UsersConnectionRepository getUsersConnectionRepository(ConnectionFactoryLocator connectionFactoryLocator) {
         MyJdbcUsersConnectionRepository repository = new MyJdbcUsersConnectionRepository(dataSource,
@@ -90,7 +88,7 @@ public class ConnectAutoConfiguration extends SocialConfigurerAdapter {
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = "app.security.social.weixin", name = "app-id")
+    @ConditionalOnProperty(prefix = "security.social.weixin", name = "app-id")
     public ConnectionFactory<?> createWeixinConnectionFactory() {
         WeixinConfiguration weixinConfig = getConnectConfiguration().getWeixin();
         return new WeixinConnectionFactory(weixinConfig.getProviderId(), weixinConfig.getAppId(),
@@ -98,7 +96,7 @@ public class ConnectAutoConfiguration extends SocialConfigurerAdapter {
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = "app.security.social.qq", name = "app-id")
+    @ConditionalOnProperty(prefix = "security.social.qq", name = "app-id")
     public ConnectionFactory<?> createQqConnectionFactory() {
         QQConfiguration qqConfig = getConnectConfiguration().getQq();
         return new QQConnectionFactory(qqConfig.getProviderId(), qqConfig.getAppId(),
@@ -110,7 +108,7 @@ public class ConnectAutoConfiguration extends SocialConfigurerAdapter {
 	 * @return
 	 */
 	@Bean
-	public ConnectConfigurer socialSecurityConfig() {
+	public AuthenticationFilterProvider socialSecurityConfig() {
         ConnectConfiguration connectConfiguration = getConnectConfiguration();
         // 设置过滤器拦截社交登录的url
 		String filterProcessesUrl = connectConfiguration.getFilterProcessesUrl();
@@ -128,7 +126,7 @@ public class ConnectAutoConfiguration extends SocialConfigurerAdapter {
 		if (connectConfigurerProcessor != null) {
             connectConfigurerProcessor.proceed(configurer);
         }
-		return configurer;
+		return new ConnectFilterProvider(configurer);
 	}
 
 
@@ -150,6 +148,15 @@ public class ConnectAutoConfiguration extends SocialConfigurerAdapter {
     public ConnectController connectController(ConnectionFactoryLocator connectionFactoryLocator,
                                                ConnectionRepository connectionRepository) {
         return new ConnectController(connectionFactoryLocator, connectionRepository);
+    }
+
+    @Bean
+    @ConditionalOnClass(RedisTemplate.class)
+    @ConditionalOnMissingBean
+    public RedisSingInUtils appSingUpUtils(RedisTemplate<Object, Object> redisTemplate,
+                                           UsersConnectionRepository usersConnectionRepository,
+                                           ConnectionFactoryLocator connectionFactoryLocator) {
+        return new RedisSingInUtils(redisTemplate, usersConnectionRepository, connectionFactoryLocator);
     }
 
     /**

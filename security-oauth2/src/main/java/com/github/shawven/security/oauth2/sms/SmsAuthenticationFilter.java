@@ -2,7 +2,6 @@
 package com.github.shawven.security.oauth2.sms;
 
 import com.github.shawven.security.oauth2.OAuth2Constants;
-import com.github.shawven.security.social.mobile.SmsAuthenticationToken;
 import com.github.shawven.security.verification.VerificationConstants;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.AuthenticationServiceException;

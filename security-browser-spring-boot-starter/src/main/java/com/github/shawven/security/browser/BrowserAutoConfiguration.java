@@ -3,13 +3,17 @@ package com.github.shawven.security.browser;
 
 import com.github.shawven.security.authorization.AuthorizationConfigureProvider;
 import com.github.shawven.security.browser.authentication.*;
-import com.github.shawven.security.browser.properties.BrowserConfiguration;
-import com.github.shawven.security.browser.properties.SessionConfiguration;
+import com.github.shawven.security.browser.config.BrowserConfiguration;
+import com.github.shawven.security.browser.config.SessionConfiguration;
 import com.github.shawven.security.browser.session.BrowserExpiredSessionStrategy;
 import com.github.shawven.security.browser.session.BrowserInvalidSessionStrategy;
-import com.github.shawven.security.browser.session.SessionVerificationRepository;
+import com.github.shawven.security.verification.SessionVerificationRepository;
+import com.github.shawven.security.connect.ConnectAuthenticationFilterPostProcessor;
+import com.github.shawven.security.connect.ConnectAutoConfiguration;
+import com.github.shawven.security.oauth2.OAuth2AutoConfiguration;
 import com.github.shawven.security.verification.VerificationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -33,22 +37,10 @@ import org.springframework.security.web.session.SessionInformationExpiredStrateg
  */
 @Configuration
 @EnableConfigurationProperties(BrowserProperties.class)
-@Import(BrowserWebSecurityConfiguration.class)
 public class BrowserAutoConfiguration {
 
-	@Autowired
+	@Autowired(required = false)
 	private BrowserProperties properties;
-
-    /**
-     * 基于session的验证码存取器
-     *
-     * @return
-     */
-	@Bean
-    @ConditionalOnMissingBean
-    public VerificationRepository sessionVerificationRepository() {
-	    return new SessionVerificationRepository();
-    }
 
 	/**
 	 * session失效时的处理策略配置
@@ -130,6 +122,22 @@ public class BrowserAutoConfiguration {
     @ConditionalOnMissingBean
     public AuthorizationConfigureProvider browserAuthorizationConfigurerProvider() {
 	    return new BrowserAuthorizationConfigureProvider(browserConfiguration());
+    }
+
+
+    @Configuration
+    @ConditionalOnClass(ConnectAutoConfiguration.class)
+    public static class ConnectSupportConfiguration {
+
+        @Bean
+        @ConditionalOnMissingBean
+        public ConnectAuthenticationFilterPostProcessor connectAuthenticationFilterPostProcessor(
+                AuthenticationSuccessHandler authenticationSuccessHandler,
+                AuthenticationFailureHandler authenticationFailureHandler) {
+            return new BrowserConnectAuthenticationFilterPostProcessor(authenticationSuccessHandler,
+                    authenticationFailureHandler);
+        }
+
     }
 
     @Bean

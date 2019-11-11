@@ -15,11 +15,6 @@ public class SmsConfiguration extends VerificationConfiguration{
      */
     private int expireIn = 60;
 
-    /**
-     * 要拦截的url，多个url用逗号隔开，ant pattern
-     */
-    private String url;
-
     public int getLength() {
         return length;
     }
@@ -35,5 +30,6 @@ public class SmsConfiguration extends VerificationConfiguration{
     public void setExpireIn(int expireIn) {
         this.expireIn = expireIn;
     }
+
 }
 

@@ -2,9 +2,9 @@
 package com.github.shawven.security.browser.authentication;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.shawven.security.verification.ResponseData;
+import com.github.shawven.security.authorization.ResponseData;
 import com.github.shawven.security.browser.ResponseType;
-import com.github.shawven.security.browser.properties.BrowserConfiguration;
+import com.github.shawven.security.browser.config.BrowserConfiguration;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -55,7 +55,7 @@ public class BrowserAuthenticationSuccessHandler extends SavedRequestAwareAuthen
 			response.setStatus(HttpStatus.OK.value());
             response.getWriter().write(objectMapper.writeValueAsString(result));
 		} else {
-			// 如果设置了app.security.browser.singInSuccessUrl，总是跳到设置的地址上
+			// 如果设置了security.browser.singInSuccessUrl，总是跳到设置的地址上
 			// 如果没设置，则尝试跳转到登录之前访问的地址上，如果登录前访问地址为空，则跳到网站根路径上
 			if (StringUtils.isNotBlank(browserConfiguration.getSingInSuccessUrl())) {
 				requestCache.removeRequest(request, response);

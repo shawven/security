@@ -1,12 +1,13 @@
 package com.github.shawven.security.app;
 
-import com.github.shawven.security.app.config.social.AppSingUpUtils;
+import com.github.shawven.security.authorization.ResponseData;
 import com.github.shawven.security.connect.ConnectConstants;
-import com.github.shawven.security.connect.support.ConnectUserInfo;
 import com.github.shawven.security.connect.ConnectInfoExtendable;
+import com.github.shawven.security.connect.ConnectUserInfo;
+import com.github.shawven.security.connect.RedisSingInUtils;
 import com.github.shawven.security.oauth2.OAuth2Constants;
-import com.github.shawven.security.verification.ResponseData;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
@@ -26,16 +27,18 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 
 @RestController
+@ConditionalOnClass(ConnectInfoExtendable.class)
 public class AppOAuth2Endpoint extends ConnectInfoExtendable {
 
-	@Autowired
-	private ProviderSignInUtils providerSignInUtils;
-
-	@Autowired
-	private AppSingUpUtils appSingUpUtils;
+    @Autowired
+    private TokenEndpoint tokenEndpoint;
 
     @Autowired
-    TokenEndpoint tokenEndpoint;
+    private RedisSingInUtils redisSingInUtils;
+
+    @Autowired
+    private ProviderSignInUtils providerSignInUtils;
+
 
     /**
      * 覆盖默认的方法，格式化响应
@@ -87,7 +90,7 @@ public class AppOAuth2Endpoint extends ConnectInfoExtendable {
 	    // 从请求中拿用户信息
 		Connection<?> connection = providerSignInUtils.getConnectionFromSession(new ServletWebRequest(request));
 		// 用户信息存储到redis
-		appSingUpUtils.saveConnectionData(new ServletWebRequest(request), connection.createData());
+		redisSingInUtils.saveConnectionData(new ServletWebRequest(request), connection.createData());
 		// 构建用户信息
         ConnectUserInfo connectUserInfo = buildSocialUserInfo(connection);
 

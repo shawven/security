@@ -3,17 +3,20 @@ package com.github.shawven.security.oauth2;
 
 import com.github.shawven.security.oauth2.config.OAuth2ClientConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
-@ConfigurationProperties("app.security.oauth2")
+@ConfigurationProperties("security.oauth2")
 public class OAuth2Properties {
 
 	/**
 	 * 使用jwt时为token签名的秘钥
 	 */
 	private String jwtSigningKey = "app_jwt_signing_key";
+
 	/**
 	 * 客户端配置
 	 */
+	@NestedConfigurationProperty
 	private OAuth2ClientConfiguration[] clients = {};
 
 	public OAuth2ClientConfiguration[] getClients() {

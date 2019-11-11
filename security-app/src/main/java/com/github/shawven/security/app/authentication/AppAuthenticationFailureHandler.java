@@ -2,11 +2,12 @@
 package com.github.shawven.security.app.authentication;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.shawven.security.verification.ResponseData;
+import com.github.shawven.security.authorization.ResponseData;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -16,12 +17,21 @@ import java.io.IOException;
  */
 public class AppAuthenticationFailureHandler implements AuthenticationFailureHandler {
 
-	private ObjectMapper objectMapper = new ObjectMapper();
+	private ObjectMapper objectMapper;
 
+	private AppLoginFailureHandler loginFailureHandler;
 
-	@Override
+    public AppAuthenticationFailureHandler(AppLoginFailureHandler loginFailureHandler) {
+        this.objectMapper = new ObjectMapper();
+        this.loginFailureHandler = loginFailureHandler;
+    }
+
+    @Override
 	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
-			AuthenticationException e) throws IOException {
+			AuthenticationException e) throws IOException, ServletException {
+        if (loginFailureHandler != null) {
+            loginFailureHandler.onAuthenticationFailure(request, response, e);
+        }
         int status = HttpStatus.BAD_REQUEST.value();
         ResponseData newResponse = new ResponseData()
                 .setCode(status)

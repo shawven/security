@@ -2,6 +2,7 @@
 package com.github.shawven.security.verification;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.shawven.security.authorization.ResponseData;
 import com.github.shawven.security.verification.config.VerificationConfiguration;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -16,10 +17,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 校验验证码的过滤器
@@ -27,7 +25,7 @@ import java.util.Set;
 
 public class VerificationFilter extends OncePerRequestFilter implements InitializingBean {
 
-    private static final Logger logger = LoggerFactory.getLogger(VerificationFilter.class);
+    private static final Logger logger = LoggerFactory.getLogger(VerificationFilterProvider.class);
 
     /**
      * 系统中的校验码处理器
@@ -71,6 +69,9 @@ public class VerificationFilter extends OncePerRequestFilter implements Initiali
      */
     protected void addUrlToMap() {
         for (VerificationConfiguration configuration : configurations) {
+            if (configuration == null) {
+                continue;
+            }
             String urlString = configuration.getUrl();
             if (StringUtils.isNotBlank(urlString)) {
                 String[] urls = StringUtils.split(urlString, ",");

@@ -1,7 +1,7 @@
 
 package com.github.shawven.security.browser.session;
 
-import com.github.shawven.security.browser.properties.BrowserConfiguration;
+import com.github.shawven.security.browser.config.BrowserConfiguration;
 import org.springframework.security.web.session.SessionInformationExpiredEvent;
 import org.springframework.security.web.session.SessionInformationExpiredStrategy;
 

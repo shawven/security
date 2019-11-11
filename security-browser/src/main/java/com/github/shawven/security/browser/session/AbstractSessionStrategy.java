@@ -2,10 +2,10 @@
 package com.github.shawven.security.browser.session;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.shawven.security.browser.BrowserConstants;
-import com.github.shawven.security.verification.ResponseData;
+import com.github.shawven.security.authorization.MessageConstants;
+import com.github.shawven.security.authorization.ResponseData;
 import com.github.shawven.security.browser.ResponseType;
-import com.github.shawven.security.browser.properties.BrowserConfiguration;
+import com.github.shawven.security.browser.config.BrowserConfiguration;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.web.DefaultRedirectStrategy;
@@ -81,7 +81,7 @@ public class AbstractSessionStrategy {
 	 * @return
 	 */
 	protected Object buildResponseContent(HttpServletRequest request) {
-		String message = isConcurrency() ? "当前用户已在其地方登陆" : BrowserConstants.REQUIRE_LOGIN;
+		String message = isConcurrency() ? "当前用户已在其地方登陆" : MessageConstants.REQUIRE_LOGIN;
 		return new ResponseData()
                 .setCode(HttpStatus.UNAUTHORIZED.value())
                 .setMessage(message);
