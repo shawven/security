@@ -5,6 +5,7 @@ import com.github.shawven.security.connect.ConnectConstants;
 import com.github.shawven.security.connect.ConnectInfoExtendable;
 import com.github.shawven.security.connect.ConnectUserInfo;
 import com.github.shawven.security.connect.RedisSingInUtils;
+import com.github.shawven.security.oauth2.OAuth2AutoConfiguration;
 import com.github.shawven.security.oauth2.OAuth2Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -27,17 +28,11 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 
 @RestController
-@ConditionalOnClass(ConnectInfoExtendable.class)
-public class AppOAuth2Endpoint extends ConnectInfoExtendable {
+@ConditionalOnClass(OAuth2AutoConfiguration.class)
+public class AppOAuth2Endpoint {
 
     @Autowired
     private TokenEndpoint tokenEndpoint;
-
-    @Autowired
-    private RedisSingInUtils redisSingInUtils;
-
-    @Autowired
-    private ProviderSignInUtils providerSignInUtils;
 
 
     /**
@@ -79,27 +74,6 @@ public class AppOAuth2Endpoint extends ConnectInfoExtendable {
                 .body(new ResponseData().setMessage(message).setData(result.getBody()));
     }
 
-	/**
-     * 需要引导用户注册或绑定时，通过此服务获取当前社交用户的信息
-	 * 返回401（表示认证失败，第一次登陆）和用户信息
-	 * @param request
-	 * @return
-	 */
-	@GetMapping(ConnectConstants.DEFAULT_CURRENT_USER_INFO_URL)
-	public ResponseEntity getSocialUserInfo(HttpServletRequest request) {
-	    // 从请求中拿用户信息
-		Connection<?> connection = providerSignInUtils.getConnectionFromSession(new ServletWebRequest(request));
-		// 用户信息存储到redis
-		redisSingInUtils.saveConnectionData(new ServletWebRequest(request), connection.createData());
-		// 构建用户信息
-        ConnectUserInfo connectUserInfo = buildSocialUserInfo(connection);
 
-        ResponseData response = new ResponseData()
-                .setCode(HttpStatus.UNAUTHORIZED.value())
-                .setMessage("第一次登录需要绑定账号，轻在30分钟内完成注册绑定")
-                .setData(connectUserInfo);
-
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-    }
 
 }

@@ -1,6 +1,7 @@
 package com.github.shawven.security.verification;
 
 import com.github.shawven.security.authorization.AuthenticationFilterProvider;
+import com.github.shawven.security.authorization.AuthorizationConfigureProvider;
 import com.github.shawven.security.verification.captcha.CaptchaGenerator;
 import com.github.shawven.security.verification.captcha.CaptchaProcessor;
 import com.github.shawven.security.verification.config.VerificationConfiguration;
@@ -10,14 +11,12 @@ import com.github.shawven.security.verification.sms.SmsProcessor;
 import com.github.shawven.security.verification.sms.SmsSender;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.*;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.ArrayList;
@@ -70,6 +69,7 @@ public class VerificationAutoConfiguration {
     @ConditionalOnClass(RedisTemplate.class)
     public static class RedisSupportConfiguration {
 
+        @Bean
         @ConditionalOnMissingBean
         public VerificationRepository redisVerificationRepository(RedisTemplate<Object, Object> redisTemplate) {
             return new RedisVerificationRepository(redisTemplate);
@@ -126,6 +126,7 @@ public class VerificationAutoConfiguration {
      * @return
      */
     @Bean
+    @ConditionalOnMissingBean
     public VerificationProcessorHolder verificationProcessorHolder(List<VerificationProcessor> processors) {
         return new VerificationProcessorHolder(processors);
     }
@@ -142,6 +143,13 @@ public class VerificationAutoConfiguration {
         configurations.add(properties.getCaptcha());
         configurations.add(properties.getSms());
         return new VerificationFilter(verificationProcessorHolder, configurations);
+    }
+
+    @Bean
+    @Order(Integer.MIN_VALUE)
+    @ConditionalOnBean
+    public AuthorizationConfigureProvider verificationAuthorizationConfigureProvider() {
+        return new VerificationAuthorizationConfigureProvider();
     }
 
     @Bean

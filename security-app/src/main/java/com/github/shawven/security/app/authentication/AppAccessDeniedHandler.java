@@ -1,9 +1,15 @@
 package com.github.shawven.security.app.authentication;
 
-import com.github.shawven.security.verification.ResponseData;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
-import org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.shawven.security.authorization.ResponseData;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.web.access.AccessDeniedHandler;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * 非匿名用户且没有记住我，验证是失败时会走这里
@@ -12,23 +18,19 @@ import org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHand
  * @date 2018/11/1 18:15
  * 请求拒绝，没有权限
  */
-public class AppAccessDeniedHandler extends OAuth2AccessDeniedHandler {
+public class AppAccessDeniedHandler implements AccessDeniedHandler {
 
+    private ObjectMapper objectMapper = new ObjectMapper();
     @Override
-    protected ResponseEntity<ResponseData> enhanceResponse(ResponseEntity<?> result, Exception authException) {
-        OAuth2Exception auth2Exception = (OAuth2Exception) result.getBody();
+    public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException e) throws IOException, ServletException {
+        int status = HttpStatus.FORBIDDEN.value();
+        ResponseData rsp = new ResponseData()
+                .setCode(status)
+                .setMessage(HttpStatus.FORBIDDEN.getReasonPhrase());
 
-        String message = auth2Exception != null && auth2Exception.getMessage() != null
-                ? auth2Exception.getMessage()
-                : authException.getMessage();
-
-        ResponseData response = new ResponseData()
-                .setCode(result.getStatusCodeValue())
-                .setMessage(message);
-        return ResponseEntity
-                .status(result.getStatusCodeValue())
-                .headers(result.getHeaders())
-                .body(response);
+        response.setCharacterEncoding("UTF-8");
+        response.setStatus(status);
+        response.setContentType("application/json;charset=UTF-8");
+        response.getWriter().write(objectMapper.writeValueAsString(rsp));
     }
-
 }

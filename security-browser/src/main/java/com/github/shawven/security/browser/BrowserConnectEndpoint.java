@@ -32,9 +32,9 @@ import java.io.IOException;
  */
 @Controller
 @ConditionalOnClass(ConnectAutoConfiguration.class)
-public class BrowserConnectSignUpEndpoint extends ConnectInfoExtendable {
+public class BrowserConnectEndpoint extends ConnectInfoExtendable {
 
-    private static final Logger logger = LoggerFactory.getLogger(BrowserConnectSignUpEndpoint.class);
+    private static final Logger logger = LoggerFactory.getLogger(BrowserConnectEndpoint.class);
 
 	@Autowired
 	private ProviderSignInUtils providerSignInUtils;

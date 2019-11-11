@@ -19,7 +19,6 @@ import java.io.IOException;
 public class AppLogoutSuccessHandler implements LogoutSuccessHandler {
     private ObjectMapper objectMapper = new ObjectMapper();
 
-
 	@Override
 	public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
 			throws IOException {

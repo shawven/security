@@ -1,7 +1,7 @@
-package com.github.shawven.security.connect;
+package com.github.shawven.security.app;
 
+import com.github.shawven.security.app.config.AppConfiguration;
 import com.github.shawven.security.authorization.AuthorizationConfigureProvider;
-import com.github.shawven.security.connect.config.ConnectConfiguration;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
@@ -10,22 +10,21 @@ import java.util.Arrays;
 
 /**
  * @author Shoven
- * @date 2019-11-08
+ * @date 2019-08-20
  */
-public class ConnectAuthorizationConfigureProvider implements AuthorizationConfigureProvider {
+public class AppAuthorizationConfigureProvider implements AuthorizationConfigureProvider {
 
-    private ConnectConfiguration configuration;
+    private AppConfiguration configuration;
 
-    public ConnectAuthorizationConfigureProvider(ConnectConfiguration configuration) {
+    public AppAuthorizationConfigureProvider(AppConfiguration configuration) {
         this.configuration = configuration;
     }
 
     @Override
     public boolean config(ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry config) {
         String[] urls = {
-                ConnectConstants.DEFAULT_OPENID_TOKEN_PROCESSING_URL,
-                ConnectConstants.DEFAULT_CURRENT_USER_INFO_URL,
-                configuration.getFilterProcessesUrl() + "/*",
+                configuration.getSignInProcessingUrl(),
+                configuration.getSignOutProcessingUrl(),
         };
         config.antMatchers(Arrays.stream(urls).filter(StringUtils::isNotBlank).toArray(String[]::new)).permitAll();
         return false;

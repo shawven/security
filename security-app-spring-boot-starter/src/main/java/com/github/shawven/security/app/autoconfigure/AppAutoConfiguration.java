@@ -1,12 +1,18 @@
 package com.github.shawven.security.app.autoconfigure;
 
+import com.github.shawven.security.app.AppAuthorizationConfigureProvider;
 import com.github.shawven.security.app.authentication.*;
+import com.github.shawven.security.app.authentication.AppOAuth2AccessDeniedHandler;
+import com.github.shawven.security.app.authentication.AppOAuth2AuthenticationSuccessHandler;
 import com.github.shawven.security.app.config.AppConfiguration;
 import com.github.shawven.security.app.config.SessionConfiguration;
 import com.github.shawven.security.app.connect.AppConnectAuthenticationFilterPostProcessor;
 import com.github.shawven.security.app.connect.AppConnectConfigurerProcessor;
+import com.github.shawven.security.app.openid.OpenIdFilterProvider;
 import com.github.shawven.security.app.session.AppExpiredSessionStrategy;
 import com.github.shawven.security.app.session.AppInvalidSessionStrategy;
+import com.github.shawven.security.authorization.AuthenticationFilterProvider;
+import com.github.shawven.security.authorization.AuthorizationConfigureProvider;
 import com.github.shawven.security.connect.ConnectAuthenticationFilterPostProcessor;
 import com.github.shawven.security.connect.ConnectAutoConfiguration;
 import com.github.shawven.security.connect.ConnectConfigurerProcessor;
@@ -14,14 +20,13 @@ import com.github.shawven.security.oauth2.ClientAuthenticationFilter;
 import com.github.shawven.security.oauth2.OAuth2AutoConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
@@ -33,8 +38,6 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.session.InvalidSessionStrategy;
 import org.springframework.security.web.session.SessionInformationExpiredStrategy;
-
-import javax.servlet.Filter;
 
 /**
  * @author Shoven
@@ -136,6 +139,11 @@ public class AppAutoConfiguration {
                     new AppSocailAuthenticationFailureHandler(loginFailureHandler));
         }
 
+        @Bean
+        @ConditionalOnMissingBean
+        public AuthenticationFilterProvider openIdFilterProvider() {
+            return new OpenIdFilterProvider();
+        }
 
     }
 
@@ -196,6 +204,13 @@ public class AppAutoConfiguration {
         }
     }
 
+
+    @Bean
+    @Order
+    @ConditionalOnMissingBean
+    public AuthorizationConfigureProvider appAuthorizationConfigureProvider() {
+        return new AppAuthorizationConfigureProvider(appConfiguration());
+    }
 
     @Bean
     public AppConfiguration appConfiguration() {

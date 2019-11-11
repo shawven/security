@@ -51,6 +51,7 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
         }
 
         http
+                .csrf().disable()
                 .exceptionHandling()
                 .authenticationEntryPoint(authenticationEntryPoint)
                 .accessDeniedHandler(appAccessDeniedHandler);

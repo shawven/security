@@ -2,14 +2,18 @@
 package com.github.shawven.security.oauth2;
 
 import com.github.shawven.security.authorization.AuthenticationFilterProvider;
+import com.github.shawven.security.authorization.AuthorizationConfigureProvider;
 import com.github.shawven.security.oauth2.sms.SmsFilterProvider;
 import com.github.shawven.security.verification.DefaultPhoneUserDetailsService;
 import com.github.shawven.security.verification.PhoneUserDetailsService;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -37,23 +41,35 @@ public class OAuth2AutoConfiguration {
 		return new BCryptPasswordEncoder();
 	}
 
+	@ConditionalOnClass(PhoneUserDetailsService.class)
+	public static class SmsSupportConfiguration {
 
-    /**
-	 * 默认认证器
-	 *
-	 * @return
-	 */
-	@Bean
-	@ConditionalOnMissingBean
-	public PhoneUserDetailsService phoneUserDetailsService() {
-		return new DefaultPhoneUserDetailsService();
-	}
+        @Bean
+        @ConditionalOnMissingBean
+        public AuthenticationFilterProvider smsFilterProvider(PhoneUserDetailsService userDetailsService,
+                                                              AuthenticationSuccessHandler authenticationSuccessHandler,
+                                                              AuthenticationFailureHandler authenticationFailureHandler) {
+            return new SmsFilterProvider(userDetailsService, authenticationSuccessHandler,
+                    authenticationFailureHandler);
+        }
 
-	@Bean
-    public AuthenticationFilterProvider smsFilterProvider(PhoneUserDetailsService userDetailsService,
-                                                          AuthenticationSuccessHandler authenticationSuccessHandler,
-                                                          AuthenticationFailureHandler authenticationFailureHandler) {
-	    return new SmsFilterProvider(userDetailsService, authenticationSuccessHandler,
-                authenticationFailureHandler);
+        /**
+         * 默认认证器
+         *
+         * @return
+         */
+        @Bean
+        @ConditionalOnMissingBean
+        public PhoneUserDetailsService phoneUserDetailsService() {
+            return new DefaultPhoneUserDetailsService();
+        }
+    }
+
+
+    @Bean
+    @Order(Integer.MIN_VALUE)
+    @ConditionalOnBean
+    public AuthorizationConfigureProvider oauth2AuthorizationConfigureProvider() {
+	    return new Oauth2AuthorizationConfigureProvider();
     }
 }

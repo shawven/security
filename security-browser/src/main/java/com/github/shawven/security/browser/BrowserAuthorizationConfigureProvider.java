@@ -25,14 +25,11 @@ public class BrowserAuthorizationConfigureProvider implements AuthorizationConfi
         String[] urls = {
                 browserConfiguration.getSignInUrl(),
                 browserConfiguration.getSignUpUrl(),
-                browserConfiguration.getSession().getSessionInvalidUrl()
+                browserConfiguration.getSession().getSessionInvalidUrl(),
+                browserConfiguration.getSignOutSuccessUrl()
         };
-        config.antMatchers(Arrays.stream(urls).filter(s -> !s.isEmpty()).toArray(String[]::new)).permitAll();
+        config.antMatchers(Arrays.stream(urls).filter(StringUtils::isNotBlank).toArray(String[]::new)).permitAll();
 
-        String signOutUrl = browserConfiguration.getSignOutSuccessUrl();
-        if (StringUtils.isNotBlank(signOutUrl)) {
-            config.antMatchers(signOutUrl).permitAll();
-        }
         return false;
     }
 }

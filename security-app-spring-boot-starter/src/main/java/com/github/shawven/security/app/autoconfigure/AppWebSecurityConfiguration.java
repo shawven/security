@@ -1,14 +1,18 @@
 package com.github.shawven.security.app.autoconfigure;
 
+import com.github.shawven.security.app.AppAuthorizationConfigureProvider;
 import com.github.shawven.security.app.AppWebSecurityConfigurer;
+import com.github.shawven.security.app.authentication.AppAuthenticationSuccessHandler;
 import com.github.shawven.security.app.config.AppConfiguration;
 import com.github.shawven.security.authorization.AuthenticationFilterProvider;
+import com.github.shawven.security.authorization.AuthorizationConfigureProvider;
 import com.github.shawven.security.authorization.AuthorizationConfigurerManager;
 import com.github.shawven.security.oauth2.OAuth2AutoConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -35,6 +39,7 @@ import java.util.List;
  * @since 2019-05-09 15:33
  */
 @Configuration
+@Order(2)
 public class AppWebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Autowired

@@ -13,6 +13,12 @@ public class OAuth2Properties {
 	 */
 	private String jwtSigningKey = "app_jwt_signing_key";
 
+
+    /**
+     * jwt、redis
+     */
+    private String tokenStore = "jwt";
+
 	/**
 	 * 客户端配置
 	 */
@@ -35,4 +41,11 @@ public class OAuth2Properties {
 		this.jwtSigningKey = jwtSigningKey;
 	}
 
+    public String getTokenStore() {
+        return tokenStore;
+    }
+
+    public void setTokenStore(String tokenStore) {
+        this.tokenStore = tokenStore;
+    }
 }

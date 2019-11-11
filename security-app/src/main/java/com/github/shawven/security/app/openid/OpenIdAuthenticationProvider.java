@@ -1,5 +1,5 @@
 
-package com.github.shawven.security.connect.openid;
+package com.github.shawven.security.app.openid;
 
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;

@@ -66,10 +66,11 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
 	 */
 	@Override
 	public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-		endpoints.tokenStore(tokenStore)
+		endpoints
+                .tokenStore(tokenStore)
 				.authenticationManager(authenticationManager)
-				.userDetailsService(userDetailsService)
-                .pathMapping("/oauth/token", OAuth2Constants.DEFAULT_OAUTH_TOKEN_ENDPOINTS);
+				.userDetailsService(userDetailsService);
+//                .pathMapping("/oauth/token", OAuth2Constants.DEFAULT_OAUTH_TOKEN_ENDPOINTS);
 
 		if (jwtAccessTokenConverter != null && jwtTokenEnhancer != null) {
             jwtAccessTokenConverter.setSigningKey(oAuth2Properties.getJwtSigningKey());

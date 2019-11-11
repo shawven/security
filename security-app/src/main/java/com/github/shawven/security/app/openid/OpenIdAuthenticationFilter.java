@@ -1,5 +1,5 @@
 
-package com.github.shawven.security.connect.openid;
+package com.github.shawven.security.app.openid;
 
 import com.github.shawven.security.connect.ConnectConstants;
 import org.apache.commons.lang3.StringUtils;

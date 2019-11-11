@@ -16,6 +16,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.encrypt.Encryptors;
@@ -108,6 +109,7 @@ public class ConnectAutoConfiguration extends SocialConfigurerAdapter {
 	 * @return
 	 */
 	@Bean
+    @ConditionalOnMissingBean
 	public AuthenticationFilterProvider socialSecurityConfig() {
         ConnectConfiguration connectConfiguration = getConnectConfiguration();
         // 设置过滤器拦截社交登录的url
@@ -178,6 +180,8 @@ public class ConnectAutoConfiguration extends SocialConfigurerAdapter {
 
 
     @Bean
+    @Order(Integer.MIN_VALUE)
+    @ConditionalOnMissingBean
     public AuthorizationConfigureProvider connectAuthorizationConfigurerProvider() {
         return new ConnectAuthorizationConfigureProvider(getConnectConfiguration());
     }

@@ -1,9 +1,9 @@
 
-package com.github.shawven.security.app.connect;
+package com.github.shawven.security.app.openid;
 
 import com.github.shawven.security.authorization.AuthenticationFilterProvider;
-import com.github.shawven.security.connect.openid.OpenIdAuthenticationFilter;
-import com.github.shawven.security.connect.openid.OpenIdAuthenticationProvider;
+import com.github.shawven.security.app.openid.OpenIdAuthenticationFilter;
+import com.github.shawven.security.app.openid.OpenIdAuthenticationProvider;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;

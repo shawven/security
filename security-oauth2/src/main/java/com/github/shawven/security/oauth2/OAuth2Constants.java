@@ -10,8 +10,7 @@ package com.github.shawven.security.oauth2;
 public class OAuth2Constants {
 
     /**
-     * 默认的授权端点（获取和刷新令牌端点）
-     * 原材上不应该修改，为了统一登陆前缀
+     * 默认的授权端点（获取和刷新令牌端点），为了统一登陆前缀
      * 密码登陆（获取令牌、刷新令牌）：/login/token
      * 手机登陆（获取令牌）：/login/mobile
      * 社交登陆（获取令牌）：/login/connect/qq、/login/connect/weixin 等
