@@ -18,10 +18,10 @@ public class ConnectConstants {
     /**
      * openid参数名
      */
-    public static final String DEFAULT_PARAMETER_NAME_OPENID = "openId";
+    public static final String DEFAULT_OPENID_PARAMETER_NAME = "openId";
 
     /**
      * providerId参数名
      */
-    public static final String DEFAULT_PARAMETER_NAME_PROVIDERID = "providerId";
+    public static final String DEFAULT_PROVIDER_ID_PARAMETER_NAME = "providerId";
 }

@@ -15,7 +15,7 @@ public class ConnectProperties {
 	/**
 	 * 社交登录功能拦截的url
 	 */
-	private String filterProcessesUrl = "/login/connect";
+	private String filterProcessesUrl = ConnectConstants.DEFAULT_OPENID_TOKEN_PROCESSING_URL;
 
     /**
      * 社交登录，如果需要用户注册，跳转的页面

@@ -50,7 +50,7 @@ public class SmsProcessor extends AbstractVerificationProcessor<Verification> {
             return;
         }
         sms.setPhone(phone);
-        String messageTemplate = (String) request.getAttribute(VerificationConstants.DEFAULT_ATTR_NAME_SMS_MESSAGE);
+        String messageTemplate = (String) request.getAttribute(VerificationConstants.DEFAULT_SMS_MESSAGE_ATTR_NAME);
         sms.setMessage(new SmsMessage(messageTemplate, sms).toString());
 
         try {
@@ -90,8 +90,8 @@ public class SmsProcessor extends AbstractVerificationProcessor<Verification> {
     }
 
 	private String getPhone(HttpServletRequest request) {
-        String mobile = request.getParameter(VerificationConstants.DEFAULT_PARAMETER_NAME_MOBILE);
-        return Objects.isNull(mobile) ? String.valueOf(request.getAttribute(VerificationConstants.DEFAULT_PARAMETER_NAME_MOBILE)) : mobile;
+        String mobile = request.getParameter(VerificationConstants.DEFAULT_PHONE_PARAMETER_NAME);
+        return Objects.isNull(mobile) ? String.valueOf(request.getAttribute(VerificationConstants.DEFAULT_PHONE_PARAMETER_NAME)) : mobile;
     }
 
     public void setSmsSender(SmsSender smsSender) {

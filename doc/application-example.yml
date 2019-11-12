@@ -50,18 +50,6 @@ logging:
 
 app:
   security:
-    #APP环境配置项，参见AppProperties
-    app:
-      # 登录提交地址
-      signInProcessingUrl: /login/form
-      # 退出处理地址
-      signOutProcessingUrl: /logout
-      # 记住我时间
-      rememberMeSeconds: 294000
-      #session管理相关配置，参见SessionProperties
-      session:
-        maximumSessions: 1
-        maxSessionsPreventsLogin: false
     #浏览器环境配置项，参见BrowserProperties
     browser:
       # 登录地址
@@ -107,7 +95,7 @@ app:
     #社交登录功能拦截的url,参见SocialProperties
     connect:
       # 拦截器处理的url
-      filterProcessesUrl: /login/connect
+      filterProcessesUrl: /oauth/connect
   #      signUpUrl:
       #QQ登录配置，参见QQProperties
       qq:
@@ -123,6 +111,9 @@ app:
 
     #认证服务器注册的第三方应用配置项，参见OAuth2ClientProperties
     oauth2:
+      # 短信拦截url
+      phoneProcessingUrl: /oauth/phone
+
       # 第三方客户端配置
       clients:
         - clientId: app

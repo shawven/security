@@ -25,20 +25,6 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 @ConditionalOnClass(OAuth2AutoConfiguration.class)
 public class OAuth2SupportConfiguration {
 
-    private ClientDetailsService clientDetailsService;
-
-    private PasswordEncoder passwordEncoder;
-
-    private AuthorizationServerTokenServices services;
-
-    public OAuth2SupportConfiguration(ClientDetailsService clientDetailsService,
-                                      PasswordEncoder passwordEncoder,
-                                      AuthorizationServerTokenServices services) {
-        this.clientDetailsService = clientDetailsService;
-        this.passwordEncoder = passwordEncoder;
-        this.services = services;
-    }
-
     /**
      * 验证异常入口点
      *

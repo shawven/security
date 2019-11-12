@@ -41,7 +41,7 @@ public class VerificationEndpoint {
      */
     @RequestMapping(VerificationConstants.DEFAULT_VERIFICATION_URL_PREFIX + "/sms")
     public void createRestrictedSmsCode(HttpServletRequest request, HttpServletResponse response){
-        request.setAttribute(VerificationConstants.DEFAULT_ATTR_NAME_SMS_MESSAGE, MessageTemplate.DEFAULT_SMS_CODE);
+        request.setAttribute(VerificationConstants.DEFAULT_SMS_MESSAGE_ATTR_NAME, MessageTemplate.DEFAULT_SMS_CODE);
         getVerificationProcessor(SMS).create(new ServletWebRequest(request, response));
     }
 

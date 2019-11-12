@@ -20,6 +20,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -30,8 +31,16 @@ import java.util.List;
 @EnableConfigurationProperties(VerificationProperties.class)
 public class VerificationAutoConfiguration {
 
-    @Autowired
     private VerificationProperties properties;
+
+    private List<VerificationFilterProcessor> filterProcessors;
+
+    public VerificationAutoConfiguration(VerificationProperties properties,
+                                         @Autowired(required = false)
+                                         List<VerificationFilterProcessor> filterProcessors) {
+        this.properties = properties;
+        this.filterProcessors = filterProcessors;
+    }
 
     /**
      * 短信验证码生成器
@@ -155,6 +164,9 @@ public class VerificationAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public AuthenticationFilterProvider verificationFilterProvider(VerificationFilter filter) {
+        if (filterProcessors != null && !filterProcessors.isEmpty()) {
+            filterProcessors.forEach(processor -> processor.proceed(filter));
+        }
         return new VerificationFilterProvider(filter);
     }
 

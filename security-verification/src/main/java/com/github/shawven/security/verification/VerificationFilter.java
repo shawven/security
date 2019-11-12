@@ -59,15 +59,8 @@ public class VerificationFilter extends OncePerRequestFilter implements Initiali
      */
     @Override
     public void afterPropertiesSet() throws ServletException {
-        super.afterPropertiesSet();
-        addUrlToMap();
-    }
-
-    /**
-     * 将系统中配置的需要校验验证码的URL根据校验的类型放入map
-     *
-     */
-    protected void addUrlToMap() {
+        // 将系统中配置的需要校验验证码的URL根据校验的类型放入map
+        // 短信优先级高
         for (VerificationConfiguration configuration : configurations) {
             if (configuration == null) {
                 continue;
@@ -134,4 +127,11 @@ public class VerificationFilter extends OncePerRequestFilter implements Initiali
         return result;
     }
 
+    public Map<String, VerificationType> getUrlMap() {
+        return urlMap;
+    }
+
+    public void setUrlMap(Map<String, VerificationType> urlMap) {
+        this.urlMap = urlMap;
+    }
 }

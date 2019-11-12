@@ -22,7 +22,7 @@ public class ConnectFilterProvider extends AuthenticationFilterProvider {
 
     @Override
     public void configure(HttpSecurity builder) throws Exception {
-        connectConfigurer.init(builder);
+        connectConfigurer.configure(builder);
     }
 
     @Override

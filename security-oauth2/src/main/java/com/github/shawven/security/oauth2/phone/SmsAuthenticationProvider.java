@@ -1,5 +1,5 @@
 
-package com.github.shawven.security.oauth2.sms;
+package com.github.shawven.security.oauth2.phone;
 
 import com.github.shawven.security.verification.PhoneUserDetailsService;
 import org.springframework.security.authentication.AuthenticationProvider;

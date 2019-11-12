@@ -49,20 +49,4 @@ public class ConnectSupportConfiguration {
     public AuthenticationFilterProvider openIdFilterProvider() {
         return new OpenIdFilterProvider();
     }
-
-
-    @Configuration
-    @ConditionalOnClass()
-    public static class ConnectAdaptOAuth2Configuration {
-
-        @Bean
-        @ConditionalOnMissingBean
-        public AuthenticationSuccessHandler authenticationSuccessHandler(
-                OAuth2AuthenticationSuccessHandlerAdaptor authenticationSuccessHandlerAdaptor,
-                @Autowired(required = false) AppLoginSuccessHandler loginSuccessHandler,
-                @Autowired(required = false) AppLoginFailureHandler loginFailureHandler) {
-            return authenticationSuccessHandlerAdaptor.adapt(
-                    new AppAdaptorOAuth2AuthticationHandler(loginSuccessHandler, loginFailureHandler));
-        }
-    }
 }

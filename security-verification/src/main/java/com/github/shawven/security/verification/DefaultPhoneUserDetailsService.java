@@ -19,6 +19,6 @@ public class DefaultPhoneUserDetailsService implements PhoneUserDetailsService {
     @Override
     public UserDetails loadUserByPhone(String phone) throws UsernameNotFoundException {
         logger.warn("请配置 MobileUserDetailsService 接口的实现.");
-        throw new UsernameNotFoundException(phone);
+        throw new UsernameNotFoundException("当前不支持手机号登录");
     }
 }

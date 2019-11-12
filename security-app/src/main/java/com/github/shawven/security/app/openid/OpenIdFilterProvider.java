@@ -70,4 +70,9 @@ public class OpenIdFilterProvider extends AuthenticationFilterProvider {
     public void setUsersConnectionRepository(UsersConnectionRepository usersConnectionRepository) {
         this.usersConnectionRepository = usersConnectionRepository;
     }
+
+    @Override
+    public HttpSecurity and() {
+        return super.and();
+    }
 }

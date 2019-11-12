@@ -66,16 +66,10 @@ public class BrowserWebSecurityConfiguration extends WebSecurityConfigurerAdapte
     private DataSource dataSource;
 
     @Autowired(required = false)
-    private List<BrowserWebSecurityConfigurer> configurers = Collections.emptyList();
-
-    @Autowired(required = false)
     private List<AuthenticationFilterProvider> providerConfigurers = Collections.emptyList();
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        for (BrowserWebSecurityConfigurer configurer : configurers) {
-            configurer.configure(web);
-        }
         web.ignoring().mvcMatchers(
                 "/error",
                 "/**/favicon.ico",
@@ -86,10 +80,6 @@ public class BrowserWebSecurityConfiguration extends WebSecurityConfigurerAdapte
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
-        for (BrowserWebSecurityConfigurer configurer : configurers) {
-            configurer.configure(http);
-        }
-
         try {
             Class.forName("com.github.shawven.security.oauth2.OAuth2AutoConfiguration");
             http.csrf().disable();

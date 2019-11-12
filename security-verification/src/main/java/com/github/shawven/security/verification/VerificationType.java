@@ -11,12 +11,12 @@ public enum VerificationType {
 	/**
 	 * 短信验证码
 	 */
-	SMS(VerificationConstants.DEFAULT_PARAMETER_NAME_SMS, "短信"),
+	SMS(VerificationConstants.DEFAULT_SMS_PARAMETER_NAME, "短信"),
 
 	/**
 	 * 图片验证码
 	 */
-    CAPTCHA(VerificationConstants.DEFAULT_PARAMETER_NAME_CAPTCHA, "图形");
+    CAPTCHA(VerificationConstants.DEFAULT_CAPTCHA_PARAMETER_NAME, "图形");
 
 	private String label;
 

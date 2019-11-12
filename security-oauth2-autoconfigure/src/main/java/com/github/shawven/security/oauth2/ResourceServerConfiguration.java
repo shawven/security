@@ -3,6 +3,7 @@ package com.github.shawven.security.oauth2;
 
 import com.github.shawven.security.authorization.AuthenticationFilterProvider;
 import com.github.shawven.security.authorization.AuthorizationConfigurerManager;
+import com.github.shawven.security.oauth2.phone.PhoneFilterProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -55,6 +56,8 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
+        // 手机号码验证单独提出来了
+        providerConfigurers.removeIf(provider -> provider instanceof PhoneFilterProvider);
         for (AuthenticationFilterProvider configurer : providerConfigurers) {
              http.apply(configurer);
         }

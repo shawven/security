@@ -1,7 +1,6 @@
 
-package com.github.shawven.security.oauth2.sms;
+package com.github.shawven.security.oauth2.phone;
 
-import com.github.shawven.security.oauth2.OAuth2Constants;
 import com.github.shawven.security.verification.VerificationConstants;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -17,17 +16,17 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * 短信登录过滤器
  */
-public class SmsAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
+public class PhoneAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 	// ~ Static fields/initializers
 	// =====================================================================================
 
-	private String mobileParameter = VerificationConstants.DEFAULT_PARAMETER_NAME_MOBILE;
+	private String phoneParameter = VerificationConstants.DEFAULT_PHONE_PARAMETER_NAME;
 
 	// ~ Constructors
 	// ===================================================================================================
 
-	public SmsAuthenticationFilter() {
-		super(new AntPathRequestMatcher(OAuth2Constants.DEFAULT_PHONE_TOKEN_PROCESSING_URL, "POST"));
+	public PhoneAuthenticationFilter(PhoneConfiguration config) {
+		super(new AntPathRequestMatcher(config.getFilterProcessingUrl(), "POST"));
 	}
 
 	// ~ Methods
@@ -40,7 +39,7 @@ public class SmsAuthenticationFilter extends AbstractAuthenticationProcessingFil
 			throw new AuthenticationServiceException("Authentication method not supported: " + request.getMethod());
 		}
 
-		String mobile = request.getParameter(mobileParameter);
+		String mobile = request.getParameter(phoneParameter);
         if (StringUtils.isBlank(mobile)) {
             throw new IllegalArgumentException("参数错误，手机号码不能为空");
         }
@@ -58,13 +57,13 @@ public class SmsAuthenticationFilter extends AbstractAuthenticationProcessingFil
 	 * @param usernameParameter
 	 *            the parameter name. Defaults to "username".
 	 */
-	public void setMobileParameter(String usernameParameter) {
+	public void setPhoneParameter(String usernameParameter) {
 		Assert.hasText(usernameParameter, "Username parameter must not be empty or null");
-		this.mobileParameter = usernameParameter;
+		this.phoneParameter = usernameParameter;
 	}
 
-	public final String getMobileParameter() {
-		return mobileParameter;
+	public final String getPhoneParameter() {
+		return phoneParameter;
 	}
 
 }

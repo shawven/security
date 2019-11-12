@@ -1,15 +1,15 @@
 
 package com.github.shawven.security.oauth2;
 
+import com.github.shawven.security.authorization.AuthenticationFilterProvider;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.ProviderManager;
-import org.springframework.security.core.userdetails.UserDetailsByNameServiceWrapper;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.builders.InMemoryClientDetailsServiceBuilder;
@@ -19,21 +19,14 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
-import org.springframework.security.oauth2.provider.client.JdbcClientDetailsService;
-import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
-import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider;
-import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 
-import javax.annotation.PostConstruct;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -75,7 +68,9 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
                                             @Autowired(required = false)
                                             JwtAccessTokenConverter jwtAccessTokenConverter,
                                             @Autowired(required = false)
-                                            TokenEnhancer jwtTokenEnhancer) {
+                                            TokenEnhancer jwtTokenEnhancer,
+                                            @Autowired(required = false)
+                                            AuthenticationFilterProvider phoneFilterProvider) {
         this.userDetailsService = userDetailsService;
         this.authenticationManager = authenticationManager;
         this.tokenStore = tokenStore;
@@ -93,10 +88,24 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
 	 */
 	@Override
 	public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-		endpoints
-                .tokenServices(tokenServices())
-				.authenticationManager(authenticationManager)
-                .pathMapping("/oauth/token", OAuth2Constants.DEFAULT_OAUTH_TOKEN_ENDPOINTS);
+        endpoints
+                .tokenStore(tokenStore)
+                .authenticationManager(authenticationManager)
+                .userDetailsService(userDetailsService);
+
+        if (jwtAccessTokenConverter != null && jwtTokenEnhancer != null) {
+            jwtAccessTokenConverter.setSigningKey(oAuth2Properties.getJwtSigningKey());
+
+            TokenEnhancerChain enhancerChain = new TokenEnhancerChain();
+            List<TokenEnhancer> enhancers = new ArrayList<>();
+            enhancers.add(jwtTokenEnhancer);
+            enhancers.add(jwtAccessTokenConverter);
+            enhancerChain.setTokenEnhancers(enhancers);
+
+            endpoints
+                    .tokenEnhancer(enhancerChain)
+                    .accessTokenConverter(jwtAccessTokenConverter);
+        }
 
 
 	}
@@ -148,29 +157,4 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
     public ClientAuthenticationFilter clientAuthenticationFilter() {
         return new ClientAuthenticationFilter(clientDetailsService, passwordEncoder);
     }
-
-    @Bean
-    @Primary
-    public DefaultTokenServices tokenServices() {
-        DefaultTokenServices tokenServices = new DefaultTokenServices();
-        tokenServices.setSupportRefreshToken(true);
-        tokenServices.setReuseRefreshToken(true);
-        tokenServices.setTokenStore(tokenStore);
-        tokenServices.setClientDetailsService(clientDetailsService);
-
-        if (jwtAccessTokenConverter != null && jwtTokenEnhancer != null) {
-            jwtAccessTokenConverter.setSigningKey(oAuth2Properties.getJwtSigningKey());
-            TokenEnhancerChain enhancerChain = new TokenEnhancerChain();
-            List<TokenEnhancer> enhancers = new ArrayList<>();
-            enhancers.add(jwtTokenEnhancer);
-            enhancers.add(jwtAccessTokenConverter);
-            enhancerChain.setTokenEnhancers(enhancers);
-            tokenServices.setTokenEnhancer(enhancerChain);
-        }
-        PreAuthenticatedAuthenticationProvider provider = new PreAuthenticatedAuthenticationProvider();
-        provider.setPreAuthenticatedUserDetailsService(new UserDetailsByNameServiceWrapper<>(userDetailsService));
-        tokenServices.setAuthenticationManager(new ProviderManager(Collections.singletonList(provider)));
-        return tokenServices;
-    }
-
 }

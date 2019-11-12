@@ -1,71 +1,57 @@
 package com.github.shawven.security.app.autoconfigure;
 
-import com.github.shawven.security.app.AppAuthorizationConfigureProvider;
+import com.github.shawven.security.app.AppAdaptorOAuth2AuthticationHandler;
 import com.github.shawven.security.app.authentication.*;
-import com.github.shawven.security.app.config.AppConfiguration;
-import com.github.shawven.security.app.config.SessionConfiguration;
-import com.github.shawven.security.app.session.AppExpiredSessionStrategy;
-import com.github.shawven.security.app.session.AppInvalidSessionStrategy;
-import com.github.shawven.security.authorization.AuthorizationConfigureProvider;
+import com.github.shawven.security.connect.ConnectAutoConfiguration;
+import com.github.shawven.security.oauth2.OAuth2AuthenticationSuccessHandlerAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
-import org.springframework.security.web.session.InvalidSessionStrategy;
-import org.springframework.security.web.session.SessionInformationExpiredStrategy;
 
 /**
+ * 适用于APP端，全部json返回，适配手机验证码、社交登录
+ *
  * @author Shoven
  * @date 2019-08-20
  */
 @Configuration
-@EnableConfigurationProperties(AppProperties.class)
 @AutoConfigureAfter({ConnectSupportConfiguration.class, OAuth2SupportConfiguration.class})
 public class AppAutoConfiguration {
 
-    @Autowired
-    private AppProperties properties;
+    private OAuth2AuthenticationSuccessHandlerAdaptor authenticationSuccessHandlerAdaptor;
 
-    /**
-     * session失效时的处理策略配置
-     *
-     * @return
-     */
-    @Bean
-    @ConditionalOnMissingBean
-    public InvalidSessionStrategy invalidSessionStrategy(){
-        return new AppInvalidSessionStrategy();
+    private AppLoginSuccessHandler loginSuccessHandler;
+
+    private AppLoginFailureHandler loginFailureHandler;
+
+    public AppAutoConfiguration(OAuth2AuthenticationSuccessHandlerAdaptor authenticationSuccessHandlerAdaptor,
+                                @Autowired(required = false)
+                                AppLoginSuccessHandler loginSuccessHandler,
+                                @Autowired(required = false)
+                                AppLoginFailureHandler loginFailureHandler) {
+        this.authenticationSuccessHandlerAdaptor = authenticationSuccessHandlerAdaptor;
+        this.loginSuccessHandler = loginSuccessHandler;
+        this.loginFailureHandler = loginFailureHandler;
     }
 
     /**
-     * 并发登录导致前一个session失效时的处理策略配置
+     * 验证成功处理器
      *
      * @return
      */
     @Bean
     @ConditionalOnMissingBean
-    public SessionInformationExpiredStrategy sessionInformationExpiredStrategy(){
-        return new AppExpiredSessionStrategy();
-    }
-
-    /**
-     * 基本验证成功处理器
-     *
-     * @return
-     */
-    @Bean
-    @ConditionalOnMissingBean
-    public AuthenticationSuccessHandler authenticationSuccessHandler (
-            @Autowired(required = false) AppLoginSuccessHandler loginSuccessHandler) {
-        return new AppAuthenticationSuccessHandler(loginSuccessHandler);
+    public AuthenticationSuccessHandler authenticationSuccessHandler() {
+        return authenticationSuccessHandlerAdaptor.adapt(
+                new AppAdaptorOAuth2AuthticationHandler(loginSuccessHandler, loginFailureHandler));
     }
 
     /**
@@ -75,11 +61,15 @@ public class AppAutoConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean
-    public AuthenticationFailureHandler authenticationFailureHandler(
-            @Autowired(required = false) AppLoginFailureHandler loginFailureHandler) {
+    public AuthenticationFailureHandler authenticationFailureHandler() {
         return new AppAuthenticationFailureHandler(loginFailureHandler);
     }
 
+    /**
+     * 成功退出处理器
+     *
+     * @return
+     */
     @Bean
     @ConditionalOnMissingBean
     public LogoutSuccessHandler logoutSuccessHandler() {
@@ -97,33 +87,15 @@ public class AppAutoConfiguration {
         return new AppAccessDeniedHandler();
     }
 
+    /**
+     * 验证入口点
+     *
+     * @return
+     */
     @Bean
     @ConditionalOnMissingBean
     public AuthenticationEntryPoint authenticationEntryPoint() {
         return new AppAuthenticationExceptionEntryPoint();
     }
 
-
-    @Bean
-    @Order
-    @ConditionalOnMissingBean
-    public AuthorizationConfigureProvider appAuthorizationConfigureProvider() {
-        return new AppAuthorizationConfigureProvider(appConfiguration());
-    }
-
-
-    @Bean
-    public AppConfiguration appConfiguration() {
-        AppConfiguration cfg = new AppConfiguration();
-        cfg.setSignInProcessingUrl(properties.getSignInProcessingUrl());
-        cfg.setSignOutProcessingUrl(properties.getSignOutProcessingUrl());
-        cfg.setRememberMeSeconds(properties.getRememberMeSeconds());
-
-        SessionProperties sessionProperties = properties.getSession();
-        SessionConfiguration scfg = new SessionConfiguration();
-        scfg.setMaximumSessions(sessionProperties.getMaximumSessions());
-        scfg.setMaxSessionsPreventsLogin(sessionProperties.isMaxSessionsPreventsLogin());
-        cfg.setSession(scfg);
-        return cfg;
-    }
 }

@@ -6,9 +6,9 @@ spring:
   #数据库连接配置
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://192.168.1.10:3306/wqb_yjz?useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT%2B8
-    username: xw
-    password: Xw9999
+    url: jdbc:mysql://127.0.0.1:3306/wqb_jz?useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT%2B8
+    username: root
+    password: root
     #连接池及重试配置，防止mysql如果8小时自动断开连接问题
     tomcat:
       max-active: 100
@@ -37,18 +37,7 @@ logging:
 
 app:
   security:
-    #APP环境配置项，参见AppProperties
-    app:
-      # 登录提交地址
-      signInProcessingUrl: /login/form
-      # 退出处理地址
-      signOutProcessingUrl: /logout
-      # 记住我时间
-      rememberMeSeconds: 294000
-      #session管理相关配置，参见SessionProperties
-      session:
-        maximumSessions: 1
-        maxSessionsPreventsLogin: false
+
     #浏览器环境配置项，参见BrowserProperties
     browser:
       # 登录地址
@@ -110,6 +99,9 @@ app:
 
     #认证服务器注册的第三方应用配置项，参见OAuth2ClientProperties
     oauth2:
+      # 短信拦截url
+      phoneProcessingUrl: /oauth/phone
+
       # 第三方客户端配置
       clients:
         - clientId: app

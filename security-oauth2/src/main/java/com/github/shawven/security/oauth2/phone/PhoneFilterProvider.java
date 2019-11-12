@@ -1,5 +1,5 @@
 
-package com.github.shawven.security.oauth2.sms;
+package com.github.shawven.security.oauth2.phone;
 
 import com.github.shawven.security.authorization.AuthenticationFilterProvider;
 import com.github.shawven.security.verification.PhoneUserDetailsService;
@@ -12,7 +12,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 /**
  * 短信登录配置
  */
-public class SmsFilterProvider extends AuthenticationFilterProvider {
+public class PhoneFilterProvider extends AuthenticationFilterProvider {
+
+    private PhoneConfiguration configuration;
 
     private PhoneUserDetailsService userDetailsService;
 
@@ -20,9 +22,10 @@ public class SmsFilterProvider extends AuthenticationFilterProvider {
 
     private AuthenticationFailureHandler authenticationFailureHandler;
 
-    public SmsFilterProvider(PhoneUserDetailsService userDetailsService,
-                             AuthenticationSuccessHandler authenticationSuccessHandler,
-                             AuthenticationFailureHandler authenticationFailureHandler) {
+    public PhoneFilterProvider(PhoneConfiguration configuration, PhoneUserDetailsService userDetailsService,
+                               AuthenticationSuccessHandler authenticationSuccessHandler,
+                               AuthenticationFailureHandler authenticationFailureHandler) {
+        this.configuration = configuration;
         this.userDetailsService = userDetailsService;
         this.authenticationSuccessHandler = authenticationSuccessHandler;
         this.authenticationFailureHandler = authenticationFailureHandler;
@@ -31,16 +34,16 @@ public class SmsFilterProvider extends AuthenticationFilterProvider {
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
 
-		SmsAuthenticationFilter smsAuthenticationFilter = new SmsAuthenticationFilter();
-		smsAuthenticationFilter.setAuthenticationManager(http.getSharedObject(AuthenticationManager.class));
-		smsAuthenticationFilter.setAuthenticationSuccessHandler(authenticationSuccessHandler);
-		smsAuthenticationFilter.setAuthenticationFailureHandler(authenticationFailureHandler);
+		PhoneAuthenticationFilter phoneAuthenticationFilter = new PhoneAuthenticationFilter(configuration);
+		phoneAuthenticationFilter.setAuthenticationManager(http.getSharedObject(AuthenticationManager.class));
+		phoneAuthenticationFilter.setAuthenticationSuccessHandler(authenticationSuccessHandler);
+		phoneAuthenticationFilter.setAuthenticationFailureHandler(authenticationFailureHandler);
 
 		SmsAuthenticationProvider smsAuthenticationProvider = new SmsAuthenticationProvider();
 		smsAuthenticationProvider.setUserDetailsService(userDetailsService);
 
 		http.authenticationProvider(smsAuthenticationProvider)
-			.addFilterAfter(smsAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+			.addFilterAfter(phoneAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
 	}
 

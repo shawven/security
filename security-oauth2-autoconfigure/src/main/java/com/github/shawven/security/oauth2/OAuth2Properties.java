@@ -12,11 +12,15 @@ public class OAuth2Properties {
 	 */
 	private String jwtSigningKey = "app_jwt_signing_key";
 
-
     /**
      * jwt、redis
      */
     private String tokenStore = "jwt";
+
+    /**
+     * 手机短信处理URL
+     */
+    private String phoneProcessingUrl = OAuth2Constants.DEFAULT_PHONE_TOKEN_PROCESSING_URL;
 
 	/**
 	 * 客户端配置
@@ -46,5 +50,13 @@ public class OAuth2Properties {
 
     public void setTokenStore(String tokenStore) {
         this.tokenStore = tokenStore;
+    }
+
+    public String getPhoneProcessingUrl() {
+        return phoneProcessingUrl;
+    }
+
+    public void setPhoneProcessingUrl(String phoneProcessingUrl) {
+        this.phoneProcessingUrl = phoneProcessingUrl;
     }
 }

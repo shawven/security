@@ -1,11 +1,6 @@
 
 package com.github.shawven.security.verification;
 
-import com.github.shawven.security.verification.VerificationConstants;
-import com.github.shawven.security.verification.Verification;
-import com.github.shawven.security.verification.VerificationException;
-import com.github.shawven.security.verification.VerificationRepository;
-import com.github.shawven.security.verification.VerificationType;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.context.request.ServletWebRequest;
@@ -25,7 +20,7 @@ public class RedisVerificationRepository implements VerificationRepository {
 
 	private RedisTemplate<Object, Object> redisTemplate;
 
-    private final static String PARAM_NAME = VerificationConstants.DEFAULT_PARAMETER_NAME_MOBILE;
+    private final static String PARAM_NAME = VerificationConstants.DEFAULT_PHONE_PARAMETER_NAME;
 
     public RedisVerificationRepository(RedisTemplate<Object, Object> redisTemplate) {
         this.redisTemplate = redisTemplate;
