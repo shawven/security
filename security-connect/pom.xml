@@ -5,19 +5,19 @@
     <parent>
         <groupId>com.github.shawven</groupId>
         <artifactId>security</artifactId>
-        <version>1.1.0</version>
+        <version>2.0.0-SNAPSHOT</version>
         <relativePath>../</relativePath>
     </parent>
 
 	<artifactId>security-connect</artifactId>
-    <version>1.1.0</version>
+    <version>2.0.0-SNAPSHOT</version>
     <description>spring-social 第三方社交登陆</description>
 
 	<dependencies>
         <dependency>
             <groupId>com.github.shawven</groupId>
             <artifactId>security-authorization</artifactId>
-            <version>1.1.0</version>
+            <version>2.0.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
