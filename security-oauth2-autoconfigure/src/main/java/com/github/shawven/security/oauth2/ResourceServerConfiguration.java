@@ -56,8 +56,6 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
-        // 手机号码验证单独提出来了
-        providerConfigurers.removeIf(provider -> provider instanceof PhoneFilterProvider);
         for (AuthenticationFilterProvider configurer : providerConfigurers) {
              http.apply(configurer);
         }
