@@ -6,7 +6,7 @@ import com.github.shawven.security.verification.config.SmsConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
-@ConfigurationProperties(prefix = "security.verification")
+@ConfigurationProperties(prefix = "app.security.verification")
 public class VerificationProperties {
 
     /**

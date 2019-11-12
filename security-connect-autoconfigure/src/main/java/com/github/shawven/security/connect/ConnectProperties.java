@@ -4,11 +4,12 @@ package com.github.shawven.security.connect;
 import com.github.shawven.security.connect.config.QQConfiguration;
 import com.github.shawven.security.connect.config.WeixinConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * 社交登录配置项
  */
-@ConfigurationProperties("security.social")
+@ConfigurationProperties("app.security.connect")
 public class ConnectProperties {
 
 	/**
@@ -21,8 +22,10 @@ public class ConnectProperties {
      */
     private String signUpUrl = ConnectConstants.DEFAULT_CURRENT_USER_INFO_URL;
 
+    @NestedConfigurationProperty
 	private QQConfiguration qq = new QQConfiguration();
 
+    @NestedConfigurationProperty
 	private WeixinConfiguration weixin = new WeixinConfiguration();
 
     public String getFilterProcessesUrl() {

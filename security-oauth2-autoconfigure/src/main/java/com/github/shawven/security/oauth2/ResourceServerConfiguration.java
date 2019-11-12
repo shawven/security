@@ -8,6 +8,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
@@ -24,17 +26,24 @@ import java.util.List;
 @EnableResourceServer
 public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter {
 
-    @Autowired
     private AuthorizationConfigurerManager authorizationConfigurerManager;
 
-    @Autowired
     private AccessDeniedHandler appAccessDeniedHandler;
 
-    @Autowired
     private AuthenticationEntryPoint authenticationEntryPoint;
 
-    @Autowired(required = false)
-    private List<AuthenticationFilterProvider> providerConfigurers = Collections.emptyList();
+    private List<AuthenticationFilterProvider> providerConfigurers;
+
+    public ResourceServerConfiguration(AuthorizationConfigurerManager authorizationConfigurerManager,
+                                       AccessDeniedHandler appAccessDeniedHandler,
+                                       AuthenticationEntryPoint authenticationEntryPoint,
+                                       @Autowired(required = false)
+                                       List<AuthenticationFilterProvider> providerConfigurers) {
+        this.authorizationConfigurerManager = authorizationConfigurerManager;
+        this.appAccessDeniedHandler = appAccessDeniedHandler;
+        this.authenticationEntryPoint = authenticationEntryPoint;
+        this.providerConfigurers = providerConfigurers != null ? providerConfigurers : Collections.emptyList();
+    }
 
     @Override
     public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
@@ -47,15 +56,18 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
     @Override
     public void configure(HttpSecurity http) throws Exception {
         for (AuthenticationFilterProvider configurer : providerConfigurers) {
-            http.apply(configurer);
+             http.apply(configurer);
         }
 
         http
-                .csrf().disable()
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and().csrf().disable()
                 .exceptionHandling()
                 .authenticationEntryPoint(authenticationEntryPoint)
                 .accessDeniedHandler(appAccessDeniedHandler);
 
         authorizationConfigurerManager.config(http.authorizeRequests());
     }
+
 }

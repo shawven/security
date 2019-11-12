@@ -89,7 +89,7 @@ public class ConnectAutoConfiguration extends SocialConfigurerAdapter {
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = "security.social.weixin", name = "app-id")
+    @ConditionalOnProperty(prefix = "app.security.connect.weixin", name = "app-id")
     public ConnectionFactory<?> createWeixinConnectionFactory() {
         WeixinConfiguration weixinConfig = getConnectConfiguration().getWeixin();
         return new WeixinConnectionFactory(weixinConfig.getProviderId(), weixinConfig.getAppId(),
@@ -97,7 +97,7 @@ public class ConnectAutoConfiguration extends SocialConfigurerAdapter {
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = "security.social.qq", name = "app-id")
+    @ConditionalOnProperty(prefix = "app.security.connect.qq", name = "app-id")
     public ConnectionFactory<?> createQqConnectionFactory() {
         QQConfiguration qqConfig = getConnectConfiguration().getQq();
         return new QQConnectionFactory(qqConfig.getProviderId(), qqConfig.getAppId(),

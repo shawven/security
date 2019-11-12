@@ -2,26 +2,13 @@ server:
   port: 9090
 
 spring:
-  jpa:
-    #是否在控制台打印sql语句
-    show-sql: true
-    hibernate:
-      ddl-auto: update
-      naming:
-        # 隐私转换策略，如果实体类上没有@TableName注解，则默认适用于该策略
-        implicit-strategy: com.github.shawven.security.rbac.repository.support.AppImplicitNamingStrategy
-    #是否自动生成/修改数据库表
-    generate-ddl: true
-    properties:
-      hibernate:
-        format_sql: true:
 
   #数据库连接配置
   datasource:
-    driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/test?useUnicode=yes&characterEncoding=UTF-8&useSSL=false
-    username: root
-    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://192.168.1.10:3306/wqb_yjz?useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT%2B8
+    username: xw
+    password: Xw9999
     #连接池及重试配置，防止mysql如果8小时自动断开连接问题
     tomcat:
       max-active: 100

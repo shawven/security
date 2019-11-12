@@ -16,8 +16,12 @@ import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.provider.ClientDetailsService;
+import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+
+import javax.servlet.Filter;
 
 /**
  *
@@ -71,5 +75,12 @@ public class OAuth2AutoConfiguration {
     @ConditionalOnBean
     public AuthorizationConfigureProvider oauth2AuthorizationConfigureProvider() {
 	    return new Oauth2AuthorizationConfigureProvider();
+    }
+
+    @Bean
+    public OAuth2AuthenticationSuccessHandlerAdaptor authenticationSuccessHandlerAdaptor(ClientDetailsService clientDetailsService,
+                                                                            PasswordEncoder passwordEncoder,
+                                                                            AuthorizationServerTokenServices services) {
+	    return new OAuth2AuthenticationSuccessHandlerAdaptor(clientDetailsService, passwordEncoder, services);
     }
 }

@@ -1,8 +1,5 @@
+package com.github.shawven.security.oauth2;
 
-package com.github.shawven.security.app.authentication;
-
-import com.github.shawven.security.oauth2.AdaptedAuthenticationHandler;
-import com.github.shawven.security.oauth2.ClientUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -19,20 +16,20 @@ import java.io.IOException;
 import java.util.Collections;
 
 /**
- * APP环境下认证成功处理器
+ * @author Shoven
+ * @date 2019-11-12
  */
-
-public class AppOAuth2AuthenticationSuccessHandler implements AuthenticationSuccessHandler {
+public class OAuth2AuthenticationSuccessHandlerAdaptor implements AuthenticationSuccessHandler {
 
     private PasswordEncoder passwordEncoder;
 
+    private ClientDetailsService clientDetailsService;
+
+    private AuthorizationServerTokenServices authorizationServerTokenServices;
+
     private AdaptedAuthenticationHandler handler;
 
-	private ClientDetailsService clientDetailsService;
-
-	private AuthorizationServerTokenServices authorizationServerTokenServices;
-
-    public AppOAuth2AuthenticationSuccessHandler(ClientDetailsService clientDetailsService,
+    public OAuth2AuthenticationSuccessHandlerAdaptor(ClientDetailsService clientDetailsService,
                                                  PasswordEncoder passwordEncoder,
                                                  AuthorizationServerTokenServices authorizationServerTokenServices) {
         this.clientDetailsService = clientDetailsService;
@@ -40,13 +37,14 @@ public class AppOAuth2AuthenticationSuccessHandler implements AuthenticationSucc
         this.authorizationServerTokenServices = authorizationServerTokenServices;
     }
 
-    public void adaptor(AdaptedAuthenticationHandler handler) {
+    public AuthenticationSuccessHandler adapt(AdaptedAuthenticationHandler handler) {
         this.handler = handler;
+        return this;
     }
 
     @Override
-	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-			Authentication authentication) throws IOException, ServletException {
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+                                        Authentication authentication) throws IOException, ServletException {
         String[] clientInfo;
 
         try {
@@ -60,8 +58,8 @@ public class AppOAuth2AuthenticationSuccessHandler implements AuthenticationSucc
             return;
         }
 
-		String clientId = clientInfo[0];
-		ClientDetails clientDetails = clientDetailsService.loadClientByClientId(clientId);
+        String clientId = clientInfo[0];
+        ClientDetails clientDetails = clientDetailsService.loadClientByClientId(clientId);
 
         try {
             ClientUtils.authenticateClient(passwordEncoder, clientDetails, clientInfo);
@@ -69,16 +67,16 @@ public class AppOAuth2AuthenticationSuccessHandler implements AuthenticationSucc
             ClientUtils.outputBadCredentials(response, e);
         }
 
-		TokenRequest tokenRequest = new TokenRequest(Collections.emptyMap(),
+        TokenRequest tokenRequest = new TokenRequest(Collections.emptyMap(),
                 clientId, clientDetails.getScope(), "custom");
 
-		OAuth2Request oAuth2Request = tokenRequest.createOAuth2Request(clientDetails);
+        OAuth2Request oAuth2Request = tokenRequest.createOAuth2Request(clientDetails);
 
-		OAuth2Authentication oAuth2Authentication = new OAuth2Authentication(oAuth2Request, authentication);
+        OAuth2Authentication oAuth2Authentication = new OAuth2Authentication(oAuth2Request, authentication);
 
         try {
-            OAuth2AccessToken token = authorizationServerTokenServices.createAccessToken(oAuth2Authentication);
 
+            OAuth2AccessToken token = authorizationServerTokenServices.createAccessToken(oAuth2Authentication);
             if (handler != null) {
                 handler.onSuccess(request, response, authentication, token);
             }
@@ -86,7 +84,7 @@ public class AppOAuth2AuthenticationSuccessHandler implements AuthenticationSucc
             if (handler != null) {
                 handler.onFailure(request, response, e);
             }
-        }
 
-	}
+        }
+    }
 }

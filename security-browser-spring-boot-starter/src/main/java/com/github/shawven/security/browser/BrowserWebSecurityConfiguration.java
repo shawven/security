@@ -92,6 +92,7 @@ public class BrowserWebSecurityConfiguration extends WebSecurityConfigurerAdapte
 
         try {
             Class.forName("com.github.shawven.security.oauth2.OAuth2AutoConfiguration");
+            http.csrf().disable();
         } catch (ClassNotFoundException e) {
             for (AuthenticationFilterProvider configurer : providerConfigurers) {
                 http = http.apply(configurer).and();

@@ -12,11 +12,11 @@ import java.io.IOException;
 /**
  * 社交登陆APP环境下认证失败处理器
  */
-public class AppSocailAuthenticationFailureHandler extends AppAuthenticationFailureHandler {
+public class AppConnectAuthenticationFailureHandler extends AppAuthenticationFailureHandler {
 
     private AppLoginFailureHandler loginFailureHandler;
 
-    public AppSocailAuthenticationFailureHandler(AppLoginFailureHandler loginFailureHandler) {
+    public AppConnectAuthenticationFailureHandler(AppLoginFailureHandler loginFailureHandler) {
         super(loginFailureHandler);
         this.loginFailureHandler = loginFailureHandler;
     }

@@ -7,7 +7,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  * @author Shoven
  * @date 2019-11-11
  */
-@ConfigurationProperties("security.app")
+@ConfigurationProperties("app.security.app")
 public class AppProperties {
     /**
      * session管理配置项

@@ -5,6 +5,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -18,8 +19,8 @@ public class AuthorizationAutoConfiguration {
     @Autowired
     private AuthorizationProperties properties;
 
-    @Autowired
-    private List<AuthorizationConfigureProvider> providers;
+    @Autowired(required = false)
+    private List<AuthorizationConfigureProvider> providers = Collections.emptyList();
 
     @Bean
     public AuthorizationConfigurerManager authorizationConfigurerManager() {

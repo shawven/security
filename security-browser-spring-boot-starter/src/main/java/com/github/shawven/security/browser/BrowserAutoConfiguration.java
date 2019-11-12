@@ -108,20 +108,7 @@ public class BrowserAutoConfiguration {
         return new BrowserAuthenticationExceptionEntryPoint(browserConfiguration());
     }
 
-    @Configuration
-    @ConditionalOnClass(ConnectAutoConfiguration.class)
-    public static class ConnectSupportConfiguration {
 
-        @Bean
-        @ConditionalOnMissingBean
-        public ConnectAuthenticationFilterPostProcessor connectAuthenticationFilterPostProcessor(
-                AuthenticationSuccessHandler authenticationSuccessHandler,
-                AuthenticationFailureHandler authenticationFailureHandler) {
-            return new BrowserConnectAuthenticationFilterPostProcessor(authenticationSuccessHandler,
-                    authenticationFailureHandler);
-        }
-
-    }
 
 
     /**

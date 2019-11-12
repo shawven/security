@@ -1,10 +1,10 @@
 
-package com.github.shawven.security.oauth2.config;
+package com.github.shawven.security.oauth2;
 
 /**
  * 认证服务器注册的第三方应用配置项
  */
-public class OAuth2ClientConfiguration {
+public class OAuth2ClientProperties {
 
 	/**
 	 * 第三方应用appId

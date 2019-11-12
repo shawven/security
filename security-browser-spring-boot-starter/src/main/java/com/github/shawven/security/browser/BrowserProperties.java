@@ -7,7 +7,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 /**
  * 浏览器环境配置项
  */
-@ConfigurationProperties("security.browser")
+@ConfigurationProperties("app.security.browser")
 public class BrowserProperties {
 
     /**

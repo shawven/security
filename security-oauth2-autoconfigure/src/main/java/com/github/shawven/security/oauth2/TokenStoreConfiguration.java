@@ -1,7 +1,6 @@
 
 package com.github.shawven.security.oauth2;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -24,13 +23,16 @@ public class TokenStoreConfiguration {
 	 */
 	@Configuration
     @ConditionalOnClass(RedisConnectionFactory.class)
-	@ConditionalOnProperty(prefix = "security.oauth2", name = "tokenStore", havingValue = "redis")
+	@ConditionalOnProperty(prefix = "app.security.oauth2", name = "tokenStore", havingValue = "redis")
 	public static class RedisConfig {
 
-		@Autowired
 		private RedisConnectionFactory redisConnectionFactory;
 
-		/**
+        public RedisConfig(RedisConnectionFactory redisConnectionFactory) {
+            this.redisConnectionFactory = redisConnectionFactory;
+        }
+
+        /**
 		 * @return
 		 */
 		@Bean
@@ -44,16 +46,19 @@ public class TokenStoreConfiguration {
 	 * 使用jwt时的配置，默认生效
 	 */
 	@Configuration
-	@ConditionalOnProperty(prefix = "security.oauth2", name = "tokenStore", havingValue = "jwt", matchIfMissing = true)
+	@ConditionalOnProperty(prefix = "app.security.oauth2", name = "tokenStore", havingValue = "jwt", matchIfMissing = true)
 	public static class JwtConfig {
 
-		@Autowired
 		private OAuth2Properties oAuth2Properties;
 
-		/**
+        public JwtConfig(OAuth2Properties oAuth2Properties) {
+            this.oAuth2Properties = oAuth2Properties;
+        }
+
+        /**
 		 * @return
 		 */
-		@Bean
+        @Bean
 		public TokenStore jwtTokenStore() {
 			return new JwtTokenStore(jwtAccessTokenConverter());
 		}
