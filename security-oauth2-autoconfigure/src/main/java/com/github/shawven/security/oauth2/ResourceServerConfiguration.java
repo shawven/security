@@ -34,12 +34,11 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
     public ResourceServerConfiguration(AuthorizationConfigurerManager authorizationConfigurerManager,
                                        AccessDeniedHandler appAccessDeniedHandler,
                                        AuthenticationEntryPoint authenticationEntryPoint,
-                                       @Autowired(required = false)
                                        List<AuthenticationFilterProviderConfigurer> filterProviderConfigurer) {
         this.authorizationConfigurerManager = authorizationConfigurerManager;
         this.appAccessDeniedHandler = appAccessDeniedHandler;
         this.authenticationEntryPoint = authenticationEntryPoint;
-        this.filterProviderConfigurer = filterProviderConfigurer != null ? filterProviderConfigurer : Collections.emptyList();
+        this.filterProviderConfigurer = filterProviderConfigurer;
     }
 
     @Override

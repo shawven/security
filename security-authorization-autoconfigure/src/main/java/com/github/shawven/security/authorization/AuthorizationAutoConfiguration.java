@@ -16,11 +16,15 @@ import java.util.List;
 @EnableConfigurationProperties(AuthorizationProperties.class)
 public class AuthorizationAutoConfiguration {
 
-    @Autowired
     private AuthorizationProperties properties;
 
-    @Autowired(required = false)
-    private List<AuthorizationConfigureProvider> providers = Collections.emptyList();
+    private List<AuthorizationConfigureProvider> providers;
+
+    public AuthorizationAutoConfiguration(AuthorizationProperties properties,
+                                          List<AuthorizationConfigureProvider> providers) {
+        this.properties = properties;
+        this.providers = providers;
+    }
 
     @Bean
     public AuthorizationConfigurerManager authorizationConfigurerManager() {

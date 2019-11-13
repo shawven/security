@@ -178,8 +178,6 @@ public class ConnectAutoConfiguration extends SocialConfigurerAdapter {
 
 
     @Bean
-    @Order(Integer.MIN_VALUE)
-    @ConditionalOnMissingBean
     public AuthorizationConfigureProvider connectAuthorizationConfigurerProvider() {
         return new ConnectAuthorizationConfigureProvider(getConnectConfiguration());
     }

@@ -54,7 +54,7 @@ public class SmsProcessor extends AbstractVerificationProcessor<Sms> {
 
         try {
             smsSender.send(sms);
-            responseMessage(webRequest, sms.getExpireIn() + "");
+            responseMessage(webRequest, sms.getExpireIn()/60 + "分钟内有效");
         } catch (VerificationException e) {
             responseErrorMessage(webRequest, e.getMessage(), HttpStatus.BAD_REQUEST.value());
         } catch (Exception e) {

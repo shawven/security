@@ -74,8 +74,6 @@ public class OAuth2AutoConfiguration {
 
 
     @Bean
-    @Order(Integer.MIN_VALUE)
-    @ConditionalOnBean
     public AuthorizationConfigureProvider oauth2AuthorizationConfigureProvider() {
 	    return new Oauth2AuthorizationConfigureProvider();
     }

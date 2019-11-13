@@ -46,8 +46,6 @@ public class VerificationFilter extends OncePerRequestFilter implements Initiali
 
     private ObjectMapper objectMapper;
 
-    private List<String> whiteList;
-
     public VerificationFilter(VerificationProcessorHolder verificationProcessorHolder,
                               List<VerificationConfiguration> configurations) {
         urlMap = new HashMap<>();
@@ -62,16 +60,12 @@ public class VerificationFilter extends OncePerRequestFilter implements Initiali
      */
     @Override
     public void afterPropertiesSet() throws ServletException {
-        whiteList = new ArrayList<>(configurations.size());
         for (VerificationConfiguration configuration : configurations) {
             if (configuration == null) {
                 continue;
             }
-
             String className = configuration.getClass().getSimpleName();
             String prefix = StringUtils.substringBefore(className, "Configuration").toUpperCase();
-            // 把自己放入白名单
-            whiteList.add("/verification/" + prefix.toLowerCase());
             // 将系统中配置的需要校验验证码的URL根据校验的类型放入map
             // 这里如果多个处理器拦截同一个url会被覆盖，只有一个生效，参考具体配置时的顺序
             String urlString = configuration.getUrl();
@@ -87,9 +81,6 @@ public class VerificationFilter extends OncePerRequestFilter implements Initiali
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
-        if (isProcessorUrl(request)) {
-            return;
-        }
         VerificationType type = getVerificationType(request);
         if (type != null) {
             String name = type.getName();
@@ -135,20 +126,6 @@ public class VerificationFilter extends OncePerRequestFilter implements Initiali
             }
         }
         return result;
-    }
-
-    /**
-     * 是否处理器的url
-     * @param request
-     * @return
-     */
-    private boolean isProcessorUrl(HttpServletRequest request) {
-        for (String url : whiteList) {
-            if (pathMatcher.match(url, request.getRequestURI())) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public Map<String, VerificationType> getUrlMap() {

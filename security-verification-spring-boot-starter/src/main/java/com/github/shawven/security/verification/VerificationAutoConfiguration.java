@@ -151,8 +151,6 @@ public class VerificationAutoConfiguration {
     }
 
     @Bean
-    @Order(Integer.MIN_VALUE)
-    @ConditionalOnBean
     public AuthorizationConfigureProvider verificationAuthorizationConfigureProvider() {
         return new VerificationAuthorizationConfigureProvider();
     }

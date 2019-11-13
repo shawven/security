@@ -114,8 +114,6 @@ public class BrowserAutoConfiguration {
      * @return
      */
     @Bean
-    @Order
-    @ConditionalOnMissingBean
     public AuthorizationConfigureProvider browserAuthorizationConfigurerProvider() {
         return new BrowserAuthorizationConfigureProvider(browserConfiguration());
     }
