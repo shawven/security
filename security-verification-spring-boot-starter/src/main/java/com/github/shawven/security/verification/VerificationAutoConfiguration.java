@@ -1,6 +1,6 @@
 package com.github.shawven.security.verification;
 
-import com.github.shawven.security.authorization.AuthenticationFilterProvider;
+import com.github.shawven.security.authorization.AuthenticationFilterProviderConfigurer;
 import com.github.shawven.security.authorization.AuthorizationConfigureProvider;
 import com.github.shawven.security.verification.captcha.CaptchaGenerator;
 import com.github.shawven.security.verification.captcha.CaptchaProcessor;
@@ -12,7 +12,6 @@ import com.github.shawven.security.verification.sms.SmsSender;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.*;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,7 +19,6 @@ import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -72,7 +70,6 @@ public class VerificationAutoConfiguration {
         return new CaptchaGenerator(properties.getCaptcha());
     }
 
-
     @Configuration
     @AutoConfigureOrder(1)
     @ConditionalOnClass(RedisTemplate.class)
@@ -80,7 +77,7 @@ public class VerificationAutoConfiguration {
 
         @Bean
         @ConditionalOnMissingBean
-        public VerificationRepository redisVerificationRepository(RedisTemplate<Object, Object> redisTemplate) {
+        public VerificationRepository verificationRepository(RedisTemplate<Object, Object> redisTemplate) {
             return new RedisVerificationRepository(redisTemplate);
         }
     }
@@ -93,7 +90,7 @@ public class VerificationAutoConfiguration {
     @Bean
     @AutoConfigureOrder(2)
     @ConditionalOnMissingBean
-    public VerificationRepository sessionVerificationRepository() {
+    public VerificationRepository verificationRepository() {
         return new SessionVerificationRepository();
     }
 
@@ -109,8 +106,7 @@ public class VerificationAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public SmsProcessor smsProcessor(VerificationRepository verificationRepository,
-                                         SmsGenerator smsGenerator,
-                                         SmsSender smsSender) {
+                                     SmsGenerator smsGenerator, SmsSender smsSender) {
         return new SmsProcessor(verificationRepository, smsGenerator, smsSender);
     }
 
@@ -124,7 +120,7 @@ public class VerificationAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public CaptchaProcessor imageProcessor(VerificationRepository verificationRepository,
-                                               CaptchaGenerator captchaGenerator) {
+                                           CaptchaGenerator captchaGenerator) {
         return new CaptchaProcessor(verificationRepository, captchaGenerator);
     }
 
@@ -162,12 +158,11 @@ public class VerificationAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean
-    public AuthenticationFilterProvider verificationFilterProvider(VerificationFilter filter) {
+    public AuthenticationFilterProviderConfigurer verificationFilterProviderConfigurer(VerificationFilter filter) {
         if (filterProcessors != null && !filterProcessors.isEmpty()) {
             filterProcessors.forEach(processor -> processor.proceed(filter));
         }
-        return new VerificationFilterProvider(filter);
+        return new VerificationFilterProviderConfigurer(filter);
     }
 
 }

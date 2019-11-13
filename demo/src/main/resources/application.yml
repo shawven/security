@@ -6,7 +6,7 @@ spring:
   #数据库连接配置
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/wqb_jz?useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT%2B8
+    url: jdbc:mysql://127.0.0.1:3306/test?useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT%2B8
     username: root
     password: root
     #连接池及重试配置，防止mysql如果8小时自动断开连接问题
@@ -105,11 +105,9 @@ app:
       # 第三方客户端配置
       clients:
         - clientId: app
-          clientSecret: appsecret
           accessTokenValidateSeconds: 3600
           refreshTokenValidateSeconds: 2592000
         - clientId: test
-          clientSecret: test
       #OAuth2认证服务器的tokenStore的类型，可选值为redis和jwt，值为jwt时发出的token为jwt
       tokenStore: jwt
       #使用jwt时为token签名的秘钥

@@ -1,7 +1,7 @@
 
 package com.github.shawven.security.connect;
 
-import com.github.shawven.security.authorization.AuthenticationFilterProvider;
+import com.github.shawven.security.authorization.AuthenticationFilterProviderConfigurer;
 import com.github.shawven.security.connect.config.ConnectConfiguration;
 import com.github.shawven.security.connect.config.QQConfiguration;
 import com.github.shawven.security.connect.config.WeixinConfiguration;
@@ -9,7 +9,6 @@ import com.github.shawven.security.connect.provider.qq.connet.QQConnectionFactor
 import com.github.shawven.security.connect.provider.weixin.connect.WeixinConnectionFactory;
 import com.github.shawven.security.authorization.AuthorizationConfigureProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -109,8 +108,7 @@ public class ConnectAutoConfiguration extends SocialConfigurerAdapter {
 	 * @return
 	 */
 	@Bean
-    @ConditionalOnMissingBean
-	public AuthenticationFilterProvider socialSecurityConfig() {
+	public AuthenticationFilterProviderConfigurer connectFilterProviderConfigurer() {
         ConnectConfiguration connectConfiguration = getConnectConfiguration();
         // 设置过滤器拦截社交登录的url
 		String filterProcessesUrl = connectConfiguration.getFilterProcessesUrl();
@@ -128,7 +126,7 @@ public class ConnectAutoConfiguration extends SocialConfigurerAdapter {
 		if (connectConfigurerProcessor != null) {
             connectConfigurerProcessor.proceed(configurer);
         }
-		return new ConnectFilterProvider(configurer);
+		return new ConnectFilterProviderConfigurer(configurer);
 	}
 
 

@@ -1,15 +1,11 @@
 
 package com.github.shawven.security.oauth2;
 
-import com.github.shawven.security.authorization.AuthenticationFilterProvider;
+import com.github.shawven.security.authorization.AuthenticationFilterProviderConfigurer;
 import com.github.shawven.security.authorization.AuthorizationConfigurerManager;
-import com.github.shawven.security.oauth2.phone.PhoneFilterProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
@@ -33,17 +29,17 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
 
     private AuthenticationEntryPoint authenticationEntryPoint;
 
-    private List<AuthenticationFilterProvider> providerConfigurers;
+    private List<AuthenticationFilterProviderConfigurer> filterProviderConfigurer;
 
     public ResourceServerConfiguration(AuthorizationConfigurerManager authorizationConfigurerManager,
                                        AccessDeniedHandler appAccessDeniedHandler,
                                        AuthenticationEntryPoint authenticationEntryPoint,
                                        @Autowired(required = false)
-                                       List<AuthenticationFilterProvider> providerConfigurers) {
+                                       List<AuthenticationFilterProviderConfigurer> filterProviderConfigurer) {
         this.authorizationConfigurerManager = authorizationConfigurerManager;
         this.appAccessDeniedHandler = appAccessDeniedHandler;
         this.authenticationEntryPoint = authenticationEntryPoint;
-        this.providerConfigurers = providerConfigurers != null ? providerConfigurers : Collections.emptyList();
+        this.filterProviderConfigurer = filterProviderConfigurer != null ? filterProviderConfigurer : Collections.emptyList();
     }
 
     @Override
@@ -56,7 +52,7 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
-        for (AuthenticationFilterProvider configurer : providerConfigurers) {
+        for (AuthenticationFilterProviderConfigurer configurer : filterProviderConfigurer) {
              http.apply(configurer);
         }
 

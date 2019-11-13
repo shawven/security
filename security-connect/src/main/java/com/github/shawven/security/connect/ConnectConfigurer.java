@@ -24,7 +24,7 @@ public class ConnectConfigurer extends SpringSocialConfigurer {
 		SocialAuthenticationFilter filter = (SocialAuthenticationFilter) super.postProcess(object);
 		filter.setFilterProcessesUrl(filterProcessesUrl);
 		if (connectAuthenticationFilterPostProcessor != null) {
-			connectAuthenticationFilterPostProcessor.proceed(filter);
+			connectAuthenticationFilterPostProcessor.postProcess(filter);
 		}
 		return (T) filter;
 	}

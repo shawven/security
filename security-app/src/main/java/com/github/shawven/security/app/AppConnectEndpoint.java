@@ -1,6 +1,7 @@
 package com.github.shawven.security.app;
 
 import com.github.shawven.security.authorization.ResponseData;
+import com.github.shawven.security.authorization.Responses;
 import com.github.shawven.security.connect.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -43,11 +44,7 @@ public class AppConnectEndpoint extends ConnectInfoExtendable {
         // 构建用户信息
         ConnectUserInfo connectUserInfo = buildSocialUserInfo(connection);
 
-        ResponseData response = new ResponseData()
-                .setCode(HttpStatus.UNAUTHORIZED.value())
-                .setMessage("第一次登录需要绑定账号，轻在30分钟内完成注册绑定")
-                .setData(connectUserInfo);
-
+        ResponseData response = Responses.firstLoginNeedBindAccount().setData(connectUserInfo);
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
 }

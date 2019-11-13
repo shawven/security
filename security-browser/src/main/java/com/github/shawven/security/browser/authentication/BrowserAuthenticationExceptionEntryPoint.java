@@ -5,6 +5,8 @@ import com.github.shawven.security.authorization.MessageConstants;
 import com.github.shawven.security.authorization.ResponseData;
 import com.github.shawven.security.browser.ResponseType;
 import com.github.shawven.security.browser.config.BrowserConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
@@ -21,6 +23,8 @@ import java.io.IOException;
 
 public class BrowserAuthenticationExceptionEntryPoint extends LoginUrlAuthenticationEntryPoint {
 
+    private final Logger logger = LoggerFactory.getLogger(BrowserAuthenticationExceptionEntryPoint.class);
+
     private BrowserConfiguration browserConfiguration;
 
     private ObjectMapper objectMapper;
@@ -35,6 +39,7 @@ public class BrowserAuthenticationExceptionEntryPoint extends LoginUrlAuthentica
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException e)
             throws IOException, ServletException {
+        logger.debug(e.getMessage(), e);
         if (ResponseType.JSON.equals(browserConfiguration.getResponseType())) {
             String errorMessage = MessageConstants.UNAUTHORIZED.equals(e.getMessage())
                     ? MessageConstants.REQUIRE_LOGIN

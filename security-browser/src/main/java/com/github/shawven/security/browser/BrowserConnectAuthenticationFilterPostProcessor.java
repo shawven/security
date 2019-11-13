@@ -30,7 +30,7 @@ public class BrowserConnectAuthenticationFilterPostProcessor implements ConnectA
      * @param socialAuthenticationFilter
      */
     @Override
-    public void proceed(SocialAuthenticationFilter socialAuthenticationFilter) {
+    public void postProcess(SocialAuthenticationFilter socialAuthenticationFilter) {
         socialAuthenticationFilter.setAuthenticationSuccessHandler(browserAuthenticationSuccessHandler);
         socialAuthenticationFilter.setAuthenticationFailureHandler(browserAuthenticationFailureHandler);
     }

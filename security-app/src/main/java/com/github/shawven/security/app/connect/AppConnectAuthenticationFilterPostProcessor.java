@@ -29,7 +29,7 @@ public class AppConnectAuthenticationFilterPostProcessor implements ConnectAuthe
      * @param socialAuthenticationFilter
      */
     @Override
-    public void proceed(SocialAuthenticationFilter socialAuthenticationFilter) {
+    public void postProcess(SocialAuthenticationFilter socialAuthenticationFilter) {
         socialAuthenticationFilter.setAuthenticationSuccessHandler(authenticationSuccessHandler);
         socialAuthenticationFilter.setAuthenticationFailureHandler(authenticationFailureHandler);
     }

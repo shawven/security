@@ -3,7 +3,7 @@ package com.github.shawven.security.app.connect;
 
 import com.github.shawven.security.app.connect.wxmini.WxMiniAuthenticationFilter;
 import com.github.shawven.security.app.connect.wxmini.WxMiniAuthenticationProvider;
-import com.github.shawven.security.authorization.AuthenticationFilterProvider;
+import com.github.shawven.security.authorization.AuthenticationFilterProviderConfigurer;
 import com.github.shawven.security.connect.RedisSingInUtils;
 import com.github.shawven.security.connect.config.ConnectConfiguration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -13,7 +13,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.social.security.SocialUserDetailsService;
 
-public class WxMiniFilterProvider extends AuthenticationFilterProvider {
+public class WxMiniFilterProviderConfigurer extends AuthenticationFilterProviderConfigurer {
 
     private AuthenticationSuccessHandler appAuthenticationSuccessHandler;
 

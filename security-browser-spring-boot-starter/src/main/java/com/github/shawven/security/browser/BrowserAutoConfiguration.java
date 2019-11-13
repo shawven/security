@@ -108,9 +108,6 @@ public class BrowserAutoConfiguration {
         return new BrowserAuthenticationExceptionEntryPoint(browserConfiguration());
     }
 
-
-
-
     /**
      * 授权配置提供器
      *
@@ -142,4 +139,20 @@ public class BrowserAutoConfiguration {
         cfg.setSession(scfg);
         return cfg;
     }
+
+    @Configuration
+    @ConditionalOnClass(ConnectAutoConfiguration.class)
+    public static class ConnectSupportConfiguration {
+
+        @Bean
+        @ConditionalOnMissingBean
+        public ConnectAuthenticationFilterPostProcessor connectAuthenticationFilterPostProcessor(
+                AuthenticationSuccessHandler authenticationSuccessHandler,
+                AuthenticationFailureHandler authenticationFailureHandler) {
+            return new BrowserConnectAuthenticationFilterPostProcessor(authenticationSuccessHandler,
+                    authenticationFailureHandler);
+        }
+
+    }
+
 }

@@ -1,14 +1,10 @@
 
 package com.github.shawven.security.oauth2;
 
-import com.github.shawven.security.authorization.AuthenticationFilterProvider;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,7 +14,6 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.A
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
-import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
 import org.springframework.security.oauth2.provider.token.TokenStore;
@@ -51,8 +46,6 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
 
     private AuthenticationEntryPoint authenticationEntryPoint;
 
-    private ClientDetailsService clientDetailsService;
-
     private JwtAccessTokenConverter jwtAccessTokenConverter;
 
     private TokenEnhancer jwtTokenEnhancer;
@@ -64,13 +57,10 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
                                             PasswordEncoder passwordEncoder,
                                             AccessDeniedHandler accessDeniedHandler,
                                             AuthenticationEntryPoint authenticationEntryPoint,
-                                            ClientDetailsService clientDetailsService,
                                             @Autowired(required = false)
                                             JwtAccessTokenConverter jwtAccessTokenConverter,
                                             @Autowired(required = false)
-                                            TokenEnhancer jwtTokenEnhancer,
-                                            @Autowired(required = false)
-                                            AuthenticationFilterProvider phoneFilterProvider) {
+                                            TokenEnhancer jwtTokenEnhancer) {
         this.userDetailsService = userDetailsService;
         this.authenticationManager = authenticationManager;
         this.tokenStore = tokenStore;
@@ -78,7 +68,6 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
         this.passwordEncoder = passwordEncoder;
         this.accessDeniedHandler = accessDeniedHandler;
         this.authenticationEntryPoint = authenticationEntryPoint;
-        this.clientDetailsService = clientDetailsService;
         this.jwtAccessTokenConverter = jwtAccessTokenConverter;
         this.jwtTokenEnhancer = jwtTokenEnhancer;
     }
@@ -115,11 +104,14 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
 	 */
 	@Override
     public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
+        security.allowFormAuthenticationForClients()
+                .passwordEncoder(passwordEncoder)
+                .addObjectPostProcessor(new ClientCredentialsTokenEndpointFilterPostProcessor(authenticationEntryPoint));
+
 		security.tokenKeyAccess("isAuthenticated()")
                 .checkTokenAccess("isAuthenticated()")
                 .accessDeniedHandler(accessDeniedHandler)
-                .authenticationEntryPoint(authenticationEntryPoint)
-                .addTokenEndpointAuthenticationFilter(clientAuthenticationFilter());
+                .authenticationEntryPoint(authenticationEntryPoint);
 	}
 
 	/**
@@ -145,16 +137,4 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
                     .scopes("all");
         }
 	}
-
-
-    /**
-     * 客户端验证过滤器
-     *
-     * @return
-     */
-    @Bean
-    @ConditionalOnMissingBean
-    public ClientAuthenticationFilter clientAuthenticationFilter() {
-        return new ClientAuthenticationFilter(clientDetailsService, passwordEncoder);
-    }
 }

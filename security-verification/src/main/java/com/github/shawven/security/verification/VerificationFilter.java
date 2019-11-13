@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -25,7 +26,7 @@ import java.util.*;
 
 public class VerificationFilter extends OncePerRequestFilter implements InitializingBean {
 
-    private static final Logger logger = LoggerFactory.getLogger(VerificationFilterProvider.class);
+    private static final Logger logger = LoggerFactory.getLogger(VerificationFilterProviderConfigurer.class);
 
     /**
      * 系统中的校验码处理器
@@ -45,6 +46,8 @@ public class VerificationFilter extends OncePerRequestFilter implements Initiali
 
     private ObjectMapper objectMapper;
 
+    private List<String> whiteList;
+
     public VerificationFilter(VerificationProcessorHolder verificationProcessorHolder,
                               List<VerificationConfiguration> configurations) {
         urlMap = new HashMap<>();
@@ -59,18 +62,22 @@ public class VerificationFilter extends OncePerRequestFilter implements Initiali
      */
     @Override
     public void afterPropertiesSet() throws ServletException {
-        // 将系统中配置的需要校验验证码的URL根据校验的类型放入map
-        // 短信优先级高
+        whiteList = new ArrayList<>(configurations.size());
         for (VerificationConfiguration configuration : configurations) {
             if (configuration == null) {
                 continue;
             }
+
+            String className = configuration.getClass().getSimpleName();
+            String prefix = StringUtils.substringBefore(className, "Configuration").toUpperCase();
+            // 把自己放入白名单
+            whiteList.add("/verification/" + prefix.toLowerCase());
+            // 将系统中配置的需要校验验证码的URL根据校验的类型放入map
+            // 这里如果多个处理器拦截同一个url会被覆盖，只有一个生效，参考具体配置时的顺序
             String urlString = configuration.getUrl();
             if (StringUtils.isNotBlank(urlString)) {
                 String[] urls = StringUtils.split(urlString, ",");
                 for (String url : urls) {
-                    String className = configuration.getClass().getSimpleName();
-                    String prefix = StringUtils.substringBefore(className, "Configuration").toUpperCase();
                     urlMap.put(url, VerificationType.valueOf(prefix));
                 }
             }
@@ -80,13 +87,16 @@ public class VerificationFilter extends OncePerRequestFilter implements Initiali
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
+        if (isProcessorUrl(request)) {
+            return;
+        }
         VerificationType type = getVerificationType(request);
         if (type != null) {
             String name = type.getName();
             logger.info("正在校验" + name + "验证码");
             try {
                 verificationProcessorHolder.get(type)
-                        .verification(new ServletWebRequest(request, response));
+                        .validate(new ServletWebRequest(request, response));
                 logger.info(name + "验证码校验通过");
             } catch (VerificationException e) {
                 String message = e.getMessage();
@@ -100,10 +110,10 @@ public class VerificationFilter extends OncePerRequestFilter implements Initiali
 
     private void responseErrorMessage(HttpServletResponse response, String message) {
         try {
-            ResponseData result = new ResponseData(400, message);
+            ResponseData result = new ResponseData(HttpStatus.BAD_REQUEST.value(), message);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("application/json;charset=UTF-8");
-            response.setStatus(400);
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
             response.getWriter().write(objectMapper.writeValueAsString(result));
         } catch (IOException ex) {
             logger.error(ex.getMessage(), ex);
@@ -125,6 +135,20 @@ public class VerificationFilter extends OncePerRequestFilter implements Initiali
             }
         }
         return result;
+    }
+
+    /**
+     * 是否处理器的url
+     * @param request
+     * @return
+     */
+    private boolean isProcessorUrl(HttpServletRequest request) {
+        for (String url : whiteList) {
+            if (pathMatcher.match(url, request.getRequestURI())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public Map<String, VerificationType> getUrlMap() {

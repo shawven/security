@@ -4,6 +4,7 @@ package com.github.shawven.security.browser.session;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.shawven.security.authorization.MessageConstants;
 import com.github.shawven.security.authorization.ResponseData;
+import com.github.shawven.security.authorization.Responses;
 import com.github.shawven.security.browser.ResponseType;
 import com.github.shawven.security.browser.config.BrowserConfiguration;
 import org.apache.commons.lang3.StringUtils;
@@ -57,11 +58,11 @@ public class AbstractSessionStrategy {
 		}
 
 		if (ResponseType.JSON.equals(browserConfiguration.getResponseType())) {
-            Object result = buildResponseContent(request);
+            ResponseData data = isConcurrency() ? Responses.concurrentLogin() : Responses.requireLogin();
             response.setCharacterEncoding("UTF-8");
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             response.setContentType("application/json;charset=UTF-8");
-            response.getWriter().write(objectMapper.writeValueAsString(result));
+            response.getWriter().write(objectMapper.writeValueAsString(data));
         } else {
             String sourceUrl = request.getRequestURI();
             String targetUrl;
@@ -74,17 +75,6 @@ public class AbstractSessionStrategy {
             }
             redirectStrategy.sendRedirect(request, response, targetUrl);
         }
-	}
-
-	/**
-	 * @param request
-	 * @return
-	 */
-	protected Object buildResponseContent(HttpServletRequest request) {
-		String message = isConcurrency() ? "当前用户已在其地方登陆" : MessageConstants.REQUIRE_LOGIN;
-		return new ResponseData()
-                .setCode(HttpStatus.UNAUTHORIZED.value())
-                .setMessage(message);
 	}
 
 	/**

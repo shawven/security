@@ -2,6 +2,7 @@
 package com.github.shawven.security.browser.authentication;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.shawven.security.authorization.Responses;
 import com.github.shawven.security.browser.ResponseType;
 import com.github.shawven.security.browser.config.BrowserConfiguration;
 import com.github.shawven.security.authorization.ResponseData;
@@ -35,8 +36,9 @@ public class BrowserLogoutSuccessHandler implements LogoutSuccessHandler {
 	public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
 			throws IOException {
         if (ResponseType.JSON.equals(configuration.getResponseType())) {
+            response.setCharacterEncoding("UTF-8");
             response.setContentType("application/json;charset=UTF-8");
-            response.getWriter().write(objectMapper.writeValueAsString(new ResponseData("退出成功")));
+            response.getWriter().write(objectMapper.writeValueAsString(Responses.loginOutSuccess()));
         } else {
             String redirectUrl = configuration.getSignOutSuccessUrl();
             if (StringUtils.isBlank(redirectUrl)) {

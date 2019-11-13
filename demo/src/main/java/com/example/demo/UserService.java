@@ -8,6 +8,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * @author Shoven
@@ -15,17 +18,29 @@ import java.util.Collections;
  */
 @Service("userDetailsService")
 public class UserService implements UserDetailsService, PhoneUserDetailsService {
+
+    private Map<String, User> users = new ConcurrentHashMap<>();
+
+    {
+        User user = new User("18684844593", "$2a$10$7K/PlNSqdjSSZ7/DxIVrNOqogSra6hzof7MAs9zeUeE517qahqIgy", Collections.emptyList());
+        users.put("18684844593", user);
+    }
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-       return build();
+       return build(username);
     }
 
     @Override
     public UserDetails loadUserByPhone(String phone) throws UsernameNotFoundException {
-        return build();
+        return build(phone);
     }
 
-    public UserDetails build() {
-        return new User("18684844593", "$2a$10$7K/PlNSqdjSSZ7/DxIVrNOqogSra6hzof7MAs9zeUeE517qahqIgy",  Collections.emptyList());
+    public UserDetails build(String username) {
+        User user = users.get(username);
+        if (user == null) {
+            throw new UsernameNotFoundException("用户名或密码错误");
+        }
+        return user;
     }
 }

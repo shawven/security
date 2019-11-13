@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.shawven.security.authorization.ResponseData;
 import com.github.shawven.security.browser.ResponseType;
 import com.github.shawven.security.browser.config.BrowserConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
@@ -22,6 +24,8 @@ import java.io.IOException;
  */
 public class BrowserAuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
+    private final Logger logger = LoggerFactory.getLogger(BrowserAuthenticationFailureHandler.class);
+
 	private ObjectMapper objectMapper;
 
 	private BrowserConfiguration browserConfiguration;
@@ -38,6 +42,7 @@ public class BrowserAuthenticationFailureHandler extends SimpleUrlAuthentication
     @Override
 	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
 			AuthenticationException exception) throws IOException, ServletException {
+        logger.debug(exception.getMessage(), exception);
         if (browserLoginFailureHandler != null) {
             browserLoginFailureHandler.onAuthenticationFailure(request, response, exception);
         }

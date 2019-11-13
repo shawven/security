@@ -13,7 +13,7 @@ public class OAuth2ClientProperties {
 	/**
 	 * 第三方应用appSecret
 	 */
-	private String clientSecret;
+	private String clientSecret = "";
 
 	/**
 	 *  accessToken的有效时间

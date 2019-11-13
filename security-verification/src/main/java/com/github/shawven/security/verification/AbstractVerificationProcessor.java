@@ -39,7 +39,7 @@ public abstract class AbstractVerificationProcessor<T extends Verification> impl
     }
 
     @Override
-    public void verification(ServletWebRequest request) {
+    public void validate(ServletWebRequest request) {
         VerificationType codeType = getVerificationType(request);
         Verification verificationInSession = verificationRepository.get(request, codeType);
 

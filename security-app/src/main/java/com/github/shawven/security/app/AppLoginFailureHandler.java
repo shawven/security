@@ -1,4 +1,4 @@
-package com.github.shawven.security.app.authentication;
+package com.github.shawven.security.app;
 
 import org.springframework.security.core.AuthenticationException;
 

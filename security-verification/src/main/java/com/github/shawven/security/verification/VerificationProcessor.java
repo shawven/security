@@ -22,6 +22,6 @@ public interface VerificationProcessor {
 	 * @param servletWebRequest
 	 * @throws Exception
 	 */
-	void verification(ServletWebRequest servletWebRequest);
+	void validate(ServletWebRequest servletWebRequest);
 
 }

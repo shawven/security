@@ -20,7 +20,7 @@ public class CaptchaProcessor extends AbstractVerificationProcessor<Captcha> {
     private static final Logger logger = LoggerFactory.getLogger(CaptchaProcessor.class);
 
     public CaptchaProcessor(VerificationRepository verificationRepository,
-                            VerificationGenerator verificationGenerator) {
+                            VerificationGenerator<Captcha> verificationGenerator) {
         super(verificationRepository, verificationGenerator);
     }
 

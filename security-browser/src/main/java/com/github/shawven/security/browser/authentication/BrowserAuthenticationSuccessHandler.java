@@ -3,6 +3,7 @@ package com.github.shawven.security.browser.authentication;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.shawven.security.authorization.ResponseData;
+import com.github.shawven.security.authorization.Responses;
 import com.github.shawven.security.browser.ResponseType;
 import com.github.shawven.security.browser.config.BrowserConfiguration;
 import org.apache.commons.lang3.StringUtils;
@@ -50,9 +51,8 @@ public class BrowserAuthenticationSuccessHandler extends SavedRequestAwareAuthen
         }
 
 		if (ResponseType.JSON.equals(browserConfiguration.getResponseType())) {
-            ResponseData result = new ResponseData("登录成功");
+            ResponseData result = Responses.loginSuccess();
 			response.setContentType("application/json;charset=UTF-8");
-			response.setStatus(HttpStatus.OK.value());
             response.getWriter().write(objectMapper.writeValueAsString(result));
 		} else {
 			// 如果设置了security.browser.singInSuccessUrl，总是跳到设置的地址上

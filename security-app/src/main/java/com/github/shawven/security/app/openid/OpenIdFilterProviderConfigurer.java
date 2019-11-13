@@ -1,9 +1,7 @@
 
 package com.github.shawven.security.app.openid;
 
-import com.github.shawven.security.authorization.AuthenticationFilterProvider;
-import com.github.shawven.security.app.openid.OpenIdAuthenticationFilter;
-import com.github.shawven.security.app.openid.OpenIdAuthenticationProvider;
+import com.github.shawven.security.authorization.AuthenticationFilterProviderConfigurer;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -12,7 +10,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.social.connect.UsersConnectionRepository;
 import org.springframework.social.security.SocialUserDetailsService;
 
-public class OpenIdFilterProvider extends AuthenticationFilterProvider {
+public class OpenIdFilterProviderConfigurer extends AuthenticationFilterProviderConfigurer {
 
 	private AuthenticationSuccessHandler appAuthenticationSuccessHandler;
 

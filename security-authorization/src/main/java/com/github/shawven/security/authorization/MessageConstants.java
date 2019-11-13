@@ -11,4 +11,5 @@ public class MessageConstants {
     public static final String UNAUTHORIZED = "Full authentication is required to access this resource";
 
     public static final String REQUIRE_LOGIN = "Require login";
+
 }

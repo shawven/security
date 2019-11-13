@@ -2,8 +2,11 @@ package com.github.shawven.security.browser.authentication;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.shawven.security.authorization.ResponseData;
+import com.github.shawven.security.authorization.Responses;
 import com.github.shawven.security.browser.ResponseType;
 import com.github.shawven.security.browser.config.BrowserConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandlerImpl;
@@ -22,6 +25,8 @@ import java.io.IOException;
  */
 public class BrowserAccessDeniedHandler extends AccessDeniedHandlerImpl {
 
+    private final Logger logger = LoggerFactory.getLogger(BrowserAccessDeniedHandler.class);
+
     private BrowserConfiguration browserConfiguration;
 
     private ObjectMapper objectMapper;
@@ -34,16 +39,12 @@ public class BrowserAccessDeniedHandler extends AccessDeniedHandlerImpl {
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException e)
             throws IOException, ServletException {
+        logger.debug(e.getMessage(), e);
         if (ResponseType.JSON.equals(browserConfiguration.getResponseType())) {
-            int status = HttpStatus.FORBIDDEN.value();
-            ResponseData rsp = new ResponseData()
-                    .setCode(status)
-                    .setMessage(HttpStatus.FORBIDDEN.getReasonPhrase());
-
             response.setCharacterEncoding("UTF-8");
-            response.setStatus(status);
+            response.setStatus(HttpStatus.FORBIDDEN.value());
             response.setContentType("application/json;charset=UTF-8");
-            response.getWriter().write(objectMapper.writeValueAsString(rsp));
+            response.getWriter().write(objectMapper.writeValueAsString(Responses.accessDenied()));
         } else {
             super.handle(request, response, e);
         }

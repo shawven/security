@@ -1,9 +1,10 @@
-package com.github.shawven.security.app;
+package com.github.shawven.security.app.oauth2;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.shawven.security.app.authentication.AppLoginFailureHandler;
-import com.github.shawven.security.app.authentication.AppLoginSuccessHandler;
+import com.github.shawven.security.app.AppLoginFailureHandler;
+import com.github.shawven.security.app.AppLoginSuccessHandler;
 import com.github.shawven.security.authorization.ResponseData;
+import com.github.shawven.security.authorization.Responses;
 import com.github.shawven.security.oauth2.AdaptedAuthenticationHandler;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -19,15 +20,15 @@ import java.io.IOException;
  * @author Shoven
  * @date 2019-11-12
  */
-public class AppAdaptorOAuth2AuthticationHandler implements AdaptedAuthenticationHandler {
+public class AppOAuth2AuthenticationHandler implements AdaptedAuthenticationHandler {
 
     private ObjectMapper objectMapper;
 
     private AppLoginSuccessHandler loginSuccessHandler;
     private AppLoginFailureHandler loginFailureHandler;
 
-    public AppAdaptorOAuth2AuthticationHandler(AppLoginSuccessHandler loginSuccessHandler,
-                                               AppLoginFailureHandler loginFailureHandler) {
+    public AppOAuth2AuthenticationHandler(AppLoginSuccessHandler loginSuccessHandler,
+                                          AppLoginFailureHandler loginFailureHandler) {
         this.objectMapper =  new ObjectMapper();
         this.loginSuccessHandler = loginSuccessHandler;
         this.loginFailureHandler = loginFailureHandler;
@@ -36,16 +37,13 @@ public class AppAdaptorOAuth2AuthticationHandler implements AdaptedAuthenticatio
     @Override
     public void onSuccess(HttpServletRequest request, HttpServletResponse response,
                           Authentication authentication, OAuth2AccessToken token) throws IOException, ServletException {
-        String message = "refresh_token".equals(request.getParameter("grant_type"))
-                ? "刷新token成功"
-                : "获取token成功";
-        ResponseData result = new ResponseData()
-                .setMessage(message)
-                .setData(token);
+        boolean isRefresh = "refresh_token".equals(request.getParameter("grant_type"));
+        ResponseData data = isRefresh ? Responses.refreshTokenSuccess() : Responses.getTokenSuccess();
+        data.setData(token);
         if (loginSuccessHandler != null) {
             loginSuccessHandler.onAuthenticationSuccess(request, response, authentication);
         }
-        output(response, result);
+        output(response, data);
     };
 
     @Override

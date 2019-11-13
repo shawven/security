@@ -3,6 +3,7 @@ package com.github.shawven.security.browser;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.shawven.security.authorization.Responses;
 import com.github.shawven.security.browser.config.BrowserConfiguration;
 import com.github.shawven.security.connect.ConnectAutoConfiguration;
 import com.github.shawven.security.connect.ConnectConstants;
@@ -55,14 +56,10 @@ public class BrowserConnectEndpoint extends ConnectInfoExtendable {
         ConnectUserInfo connectUserInfo = buildSocialUserInfo(connection);
 
         if (ResponseType.JSON.equals(browserConfiguration.getResponseType())) {
-            ResponseData result = new ResponseData()
-                    .setCode(HttpStatus.UNAUTHORIZED.value())
-                    .setMessage("第一次登录需要绑定账号")
-                    .setData(connectUserInfo);
-
+            ResponseData result = Responses.firstLoginNeedBindAccount().setData(connectUserInfo);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("application/json;charset=UTF-8");
-            response.setStatus(401);
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
             try {
                 response.getWriter().write(new ObjectMapper().writeValueAsString(result));
             } catch (IOException e) {

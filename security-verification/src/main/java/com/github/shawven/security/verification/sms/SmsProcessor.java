@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 /**
  * 短信验证码处理器
  */
-public class SmsProcessor extends AbstractVerificationProcessor<Verification> {
+public class SmsProcessor extends AbstractVerificationProcessor<Sms> {
 
     private static final Logger logger = LoggerFactory.getLogger(SmsProcessor.class);
 
@@ -33,7 +33,7 @@ public class SmsProcessor extends AbstractVerificationProcessor<Verification> {
     private ObjectMapper objectMapper ;
 
     public SmsProcessor(VerificationRepository verificationRepository,
-                        VerificationGenerator verificationGenerator,
+                        VerificationGenerator<Sms> verificationGenerator,
                         SmsSender smsSender) {
         super(verificationRepository, verificationGenerator);
         this.objectMapper = new ObjectMapper();
@@ -41,12 +41,11 @@ public class SmsProcessor extends AbstractVerificationProcessor<Verification> {
     }
 
     @Override
-	protected void send(ServletWebRequest webRequest, Verification verification) {
+	protected void send(ServletWebRequest webRequest, Sms sms) {
         HttpServletRequest request = webRequest.getRequest();
-        Sms sms = (Sms) verification;
         String phone = getPhone(request);
         if (!phoneMatcher.matcher(phone).matches()) {
-            responseErrorMessage(webRequest,"手机号格式不正确", HttpStatus.BAD_REQUEST.value());
+            responseErrorMessage(webRequest, "手机号格式不正确", HttpStatus.BAD_REQUEST.value());
             return;
         }
         sms.setPhone(phone);
@@ -55,7 +54,7 @@ public class SmsProcessor extends AbstractVerificationProcessor<Verification> {
 
         try {
             smsSender.send(sms);
-            responseMessage(webRequest, verification.getExpireIn() + "");
+            responseMessage(webRequest, sms.getExpireIn() + "");
         } catch (VerificationException e) {
             responseErrorMessage(webRequest, e.getMessage(), HttpStatus.BAD_REQUEST.value());
         } catch (Exception e) {
@@ -69,7 +68,6 @@ public class SmsProcessor extends AbstractVerificationProcessor<Verification> {
             HttpServletResponse response = request.getResponse();
             response.setCharacterEncoding("UTF-8");
             response.setContentType("application/json;charset=UTF-8");
-            response.setStatus(200);
             response.getWriter().write(objectMapper.writeValueAsString(result));
         } catch (IOException ex) {
             logger.error(ex.getMessage(), ex);

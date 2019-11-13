@@ -1,17 +1,17 @@
 package com.github.shawven.security.connect;
 
-import com.github.shawven.security.authorization.AuthenticationFilterProvider;
+import com.github.shawven.security.authorization.AuthenticationFilterProviderConfigurer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 
 /**
  * @author Shoven
  * @date 2019-11-11
  */
-public class ConnectFilterProvider extends AuthenticationFilterProvider {
+public class ConnectFilterProviderConfigurer extends AuthenticationFilterProviderConfigurer {
 
     private ConnectConfigurer connectConfigurer;
 
-    public ConnectFilterProvider(ConnectConfigurer connectConfigurer) {
+    public ConnectFilterProviderConfigurer(ConnectConfigurer connectConfigurer) {
         this.connectConfigurer = connectConfigurer;
     }
 

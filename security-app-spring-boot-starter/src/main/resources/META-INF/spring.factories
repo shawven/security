@@ -1,8 +1,5 @@
 # Auto Configure
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
 com.github.shawven.security.app.autoconfigure.AppAutoConfiguration,\
-com.github.shawven.security.app.autoconfigure.AppWebSecurityConfiguration,\
-com.github.shawven.security.app.autoconfigure.ConnectSupportConfiguration,\
-com.github.shawven.security.app.autoconfigure.OAuth2SupportConfiguration,\
 com.github.shawven.security.app.AppOAuth2Endpoint,\
 com.github.shawven.security.app.AppConnectEndpoint
