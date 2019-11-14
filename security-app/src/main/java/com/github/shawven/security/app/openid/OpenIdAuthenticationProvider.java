@@ -53,12 +53,6 @@ public class OpenIdAuthenticationProvider implements AuthenticationProvider {
 		return authenticationResult;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.springframework.security.authentication.AuthenticationProvider#
-	 * supports(java.lang.Class)
-	 */
 	@Override
 	public boolean supports(Class<?> authentication) {
 		return OpenIdAuthenticationToken.class.isAssignableFrom(authentication);

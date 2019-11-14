@@ -6,7 +6,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.context.request.ServletWebRequest;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 
@@ -25,12 +24,13 @@ public class RedisVerificationRepository implements VerificationRepository {
     }
 
     @Override
-	public void save(ServletWebRequest request, Verification verification, VerificationType type) {
-        redisTemplate.opsForValue().set(getKey(request, type), verification, verification.getExpireIn(), TimeUnit.SECONDS);
+	public void save(HttpServletRequest request, Verification verification, VerificationType type) {
+        String key = getKey(request, type);
+        redisTemplate.opsForValue().set(key, verification, verification.getExpireIn(), TimeUnit.SECONDS);
 	}
 
 	@Override
-	public Verification get(ServletWebRequest request, VerificationType type) {
+	public Verification get(HttpServletRequest request, VerificationType type) {
 		Object value = redisTemplate.opsForValue().get(getKey(request, type));
 		if (value == null) {
 			return null;
@@ -39,7 +39,7 @@ public class RedisVerificationRepository implements VerificationRepository {
 	}
 
 	@Override
-	public void remove(ServletWebRequest request, VerificationType type) {
+	public void remove(HttpServletRequest request, VerificationType type) {
 		redisTemplate.delete(getKey(request, type));
 	}
 
@@ -49,8 +49,8 @@ public class RedisVerificationRepository implements VerificationRepository {
 	 * @return
 	 */
 	@Override
-    public String getKey(ServletWebRequest request, VerificationType type) {
-        String uniqueId = getUniqueId(request.getRequest(), type);
+    public String getKey(HttpServletRequest request, VerificationType type) {
+        String uniqueId = getUniqueId(request, type);
         return "code:" + type.getLabel() + ":" + uniqueId;
 	}
 

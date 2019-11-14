@@ -1,26 +1,43 @@
 
 package com.github.shawven.security.verification.sms;
 
-import com.github.shawven.security.verification.config.SmsConfiguration;
 import com.github.shawven.security.verification.VerificationGenerator;
+import com.github.shawven.security.verification.VerificationRequest;
+import com.github.shawven.security.verification.config.SmsConfiguration;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.springframework.web.context.request.ServletWebRequest;
+
+import java.text.MessageFormat;
 
 /**
  * 短信验证码生成器
  */
 public class SmsGenerator implements VerificationGenerator<Sms> {
 
+    private static final String DEFAULT_TEMPLATE = "短信验证码【{0}】，{1,number}分钟内输入有效";
+
 	private SmsConfiguration configuration;
+
 
     public SmsGenerator(SmsConfiguration configuration) {
         this.configuration = configuration;
     }
 
     @Override
-	public Sms generate(ServletWebRequest request) {
-		String code = RandomStringUtils.randomNumeric(configuration.getLength());
-		return new Sms(code, configuration.getExpireIn());
-	}
+    public Sms generate(VerificationRequest<Sms> request) {
+        SmsRequest smsReq = (SmsRequest) request;
+        int length = smsReq.getLength() != null ? smsReq.getLength() : configuration.getLength();
+        int expireIn = smsReq.getExpireIn() != null ? smsReq.getExpireIn() :  configuration.getExpireIn();
 
+        String template = smsReq.getMessageTemplate() != null
+                ? smsReq.getMessageTemplate() : DEFAULT_TEMPLATE;
+        String code = RandomStringUtils.randomNumeric(length);
+        String message = toMessage(template, code, expireIn);
+
+        return new Sms(smsReq.getPhone(), message, code, expireIn);
+    }
+
+    private String toMessage(String template, String code, int expireIn) {
+        int seconds = expireIn / 60;
+        return MessageFormat.format(template, code, seconds);
+    }
 }

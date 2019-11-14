@@ -16,12 +16,16 @@ public class Sms extends Verification {
 
     private String message;
 
-    public Sms(String code, int expireIn) {
+    public Sms(String phone, String message, String code, int expireIn) {
         super(code, expireIn);
+        this.phone = phone;
+        this.message = message;
     }
 
-    public Sms(String code, LocalDateTime expireTime) {
+    public Sms(String phone, String message, String code, LocalDateTime expireTime) {
         super(code, expireTime);
+        this.phone = phone;
+        this.message = message;
     }
 
     public String getPhone() {

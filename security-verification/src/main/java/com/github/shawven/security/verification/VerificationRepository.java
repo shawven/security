@@ -3,6 +3,8 @@ package com.github.shawven.security.verification;
 
 import org.springframework.web.context.request.ServletWebRequest;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * 校验码存取器
  */
@@ -10,33 +12,32 @@ public interface VerificationRepository {
 
 	/**
 	 * 保存验证码
-     *
-	 * @param request
-	 * @param verification
-	 * @param verificationType
-	 */
-	void save(ServletWebRequest request, Verification verification, VerificationType verificationType);
+     *  @param request
+     * @param verification
+     * @param type
+     */
+	void save(HttpServletRequest request, Verification verification, VerificationType type);
 
 	/**
 	 * 获取验证码
      *
 	 * @param request
-	 * @param verificationType
+	 * @param type
 	 * @return
 	 */
-    Verification get(ServletWebRequest request, VerificationType verificationType);
+    Verification get(HttpServletRequest request, VerificationType type);
 
 	/**
 	 * 移除验证码
-	 * @param request
-	 * @param codeType
-	 */
-	void remove(ServletWebRequest request, VerificationType codeType);
+     * @param request
+     * @param type
+     */
+	void remove(HttpServletRequest request, VerificationType type);
 
     /**
      * 获取持久化的key
      *
      * @return
      */
-	String getKey(ServletWebRequest request, VerificationType verificationType);
+	String getKey(HttpServletRequest request, VerificationType type);
 }

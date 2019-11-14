@@ -4,9 +4,9 @@ package com.github.shawven.security.verification.captcha;
 import com.github.shawven.security.verification.AbstractVerificationProcessor;
 import com.github.shawven.security.verification.VerificationGenerator;
 import com.github.shawven.security.verification.VerificationRepository;
+import com.github.shawven.security.verification.VerificationRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.context.request.ServletWebRequest;
 
 import javax.imageio.ImageIO;
 import javax.servlet.ServletOutputStream;
@@ -25,17 +25,17 @@ public class CaptchaProcessor extends AbstractVerificationProcessor<Captcha> {
     }
 
     /**
-	 * 发送图形验证码，将其写到响应中
-	 */
-	@Override
-	protected void send(ServletWebRequest request, Captcha captcha) {
+     * 发送图形验证码，将其写到响应中
+     *  @param captchaRequest
+     * @param captcha
+     */
+    @Override
+    protected void send(VerificationRequest<Captcha> captchaRequest, Captcha captcha) {
         try {
-            ServletOutputStream outputStream = request.getResponse().getOutputStream();
+            ServletOutputStream outputStream = captchaRequest.getResponse().getOutputStream();
             ImageIO.write(captcha.getImage(), "JPEG", outputStream);
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
         }
     }
-
-
 }

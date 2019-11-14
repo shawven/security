@@ -1,7 +1,6 @@
 
 package com.github.shawven.security.verification;
 
-
 /**
  *
  * 校验码类型

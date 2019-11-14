@@ -1,7 +1,7 @@
 
 package com.github.shawven.security.verification;
 
-import org.springframework.web.context.request.ServletWebRequest;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * 校验码生成器
@@ -14,6 +14,6 @@ public interface VerificationGenerator<T extends Verification> {
 	 * @param request
 	 * @return
 	 */
-    T generate(ServletWebRequest request);
+    T generate(VerificationRequest<T> request);
 
 }

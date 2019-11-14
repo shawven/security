@@ -4,7 +4,9 @@ package com.github.shawven.security.verification;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.context.request.ServletWebRequest;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Objects;
 
 
 /**
@@ -12,7 +14,7 @@ import org.springframework.web.context.request.ServletWebRequest;
  *
  * @author Shoven
  */
-public abstract class AbstractVerificationProcessor<T extends Verification> implements VerificationProcessor {
+public abstract class AbstractVerificationProcessor<T extends Verification> implements VerificationProcessor<T> {
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractVerificationProcessor.class);
 
@@ -28,18 +30,20 @@ public abstract class AbstractVerificationProcessor<T extends Verification> impl
     }
 
     @Override
-	public void create(ServletWebRequest request) {
+	public void create(VerificationRequest<T> verificationRequest) {
+        Objects.requireNonNull(verificationRequest);
         try {
-            T verification = verificationGenerator.generate(request);
+            HttpServletRequest request = verificationRequest.getRequest();
+            T verification = verificationGenerator.generate(verificationRequest);
             save(request, verification);
-            send(request, verification);
+            send(verificationRequest, verification);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
     }
 
     @Override
-    public void validate(ServletWebRequest request) {
+    public void validate(HttpServletRequest request) {
         VerificationType codeType = getVerificationType(request);
         Verification verificationInSession = verificationRepository.get(request, codeType);
 
@@ -62,11 +66,10 @@ public abstract class AbstractVerificationProcessor<T extends Verification> impl
 
 	/**
 	 * 保存校验码
-	 *
-	 * @param request
+	 *  @param request
 	 * @param verification
-	 */
-	private void save(ServletWebRequest request, T verification) {
+     */
+	private void save(HttpServletRequest request, T verification) {
 		Verification simpleVerification = new Verification(verification.getCode(), verification.getExpireTime());
 		verificationRepository.save(request, simpleVerification, getVerificationType(request));
 	}
@@ -74,11 +77,11 @@ public abstract class AbstractVerificationProcessor<T extends Verification> impl
 	/**
 	 * 发送校验码，由子类实现
 	 *
-	 * @param request
+	 * @param verificationRequest
 	 * @param verification
 	 * @throws Exception
 	 */
-	protected abstract void send(ServletWebRequest request, T verification);
+	protected abstract void send(VerificationRequest<T> verificationRequest, T verification) throws Exception;
 
 	/**
 	 * 根据请求的url获取校验码的类型
@@ -86,7 +89,7 @@ public abstract class AbstractVerificationProcessor<T extends Verification> impl
 	 * @param request
 	 * @return
 	 */
-	public VerificationType getVerificationType(ServletWebRequest request) {
+	public VerificationType getVerificationType(HttpServletRequest request) {
 		String type = StringUtils.substringBefore(getClass().getSimpleName(), "Processor");
 		return VerificationType.valueOf(type.toUpperCase());
 	}

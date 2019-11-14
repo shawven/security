@@ -124,17 +124,6 @@ public class VerificationAutoConfiguration {
         return new CaptchaProcessor(verificationRepository, captchaGenerator);
     }
 
-    /**
-     * 验证码处理器持有者
-     *
-     * @param processors
-     * @return
-     */
-    @Bean
-    @ConditionalOnMissingBean
-    public VerificationProcessorHolder verificationProcessorHolder(List<VerificationProcessor> processors) {
-        return new VerificationProcessorHolder(processors);
-    }
 
     /**
      * 验证码校验过滤器
@@ -143,11 +132,11 @@ public class VerificationAutoConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean
-    public VerificationFilter verificationFilter(VerificationProcessorHolder verificationProcessorHolder) {
+    public VerificationFilter verificationFilter(List<VerificationProcessor> processors) {
         ArrayList<VerificationConfiguration> configurations = new ArrayList<>();
         configurations.add(properties.getCaptcha());
         configurations.add(properties.getSms());
-        return new VerificationFilter(verificationProcessorHolder, configurations);
+        return new VerificationFilter(processors, configurations);
     }
 
     @Bean

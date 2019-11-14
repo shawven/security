@@ -14,6 +14,26 @@
     <name>security-browser-spring-boot-starter</name>
     <description>Demo project for Spring Boot</description>
 
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>shoven</name>
+            <email>441653192@qq.com</email>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git@github.com:shawven/security.git</connection>
+        <developerConnection>scm:git:git@github.com:shawven/security.git</developerConnection>
+        <url>https://github.com/shawven/security</url>
+    </scm>
+
     <dependencies>
         <dependency>
             <groupId>com.github.shawven</groupId>

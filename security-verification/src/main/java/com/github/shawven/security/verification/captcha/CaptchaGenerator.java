@@ -1,12 +1,13 @@
 
 package com.github.shawven.security.verification.captcha;
 
+import com.github.shawven.security.verification.VerificationRequest;
 import com.github.shawven.security.verification.config.CaptchaConfiguration;
 import com.github.shawven.security.verification.VerificationGenerator;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.web.bind.ServletRequestUtils;
-import org.springframework.web.context.request.ServletWebRequest;
 
+import javax.servlet.http.HttpServletRequest;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Random;
@@ -28,9 +29,12 @@ public class CaptchaGenerator implements VerificationGenerator<Captcha> {
     }
 
     @Override
-	public Captcha generate(ServletWebRequest request) {
-		int width = ServletRequestUtils.getIntParameter(request.getRequest(), "width", configuration.getWidth());
-		int height = ServletRequestUtils.getIntParameter(request.getRequest(), "height", configuration.getHeight());
+	public Captcha generate(VerificationRequest<Captcha> request) {
+        CaptchaRequest cReq = (CaptchaRequest) request;
+        int length = cReq.getLength() != null ? cReq.getLength() : configuration.getLength();
+        int width = cReq.getWidth() != null ? cReq.getWidth() : configuration.getWidth();
+		int height = cReq.getHeight() != null ? cReq.getHeight():  configuration.getHeight();
+		int expireIn = cReq.getExpireIn() != null ? cReq.getExpireIn():  configuration.getExpireIn();
 
 		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
@@ -51,13 +55,12 @@ public class CaptchaGenerator implements VerificationGenerator<Captcha> {
 			g.drawLine(x, y, xl, yl);
 		}
 
-        String randomString = getRandomString();
-        int len = randomString.length();
+        String randomString = getRandomString(length);
 		int unitWidth = 13;
-		int x = width / 2 - (unitWidth * len) / 2;
+		int x = width / 2 - (unitWidth * length) / 2;
 		int y = (height + fontSize / 2) / 2;
 
-		for (int i = 0; i < len; i++) {
+		for (int i = 0; i < length; i++) {
 			g.setColor(new Color(20 + random.nextInt(110), 20 + random.nextInt(110), 20 + random.nextInt(110)));
             x += i == 0 ? 0 : unitWidth;
 			g.drawString(String.valueOf(randomString.charAt(i)), x, y);
@@ -65,7 +68,7 @@ public class CaptchaGenerator implements VerificationGenerator<Captcha> {
 
 		g.dispose();
 
-		return new Captcha(image, randomString, configuration.getExpireIn());
+		return new Captcha(image, randomString, expireIn);
 	}
 
 	/**
@@ -89,10 +92,10 @@ public class CaptchaGenerator implements VerificationGenerator<Captcha> {
 		return new Color(r, g, b);
 	}
 
-	private String getRandomString() {
+	private String getRandomString(int length) {
         String str;
         do {
-            str = RandomStringUtils.randomAlphanumeric(configuration.getLength());
+            str = RandomStringUtils.randomAlphanumeric(length);
             // 排除I l 1 这种模糊不清的
         } while (str.contains("I") || str.contains("l") || str.contains("1"));
         return str;

@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -37,7 +38,7 @@ public class UserService implements UserDetailsService, PhoneUserDetailsService 
     }
 
     public UserDetails build(String username) {
-        User user = users.get(username);
+        User user = new HashMap<>(users).get(username);
         if (user == null) {
             throw new UsernameNotFoundException("用户名或密码错误");
         }

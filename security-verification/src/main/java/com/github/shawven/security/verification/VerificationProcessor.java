@@ -1,27 +1,27 @@
 
 package com.github.shawven.security.verification;
 
-import org.springframework.web.context.request.ServletWebRequest;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * 校验码处理器，封装不同校验码的处理逻辑
  */
-public interface VerificationProcessor {
+public interface VerificationProcessor<T extends Verification> {
 
 	/**
 	 * 创建校验码
 	 *
-	 * @param request
+	 * @param data
 	 * @throws Exception
 	 */
-	void create(ServletWebRequest request);
+	void create(VerificationRequest<T> data);
 
 	/**
 	 * 校验验证码
 	 *
-	 * @param servletWebRequest
+	 * @param request
 	 * @throws Exception
 	 */
-	void validate(ServletWebRequest servletWebRequest);
+	void validate(HttpServletRequest request);
 
 }
