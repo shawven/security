@@ -23,9 +23,8 @@ public class ConnectAuthorizationConfigureProvider implements AuthorizationConfi
     @Override
     public boolean config(ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry config) {
         String[] urls = {
-                ConnectConstants.DEFAULT_OPENID_TOKEN_PROCESSING_URL,
                 ConnectConstants.DEFAULT_CURRENT_USER_INFO_URL,
-                configuration.getFilterProcessesUrl() + "/*",
+                configuration.getFilterProcessesUrl() + "/**",
         };
         config.antMatchers(Arrays.stream(urls).filter(StringUtils::isNotBlank).toArray(String[]::new)).permitAll();
         return false;

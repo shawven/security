@@ -20,8 +20,6 @@ public class RedisVerificationRepository implements VerificationRepository {
 
 	private RedisTemplate<Object, Object> redisTemplate;
 
-    private final static String PARAM_NAME = VerificationConstants.DEFAULT_PHONE_PARAMETER_NAME;
-
     public RedisVerificationRepository(RedisTemplate<Object, Object> redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
@@ -52,23 +50,32 @@ public class RedisVerificationRepository implements VerificationRepository {
 	 */
 	@Override
     public String getKey(ServletWebRequest request, VerificationType type) {
-        String uniqueId = getUniqueId(request.getRequest());
+        String uniqueId = getUniqueId(request.getRequest(), type);
         return "code:" + type.getLabel() + ":" + uniqueId;
 	}
 
-    private String getUniqueId(HttpServletRequest request) {
+    private String getUniqueId(HttpServletRequest request, VerificationType type) {
+        String uniqueId = null;
 	    // 先尝试获取手机号
-        String mobile = request.getParameter(PARAM_NAME);
-        String uniqueId = Objects.isNull(mobile) ? String.valueOf(request.getAttribute(PARAM_NAME)) : null;
-        if (uniqueId != null) {
+        if (type == VerificationType.SMS) {
+            uniqueId = request.getParameter(VerificationConstants.DEFAULT_PHONE_PARAMETER_NAME);
+            if (StringUtils.isBlank(uniqueId)) {
+                uniqueId = String.valueOf(request.getAttribute(VerificationConstants.DEFAULT_PHONE_PARAMETER_NAME));
+            }
+        }
+        if (StringUtils.isNotBlank(uniqueId)) {
+            return uniqueId;
+        } else {
+            // 再尝试获取UUID
+            uniqueId = request.getHeader("uuid");
+            if (StringUtils.isBlank(uniqueId)) {
+                if (type == VerificationType.SMS) {
+                    throw new VerificationException("请在请求头中设置 uuid:{手机号}");
+                }
+                throw new VerificationException("请在请求头中设置 uuid:{会话ID}");
+            }
             return uniqueId;
         }
 
-        // 再尝试获取设备id
-        String deviceId = request.getHeader("deviceId");
-        if (StringUtils.isBlank(deviceId)) {
-            throw new VerificationException("请在请求头中携带deviceId参数");
-        }
-        return deviceId;
     }
 }

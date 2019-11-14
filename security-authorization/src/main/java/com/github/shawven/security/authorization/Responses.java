@@ -9,19 +9,19 @@ import org.springframework.http.HttpStatus;
 public class Responses {
 
     public static ResponseData loginSuccess() {
-        return new ResponseData().setMessage("登录成功").setCode(200);
+        return new ResponseData().setMessage("登录成功");
     }
 
     public static ResponseData loginOutSuccess() {
-        return new ResponseData().setMessage("退出成功").setCode(200);
+        return new ResponseData().setMessage("退出成功");
     }
 
     public static ResponseData getTokenSuccess() {
-        return new ResponseData().setMessage("获取token成功").setCode(200);
+        return new ResponseData().setMessage("获取token成功");
     }
 
     public static ResponseData refreshTokenSuccess() {
-        return new ResponseData().setMessage("刷新token成功").setCode(200);
+        return new ResponseData().setMessage("刷新token成功");
     }
 
     public static ResponseData requireLogin() {

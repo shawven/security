@@ -12,21 +12,31 @@ import org.springframework.social.security.SocialUserDetailsService;
 
 public class OpenIdFilterProviderConfigurer extends AuthenticationFilterProviderConfigurer {
 
-	private AuthenticationSuccessHandler appAuthenticationSuccessHandler;
+	private AuthenticationSuccessHandler authenticationSuccessHandler;
 
-	private AuthenticationFailureHandler appAuthenticationFailureHandler;
+	private AuthenticationFailureHandler authenticationFailureHandler;
 
 	private SocialUserDetailsService userDetailsService;
 
 	private UsersConnectionRepository usersConnectionRepository;
+
+    public OpenIdFilterProviderConfigurer(AuthenticationSuccessHandler authenticationSuccessHandler,
+                                          AuthenticationFailureHandler authenticationFailureHandler,
+                                          SocialUserDetailsService userDetailsService,
+                                          UsersConnectionRepository usersConnectionRepository) {
+        this.authenticationSuccessHandler = authenticationSuccessHandler;
+        this.authenticationFailureHandler = authenticationFailureHandler;
+        this.userDetailsService = userDetailsService;
+        this.usersConnectionRepository = usersConnectionRepository;
+    }
 
     @Override
 	public void configure(HttpSecurity http) throws Exception {
 
 		OpenIdAuthenticationFilter openIdAuthenticationFilter = new OpenIdAuthenticationFilter();
 		openIdAuthenticationFilter.setAuthenticationManager(http.getSharedObject(AuthenticationManager.class));
-		openIdAuthenticationFilter.setAuthenticationSuccessHandler(appAuthenticationSuccessHandler);
-		openIdAuthenticationFilter.setAuthenticationFailureHandler(appAuthenticationFailureHandler);
+		openIdAuthenticationFilter.setAuthenticationSuccessHandler(authenticationSuccessHandler);
+		openIdAuthenticationFilter.setAuthenticationFailureHandler(authenticationFailureHandler);
 
 		OpenIdAuthenticationProvider openIdAuthenticationProvider = new OpenIdAuthenticationProvider();
 		openIdAuthenticationProvider.setUserDetailsService(userDetailsService);
@@ -37,20 +47,20 @@ public class OpenIdFilterProviderConfigurer extends AuthenticationFilterProvider
 
 	}
 
-    public AuthenticationSuccessHandler getAppAuthenticationSuccessHandler() {
-        return appAuthenticationSuccessHandler;
+    public AuthenticationSuccessHandler getAuthenticationSuccessHandler() {
+        return authenticationSuccessHandler;
     }
 
-    public void setAppAuthenticationSuccessHandler(AuthenticationSuccessHandler appAuthenticationSuccessHandler) {
-        this.appAuthenticationSuccessHandler = appAuthenticationSuccessHandler;
+    public void setAuthenticationSuccessHandler(AuthenticationSuccessHandler authenticationSuccessHandler) {
+        this.authenticationSuccessHandler = authenticationSuccessHandler;
     }
 
-    public AuthenticationFailureHandler getAppAuthenticationFailureHandler() {
-        return appAuthenticationFailureHandler;
+    public AuthenticationFailureHandler getAuthenticationFailureHandler() {
+        return authenticationFailureHandler;
     }
 
-    public void setAppAuthenticationFailureHandler(AuthenticationFailureHandler appAuthenticationFailureHandler) {
-        this.appAuthenticationFailureHandler = appAuthenticationFailureHandler;
+    public void setAuthenticationFailureHandler(AuthenticationFailureHandler authenticationFailureHandler) {
+        this.authenticationFailureHandler = authenticationFailureHandler;
     }
 
     public SocialUserDetailsService getUserDetailsService() {

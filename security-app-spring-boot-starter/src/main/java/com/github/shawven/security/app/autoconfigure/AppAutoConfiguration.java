@@ -1,9 +1,7 @@
 package com.github.shawven.security.app.autoconfigure;
 
+import com.github.shawven.security.app.*;
 import com.github.shawven.security.app.oauth2.AppOAuth2AuthenticationHandler;
-import com.github.shawven.security.app.AppLoginFailureHandler;
-import com.github.shawven.security.app.AppLoginSuccessHandler;
-import com.github.shawven.security.app.AppLogoutSuccessHandler;
 import com.github.shawven.security.app.connect.AppConnectAuthenticationFilterPostProcessor;
 import com.github.shawven.security.app.connect.AppConnectConfigurerProcessor;
 import com.github.shawven.security.app.connect.AppConnectOAuth2AuthenticationFailureHandler;
@@ -25,6 +23,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -36,6 +35,8 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+import org.springframework.social.connect.UsersConnectionRepository;
+import org.springframework.social.security.SocialUserDetailsService;
 
 /**
  * 适用于APP端，全部json返回，适配手机验证码、社交登录
@@ -75,8 +76,8 @@ public class AppAutoConfiguration {
 
     @Configuration
     @ConditionalOnClass({ConnectAutoConfiguration.class, RedisTemplate.class})
+    @Import(AppConnectEndpoint.class)
     public static class ConnectSupportConfiguration {
-
 
         @Bean
         @ConditionalOnMissingBean
@@ -95,13 +96,19 @@ public class AppAutoConfiguration {
         }
 
         @Bean
-        public AuthenticationFilterProviderConfigurer openIdFilterProviderConfigurer() {
-            return new OpenIdFilterProviderConfigurer();
+        public AuthenticationFilterProviderConfigurer openIdFilterProviderConfigurer(
+                AuthenticationSuccessHandler authenticationSuccessHandler,
+                AuthenticationFailureHandler authenticationFailureHandler,
+                SocialUserDetailsService userDetailsService,
+                UsersConnectionRepository usersConnectionRepository) {
+            return new OpenIdFilterProviderConfigurer(authenticationSuccessHandler,
+                    authenticationFailureHandler, userDetailsService, usersConnectionRepository);
         }
     }
 
     @Configuration
     @ConditionalOnClass(OAuth2AutoConfiguration.class)
+    @Import(AppOAuth2Endpoint.class)
     public static class OAuth2SupportConfiguration {
 
         /**
@@ -157,11 +164,11 @@ public class AppAutoConfiguration {
         protected void configure(HttpSecurity http) throws Exception {
             http
                     .authorizeRequests()
-                    .anyRequest().authenticated().and()
+                        .anyRequest().authenticated().and()
                     .sessionManagement()
-                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-                    .csrf().disable();
-
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                    .and()
+                        .csrf().disable();
         }
     }
 

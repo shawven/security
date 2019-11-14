@@ -1,8 +1,7 @@
 server:
-  port: 9090
+  port: 80
 
 spring:
-
   #数据库连接配置
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -18,12 +17,8 @@ spring:
       test-on-return: true
       test-while-idle: true
       validation-query: select 1
-
-  session:
-    #集群session存储方式
-    store-type: none
-    #session超时时间，单位秒
-    timeout: 3000
+  redis:
+    host: 127.0.0.1
 
 
 logging:
@@ -32,6 +27,7 @@ logging:
     org:
       springframework:
         security: DEBUG
+        social: DEBUG
 
 #浏览器环境配置项，参见BrowserProperties
 
@@ -71,7 +67,7 @@ app:
         height: 30
         expireIn: 30
         # 配置需要图形验证码验证的url, 两个验证码如果配的url中相同部分则短信优先级要高
-        url: /verification/sms
+        url:
 
       #短信验证码配置项，参见SmsCodeProperties
       sms:
@@ -83,7 +79,7 @@ app:
     #社交登录功能拦截的url,参见SocialProperties
     connect:
       # 拦截器处理的url
-      filterProcessesUrl: /login/connect
+      filterProcessesUrl: /oauth/connect
   #      signUpUrl:
       #QQ登录配置，参见QQProperties
       qq:
@@ -112,4 +108,3 @@ app:
       tokenStore: jwt
       #使用jwt时为token签名的秘钥
       jwtSigningKey: aXo3t%12_Ao
-

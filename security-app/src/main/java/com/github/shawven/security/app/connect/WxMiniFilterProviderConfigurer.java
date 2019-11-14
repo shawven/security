@@ -4,7 +4,7 @@ package com.github.shawven.security.app.connect;
 import com.github.shawven.security.app.connect.wxmini.WxMiniAuthenticationFilter;
 import com.github.shawven.security.app.connect.wxmini.WxMiniAuthenticationProvider;
 import com.github.shawven.security.authorization.AuthenticationFilterProviderConfigurer;
-import com.github.shawven.security.connect.RedisSingInUtils;
+import com.github.shawven.security.connect.RedisSignInUtils;
 import com.github.shawven.security.connect.config.ConnectConfiguration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -21,7 +21,7 @@ public class WxMiniFilterProviderConfigurer extends AuthenticationFilterProvider
 
 	private SocialUserDetailsService userDetailsService;
 
-    private RedisSingInUtils redisSingInUtils;
+    private RedisSignInUtils redisSignInUtils;
 
     private ConnectConfiguration connectConfiguration;
 
@@ -32,12 +32,12 @@ public class WxMiniFilterProviderConfigurer extends AuthenticationFilterProvider
         wxMiniAuthenticationFilter.setAuthenticationManager(http.getSharedObject(AuthenticationManager.class));
         wxMiniAuthenticationFilter.setAuthenticationSuccessHandler(appAuthenticationSuccessHandler);
         wxMiniAuthenticationFilter.setAuthenticationFailureHandler(appAuthenticationFailureHandler);
-        wxMiniAuthenticationFilter.setRedisSingInUtils(redisSingInUtils);
+        wxMiniAuthenticationFilter.setRedisSignInUtils(redisSignInUtils);
         wxMiniAuthenticationFilter.setConnectConfiguration(connectConfiguration);
 
         WxMiniAuthenticationProvider wxMiniAuthenticationProvider = new WxMiniAuthenticationProvider();
         wxMiniAuthenticationProvider.setUserDetailsService(userDetailsService);
-        wxMiniAuthenticationProvider.setUsersConnectionRepository(redisSingInUtils.getUsersConnectionRepository());
+        wxMiniAuthenticationProvider.setUsersConnectionRepository(redisSignInUtils.getUsersConnectionRepository());
 
 		http.authenticationProvider(wxMiniAuthenticationProvider)
 			.addFilterAfter(wxMiniAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
@@ -68,12 +68,12 @@ public class WxMiniFilterProviderConfigurer extends AuthenticationFilterProvider
         this.userDetailsService = userDetailsService;
     }
 
-    public RedisSingInUtils getRedisSingInUtils() {
-        return redisSingInUtils;
+    public RedisSignInUtils getRedisSignInUtils() {
+        return redisSignInUtils;
     }
 
-    public void setRedisSingInUtils(RedisSingInUtils redisSingInUtils) {
-        this.redisSingInUtils = redisSingInUtils;
+    public void setRedisSignInUtils(RedisSignInUtils redisSignInUtils) {
+        this.redisSignInUtils = redisSignInUtils;
     }
 
     public ConnectConfiguration getConnectConfiguration() {

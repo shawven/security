@@ -3,7 +3,7 @@ package com.github.shawven.security.app.connect.wxmini;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.shawven.security.connect.RedisSingInUtils;
+import com.github.shawven.security.connect.RedisSignInUtils;
 import com.github.shawven.security.connect.ConnectConstants;
 import com.github.shawven.security.connect.MyJdbcConnectionRepository;
 import com.github.shawven.security.connect.config.ConnectConfiguration;
@@ -55,7 +55,7 @@ public class WxMiniAuthenticationFilter extends AbstractAuthenticationProcessing
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    private RedisSingInUtils redisSingInUtils;
+    private RedisSignInUtils redisSignInUtils;
 
     public WxMiniAuthenticationFilter() {
         super(new AntPathRequestMatcher("/login/connect/wxmini", "POST"));
@@ -78,7 +78,7 @@ public class WxMiniAuthenticationFilter extends AbstractAuthenticationProcessing
             Authentication success = this.getAuthenticationManager().authenticate(authenticationToken);
 
             SocialUserDetails user = (SocialUserDetails) success.getPrincipal();
-            ConnectionRepository connectionRepository = redisSingInUtils.getUsersConnectionRepository()
+            ConnectionRepository connectionRepository = redisSignInUtils.getUsersConnectionRepository()
                     .createConnectionRepository(user.getUserId());
 
             ConnectionData connectionData = new ConnectionData(providerId, openId,
@@ -90,7 +90,7 @@ public class WxMiniAuthenticationFilter extends AbstractAuthenticationProcessing
         } catch (AuthenticationException e) {
             result.remove("errcode");
             result.remove("errmsg");
-            redisSingInUtils.saveWxMiniConnection(new ServletWebRequest(request), result);
+            redisSignInUtils.saveWxMiniConnection(new ServletWebRequest(request), result);
             throw new SocialAuthenticationRedirectException(ConnectConstants.DEFAULT_CURRENT_USER_INFO_URL);
         }
     }
@@ -136,8 +136,8 @@ public class WxMiniAuthenticationFilter extends AbstractAuthenticationProcessing
         setFilterProcessesUrl("/login/connect/wxmini");
     }
 
-    public void setRedisSingInUtils(RedisSingInUtils redisSingInUtils) {
-        this.redisSingInUtils = redisSingInUtils;
+    public void setRedisSignInUtils(RedisSignInUtils redisSignInUtils) {
+        this.redisSignInUtils = redisSignInUtils;
     }
 
     private RestTemplate getRestTemplate() {

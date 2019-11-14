@@ -8,7 +8,7 @@ public class ConnectConstants {
     /**
      * 默认的OPENID登录请求处理url
      */
-    public static final String DEFAULT_OPENID_TOKEN_PROCESSING_URL = "/login/connect";
+    public static final String DEFAULT_OPENID_TOKEN_PROCESSING_URL = "/oauth/connect";
 
     /**
      * 社交登陆需要注册时获取用户信息的处理url

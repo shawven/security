@@ -29,8 +29,6 @@ public class WeixinOAuth2Template extends OAuth2Template {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
-    private ObjectMapper objectMapper = new ObjectMapper();
-
     public WeixinOAuth2Template(String clientId, String clientSecret, String authorizeUrl, String accessTokenUrl) {
         super(clientId, clientSecret, authorizeUrl, accessTokenUrl);
         setUseParametersForClientAuthentication(true);
@@ -68,22 +66,16 @@ public class WeixinOAuth2Template extends OAuth2Template {
 
     @SuppressWarnings("unchecked")
     private AccessGrant getAccessToken(StringBuilder accessTokenRequestUrl) {
-        String response = getRestTemplate().getForObject(accessTokenRequestUrl.toString(), String.class);
-//        String response = "{\"access_token\":\"20_OjoL-GvnjMYFn5YSluEp3y1MmthbcaNRuh3bLk6RHyjA2SpA2Y58w86pcQT6r_b9102AIFZ5OhIKeIKY_wV98g\",\"expires_in\":7200,\"refresh_token\":\"20_fRN5EVnN4c-LM5dyhJW88jZV17EgHzE_XvZacurLdoJyBjUaAr12h0iKwL32JkTxoQAV5gu2GzMjzEdgVfh8OQ\",\"openid\":\"od4PTw7Iijvj9qAw3RtLXSUZpMOU\",\"scope\":\"snsapi_login\",\"unionid\":\"oEg8VuH4KoidJSzmviOKsY9n7igU\"}";
-        logger.info("获取weixin access_token响应: " + response);
-
-        Map<String, Object> result;
-        try {
-            result = objectMapper.readValue(response, Map.class);
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
+        Map<String, Object> result = getRestTemplate().getForObject(accessTokenRequestUrl.toString(), Map.class);
+        if (result == null) {
+            throw new IllegalArgumentException("获取weixin access token失败：无响应");
         }
+//        String rsp = "{\"access_token\":\"20_OjoL-GvnjMYFn5YSluEp3y1MmthbcaNRuh3bLk6RHyjA2SpA2Y58w86pcQT6r_b9102AIFZ5OhIKeIKY_wV98g\",\"expires_in\":7200,\"refresh_token\":\"20_fRN5EVnN4c-LM5dyhJW88jZV17EgHzE_XvZacurLdoJyBjUaAr12h0iKwL32JkTxoQAV5gu2GzMjzEdgVfh8OQ\",\"openid\":\"od4PTw7Iijvj9qAw3RtLXSUZpMOU\",\"scope\":\"snsapi_login\",\"unionid\":\"oEg8VuH4KoidJSzmviOKsY9n7igU\"}";
+        logger.info("获取weixin access_token响应: " + result);
 
         //返回错误码时直接返回空
         if (result.get("errcode") != null) {
-            String errCode = String.valueOf(result.get("errcode"));
-            String errMsg = String.valueOf(result.get("errmsg"));
-            throw new IllegalArgumentException("获取weixin access token失败, errcode:" + errCode + ", errmsg:" + errMsg);
+            throw new IllegalArgumentException("获取weixin access token失败："+ result);
         }
 
         WeixinAccessGrant accessToken = new WeixinAccessGrant(
@@ -114,15 +106,15 @@ public class WeixinOAuth2Template extends OAuth2Template {
     public String buildAuthorizeUrl(OAuth2Parameters parameters) {
         return buildAuthenticateUrl(parameters);
     }
-
-    /**
-     * 微信返回的contentType是html/text，添加相应的HttpMessageConverter来处理。
-     */
-    @Override
-    protected RestTemplate createRestTemplate() {
-        RestTemplate restTemplate = super.createRestTemplate();
-        restTemplate.getMessageConverters().add(new StringHttpMessageConverter(StandardCharsets.UTF_8));
-        return restTemplate;
-    }
+//
+//    /**
+//     * 微信返回的contentType是html/text，添加相应的HttpMessageConverter来处理。
+//     */
+//    @Override
+//    protected RestTemplate createRestTemplate() {
+//        RestTemplate restTemplate = super.createRestTemplate();
+//        restTemplate.getMessageConverters().add(new StringHttpMessageConverter(StandardCharsets.UTF_8));
+//        return restTemplate;
+//    }
 
 }

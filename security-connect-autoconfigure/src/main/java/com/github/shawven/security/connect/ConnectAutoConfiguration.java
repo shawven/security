@@ -15,7 +15,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.encrypt.Encryptors;
@@ -150,14 +149,20 @@ public class ConnectAutoConfiguration extends SocialConfigurerAdapter {
         return new ConnectController(connectionFactoryLocator, connectionRepository);
     }
 
-    @Bean
+
+    @Configuration
     @ConditionalOnClass(RedisTemplate.class)
-    @ConditionalOnMissingBean
-    public RedisSingInUtils appSingUpUtils(RedisTemplate<Object, Object> redisTemplate,
-                                           UsersConnectionRepository usersConnectionRepository,
-                                           ConnectionFactoryLocator connectionFactoryLocator) {
-        return new RedisSingInUtils(redisTemplate, usersConnectionRepository, connectionFactoryLocator);
+    public static class RedisSupportConfiguration {
+
+        @Bean
+        @ConditionalOnMissingBean
+        public RedisSignInUtils appSingUpUtils(RedisTemplate<Object, Object> redisTemplate,
+                                               UsersConnectionRepository usersConnectionRepository,
+                                               ConnectionFactoryLocator connectionFactoryLocator) {
+            return new RedisSignInUtils(redisTemplate, usersConnectionRepository, connectionFactoryLocator);
+        }
     }
+
 
     /**
      * 默认认证器

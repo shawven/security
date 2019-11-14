@@ -3,7 +3,6 @@ package com.github.shawven.security.oauth2;
 
 import com.github.shawven.security.authorization.AuthenticationFilterProviderConfigurer;
 import com.github.shawven.security.authorization.AuthorizationConfigurerManager;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -13,7 +12,6 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Res
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -57,11 +55,12 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
 
         http
                 .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and().csrf().disable()
+                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                    .csrf().disable()
                 .exceptionHandling()
-                .authenticationEntryPoint(authenticationEntryPoint)
-                .accessDeniedHandler(appAccessDeniedHandler);
+                    .authenticationEntryPoint(authenticationEntryPoint)
+                    .accessDeniedHandler(appAccessDeniedHandler);
 
         authorizationConfigurerManager.config(http.authorizeRequests());
     }

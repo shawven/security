@@ -3,21 +3,19 @@ package com.github.shawven.security.oauth2;
 
 import com.github.shawven.security.authorization.AuthenticationFilterProviderConfigurer;
 import com.github.shawven.security.authorization.AuthorizationConfigureProvider;
-import com.github.shawven.security.oauth2.phone.PhoneConfiguration;
-import com.github.shawven.security.oauth2.phone.PhoneFilterProviderConfigurer;
+import com.github.shawven.security.oauth2.sms.SmsConfiguration;
+import com.github.shawven.security.oauth2.sms.SmsFilterProviderConfigurer;
 import com.github.shawven.security.verification.DefaultPhoneUserDetailsService;
 import com.github.shawven.security.verification.PhoneUserDetailsService;
 import com.github.shawven.security.verification.VerificationFilterProcessor;
 import com.github.shawven.security.verification.VerificationType;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.core.annotation.Order;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
@@ -37,33 +35,19 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 @EnableConfigurationProperties(OAuth2Properties.class)
 public class OAuth2AutoConfiguration {
 
-    private ClientDetailsService clientDetailsService;
-
-    private PasswordEncoder passwordEncoder;
-
-    private AuthorizationServerTokenServices services;
-
-    private AuthenticationSuccessHandlerPostProcessor authenticationSuccessHandlerPostProcessor;
-
-    public OAuth2AutoConfiguration(ClientDetailsService clientDetailsService,
-                                   PasswordEncoder passwordEncoder,
-                                   AuthorizationServerTokenServices services,
-                                   @Autowired(required = false)
-                                   AuthenticationSuccessHandlerPostProcessor authenticationSuccessHandlerPostProcessor) {
-        this.clientDetailsService = clientDetailsService;
-        this.passwordEncoder = passwordEncoder;
-        this.services = services;
-        this.authenticationSuccessHandlerPostProcessor = authenticationSuccessHandlerPostProcessor;
-    }
-
-
     /**
      * 基于OAuth2的验证成功处理器适配器 （短信登录和社交登陆转Token）
      *
      * @return
      */
     @Bean
-    public OAuth2AuthenticationSuccessHandler authenticationSuccessHandlerAdaptor() {
+    @ConditionalOnMissingBean
+    public AuthenticationSuccessHandler authenticationSuccessHandler(
+            ClientDetailsService clientDetailsService,
+            PasswordEncoder passwordEncoder,
+            AuthorizationServerTokenServices services,
+            @Autowired(required = false)
+                    AuthenticationSuccessHandlerPostProcessor authenticationSuccessHandlerPostProcessor) {
         OAuth2AuthenticationSuccessHandler handler = new OAuth2AuthenticationSuccessHandler(clientDetailsService,
                 passwordEncoder, services);
         if (authenticationSuccessHandlerPostProcessor != null) {
@@ -72,13 +56,13 @@ public class OAuth2AutoConfiguration {
         return handler;
     }
 
-
     @Bean
     public AuthorizationConfigureProvider oauth2AuthorizationConfigureProvider() {
 	    return new Oauth2AuthorizationConfigureProvider();
     }
 
     @Configuration
+    @ConditionalOnMissingBean(PasswordEncoder.class)
     public static class BaseConfiguration {
 
         /**
@@ -86,7 +70,6 @@ public class OAuth2AutoConfiguration {
          * @return
          */
         @Bean
-        @ConditionalOnMissingBean
         public PasswordEncoder passwordEncoder() {
             return new BCryptPasswordEncoder();
         }
@@ -104,7 +87,7 @@ public class OAuth2AutoConfiguration {
                 @Lazy PhoneUserDetailsService phoneUserDetailsService,
                 @Lazy AuthenticationSuccessHandler authenticationSuccessHandler,
                 @Lazy AuthenticationFailureHandler authenticationFailureHandler) {
-            return new PhoneFilterProviderConfigurer(phoneConfiguration(), phoneUserDetailsService,
+            return new SmsFilterProviderConfigurer(phoneConfiguration(), phoneUserDetailsService,
                     authenticationSuccessHandler, authenticationFailureHandler);
         }
 
@@ -121,12 +104,12 @@ public class OAuth2AutoConfiguration {
 
         @Bean
         public VerificationFilterProcessor verificationFilterProcessor() {
-            PhoneConfiguration cfg = phoneConfiguration();
+            SmsConfiguration cfg = phoneConfiguration();
             return filter -> filter.getUrlMap().put(cfg.getFilterProcessingUrl(), VerificationType.SMS) ;
         }
 
-        private PhoneConfiguration phoneConfiguration() {
-            PhoneConfiguration cfg = new PhoneConfiguration();
+        private SmsConfiguration phoneConfiguration() {
+            SmsConfiguration cfg = new SmsConfiguration();
             cfg.setFilterProcessingUrl(properties.getPhoneProcessingUrl());
             return cfg;
         }

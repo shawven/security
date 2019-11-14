@@ -86,8 +86,7 @@ public class VerificationFilter extends OncePerRequestFilter implements Initiali
             String name = type.getName();
             logger.info("正在校验" + name + "验证码");
             try {
-                verificationProcessorHolder.get(type)
-                        .validate(new ServletWebRequest(request, response));
+                verificationProcessorHolder.get(type).validate(new ServletWebRequest(request, response));
                 logger.info(name + "验证码校验通过");
             } catch (VerificationException e) {
                 String message = e.getMessage();

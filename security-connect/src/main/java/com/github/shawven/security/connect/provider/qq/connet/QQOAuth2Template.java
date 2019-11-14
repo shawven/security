@@ -41,11 +41,4 @@ public class QQOAuth2Template extends OAuth2Template {
 		return new AccessGrant(accessToken, null, refreshToken, expiresIn);
 	}
 
-	@Override
-	protected RestTemplate createRestTemplate() {
-		RestTemplate restTemplate = super.createRestTemplate();
-		restTemplate.getMessageConverters().add(new StringHttpMessageConverter(StandardCharsets.UTF_8));
-		return restTemplate;
-	}
-
 }

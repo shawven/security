@@ -38,7 +38,7 @@ public class AppOAuth2AuthenticationFailureHandler implements AuthenticationFail
         if (loginFailureHandler != null) {
             loginFailureHandler.onAuthenticationFailure(request, response, e);
         }
-        int status = HttpStatus.BAD_REQUEST.value();
+        int status = HttpStatus.UNAUTHORIZED.value();
         ResponseData newResponse = new ResponseData()
                 .setCode(status)
                 .setMessage(e.getMessage());

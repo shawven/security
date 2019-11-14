@@ -8,7 +8,7 @@ package com.github.shawven.security.verification.message;
  */
 public final class MessageTemplate {
 
-    public static final String DEFAULT_SMS_CODE = "【XXX】短信验证码：{0}";
+    public static final String DEFAULT_SMS_CODE = "短信验证码：{0}";
 
-    public static final String WITH_EXPIRE_TIME_SMS_CODE = "【XXX】短信验证码：{0}，{1,number}分钟内输入有效";
+    public static final String WITH_EXPIRE_TIME_SMS_CODE = "短信验证码：{0}，{1,number}分钟内输入有效";
 }

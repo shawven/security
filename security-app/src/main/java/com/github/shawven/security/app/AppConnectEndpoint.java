@@ -11,6 +11,7 @@ import org.springframework.social.connect.Connection;
 import org.springframework.social.connect.web.ProviderSignInUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.ServletWebRequest;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,12 +20,11 @@ import javax.servlet.http.HttpServletRequest;
  * @author Shoven
  * @date 2019-11-11
  */
-@Controller
-@ConditionalOnClass(ConnectAutoConfiguration.class)
+@RestController
 public class AppConnectEndpoint extends ConnectInfoExtendable {
 
     @Autowired
-    private RedisSingInUtils redisSingInUtils;
+    private RedisSignInUtils redisSignInUtils;
 
     @Autowired
     private ProviderSignInUtils providerSignInUtils;
@@ -40,7 +40,7 @@ public class AppConnectEndpoint extends ConnectInfoExtendable {
         // 从请求中拿用户信息
         Connection<?> connection = providerSignInUtils.getConnectionFromSession(new ServletWebRequest(request));
         // 用户信息存储到redis
-        redisSingInUtils.saveConnectionData(new ServletWebRequest(request), connection.createData());
+        redisSignInUtils.saveConnectionData(new ServletWebRequest(request), connection.createData());
         // 构建用户信息
         ConnectUserInfo connectUserInfo = buildSocialUserInfo(connection);
 

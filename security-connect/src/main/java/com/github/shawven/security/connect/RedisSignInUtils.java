@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Redis环境下的providerSignInUtils，避免由于没有session导致读不到社交用户信息的问题
  */
-public class RedisSingInUtils {
+public class RedisSignInUtils {
 
 	private RedisTemplate<Object, Object> redisTemplate;
 
@@ -22,7 +22,7 @@ public class RedisSingInUtils {
 
 	private ConnectionFactoryLocator connectionFactoryLocator;
 
-    public RedisSingInUtils(RedisTemplate<Object, Object> redisTemplate,
+    public RedisSignInUtils(RedisTemplate<Object, Object> redisTemplate,
                             UsersConnectionRepository usersConnectionRepository,
                             ConnectionFactoryLocator connectionFactoryLocator) {
         this.redisTemplate = redisTemplate;

@@ -46,11 +46,9 @@ logging:
       springframework:
         security: DEBUG
 
-#浏览器环境配置项，参见BrowserProperties
-
 app:
   security:
-    #浏览器环境配置项，参见BrowserProperties
+    #浏览器环境配置项
     browser:
       # 登录地址
       signInUrl: /signIn.html
@@ -66,17 +64,17 @@ app:
       signOutSuccessUrl: /
       # 记住我时间
       rememberMeSeconds: 294000
-      # 响应类型，REDIRECT页面传统跳转，vue、react api请求方式
+      # 响应类型，REDIRECT页面跳转、JSON响应
       responseType: REDIRECT
-      #session管理相关配置，参见SessionProperties
+      #session管理相关配置
       session:
         maximumSessions: 1
         maxSessionsPreventsLogin: false
         sessionInvalidUrl: /session-invalid.html
 
-    # 验证码配置 参见VerificationProperties
+    # 验证码配置
     verification:
-      #图片验证码配置项，参见ImageCodeProperties
+      #图片验证码配置项
       captcha:
         length: 4
         width: 100
@@ -85,35 +83,34 @@ app:
         # 配置需要图形验证码验证的url, 两个验证码如果配的url中相同部分则短信优先级要高
         url: /verification/sms
 
-      #短信验证码配置项，参见SmsCodeProperties
+      #短信验证码配置项
       sms:
         length: 6
         expireIn: 60
         # 配置需要短信验证码验证的url
         url:
 
-    #社交登录功能拦截的url,参见SocialProperties
+    #社交登录功能拦截的url
     connect:
       # 拦截器处理的url
       filterProcessesUrl: /oauth/connect
   #      signUpUrl:
-      #QQ登录配置，参见QQProperties
+      #QQ登录配置
       qq:
         appId:
         appSecret:
         providerId: qq
 
-      #微信登录配置，参见WeixinProperties
+      #微信登录配置
       weixin:
         appId: wxd99431bbff8305a0
         appSecret: 60f78681d063590a469f1b297feff3c4
         providerId: weixin
 
-    #认证服务器注册的第三方应用配置项，参见OAuth2ClientProperties
+    #认证服务器注册的第三方应用配置项
     oauth2:
       # 短信拦截url
       phoneProcessingUrl: /oauth/phone
-
       # 第三方客户端配置
       clients:
         - clientId: app
@@ -122,7 +119,7 @@ app:
           refreshTokenValidateSeconds: 2592000
         - clientId: test
           clientSecret: test
-      #OAuth2认证服务器的tokenStore的类型，可选值为redis和jwt，值为jwt时发出的token为jwt
+      #OAuth2认证服务器的tokenStore的类型
       tokenStore: jwt
       #使用jwt时为token签名的秘钥
       jwtSigningKey: aXo3t%12_Ao

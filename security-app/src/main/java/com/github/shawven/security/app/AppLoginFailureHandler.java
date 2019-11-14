@@ -1,11 +1,7 @@
 package com.github.shawven.security.app;
 
-import org.springframework.security.core.AuthenticationException;
-
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 /**
  * @author Shoven
@@ -13,7 +9,5 @@ import java.io.IOException;
  */
 public interface AppLoginFailureHandler {
 
-    void onAuthenticationFailure(HttpServletRequest request,
-                                 HttpServletResponse response,
-                                 AuthenticationException exception) throws IOException, ServletException;
+    void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, Exception exception);
 }
