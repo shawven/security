@@ -14,24 +14,27 @@ public class WeixinServiceProvider extends AbstractOAuth2ServiceProvider<Weixin>
 	/**
 	 * 微信获取授权码的url
 	 */
-	private static final String URL_AUTHORIZE = "https://open.weixin.qq.com/connect/qrconnect";
+	private static final String AUTHORIZE_URL = "https://open.weixin.qq.com/connect/qrconnect";
 	/**
 	 * 微信获取accessToken的url
 	 */
-	private static final String URL_ACCESS_TOKEN = "https://api.weixin.qq.com/sns/connect/access_token";
+	private static final String ACCESS_TOKEN_URL = "https://api.weixin.qq.com/sns/oauth2/access_token";
+
+    /**
+     *
+     */
+    private static final String REFRESH_TOKEN_URL = "https://api.weixin.qq.com/sns/oauth2/refresh_token";
 
 	/**
 	 * @param appId
 	 * @param appSecret
 	 */
 	public WeixinServiceProvider(String appId, String appSecret) {
-		super(new WeixinOAuth2Template(appId, appSecret,URL_AUTHORIZE,URL_ACCESS_TOKEN));
+		super(new WeixinOAuth2Template(appId, appSecret, AUTHORIZE_URL, ACCESS_TOKEN_URL, REFRESH_TOKEN_URL));
 	}
 
 
-	/* (non-Javadoc)
-	 * @see org.springframework.social.connect.AbstractOAuth2ServiceProvider#getApi(java.lang.String)
-	 */
+
 	@Override
 	public Weixin getApi(String accessToken) {
 		return new WeixinImpl(accessToken);

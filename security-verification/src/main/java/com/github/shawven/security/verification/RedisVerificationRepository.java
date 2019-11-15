@@ -17,9 +17,9 @@ import java.util.concurrent.TimeUnit;
  */
 public class RedisVerificationRepository implements VerificationRepository {
 
-	private RedisTemplate<Object, Object> redisTemplate;
+	private RedisTemplate redisTemplate;
 
-    public RedisVerificationRepository(RedisTemplate<Object, Object> redisTemplate) {
+    public RedisVerificationRepository(RedisTemplate redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
 
@@ -66,13 +66,14 @@ public class RedisVerificationRepository implements VerificationRepository {
         if (StringUtils.isNotBlank(uniqueId)) {
             return uniqueId;
         } else {
-            // 再尝试获取UUID
-            uniqueId = request.getHeader("uuid");
+            // 再尝试获取session id
+            uniqueId = request.getHeader("sid");
             if (StringUtils.isBlank(uniqueId)) {
-                if (type == VerificationType.SMS) {
-                    throw new VerificationException("请在请求头中设置 uuid:{手机号}");
+                uniqueId = request.getParameter("sid");
+                if (StringUtils.isBlank(uniqueId) && type == VerificationType.SMS) {
+                    throw new VerificationException("请求头或参数中缺少phone，值可以为手机号");
                 }
-                throw new VerificationException("请在请求头中设置 uuid:{会话ID}");
+                throw new VerificationException("请在请求头或参数中缺少sid，值可以为代表当前用户临时身份的任意唯一ID");
             }
             return uniqueId;
         }

@@ -90,11 +90,11 @@ public class RedisSignInUtils {
      * @return
      */
     private String getKey(WebRequest request) {
-        String deviceId = request.getHeader("deviceId");
-        if (StringUtils.isBlank(deviceId)) {
-            throw new IllegalArgumentException("deviceId参数不能为空");
+        String sid = request.getHeader("sid");
+        if (StringUtils.isBlank(sid)) {
+            throw new IllegalArgumentException("请求头或参数中缺少phone，值可以为代表当前用户的临时身份任意唯一ID");
         }
-        return "security:social.connect." + deviceId;
+        return "security:connect:" + sid;
     }
 
     private void throwExceptionIfTrue(boolean b) {
@@ -103,3 +103,5 @@ public class RedisSignInUtils {
         }
     }
 }
+
+

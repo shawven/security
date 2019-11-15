@@ -25,16 +25,21 @@ public class WeixinOAuth2Template extends OAuth2Template {
 
     private String accessTokenUrl;
 
-    private static final String REFRESH_TOKEN_URL = "https://api.weixin.qq.com/sns/connect/refresh_token";
+    private String refreshTokenUrl;
 
-    private Logger logger = LoggerFactory.getLogger(getClass());
+    private ObjectMapper objectMapper = new ObjectMapper();
 
-    public WeixinOAuth2Template(String clientId, String clientSecret, String authorizeUrl, String accessTokenUrl) {
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+
+
+    public WeixinOAuth2Template(String clientId, String clientSecret, String authorizeUrl,
+                                String accessTokenUrl, String refreshTokenUrl) {
         super(clientId, clientSecret, authorizeUrl, accessTokenUrl);
         setUseParametersForClientAuthentication(true);
         this.clientId = clientId;
         this.clientSecret = clientSecret;
         this.accessTokenUrl = accessTokenUrl;
+        this.refreshTokenUrl = refreshTokenUrl;
     }
 
 
@@ -42,36 +47,39 @@ public class WeixinOAuth2Template extends OAuth2Template {
     public AccessGrant exchangeForAccess(String authorizationCode, String redirectUri,
                                          MultiValueMap<String, String> parameters) {
 
-        StringBuilder accessTokenRequestUrl = new StringBuilder(accessTokenUrl);
-
-        accessTokenRequestUrl.append("?appid=" + clientId);
-        accessTokenRequestUrl.append("&secret=" + clientSecret);
-        accessTokenRequestUrl.append("&code=" + authorizationCode);
-        accessTokenRequestUrl.append("&grant_type=authorization_code");
-        accessTokenRequestUrl.append("&redirect_uri=" + redirectUri);
-
-        return getAccessToken(accessTokenRequestUrl);
+        StringBuilder sb = new StringBuilder(accessTokenUrl);
+        sb.append("?appid=" + clientId);
+        sb.append("&secret=" + clientSecret);
+        sb.append("&code=" + authorizationCode);
+        sb.append("&grant_type=authorization_code");
+        sb.append("&redirect_uri=" + redirectUri);
+        return getAccessToken(sb);
     }
 
     @Override
     public AccessGrant refreshAccess(String refreshToken, MultiValueMap<String, String> additionalParameters) {
-        StringBuilder refreshTokenUrl = new StringBuilder(REFRESH_TOKEN_URL);
-
-        refreshTokenUrl.append("?appid=" + clientId);
-        refreshTokenUrl.append("&grant_type=refresh_token");
-        refreshTokenUrl.append("&refresh_token=" + refreshToken);
-
-        return getAccessToken(refreshTokenUrl);
+        StringBuilder sb = new StringBuilder(refreshTokenUrl);
+        sb.append("?appid=" + clientId);
+        sb.append("&grant_type=refresh_token");
+        sb.append("&refresh_token=" + refreshToken);
+        return getAccessToken(sb);
     }
 
     @SuppressWarnings("unchecked")
     private AccessGrant getAccessToken(StringBuilder accessTokenRequestUrl) {
-        Map<String, Object> result = getRestTemplate().getForObject(accessTokenRequestUrl.toString(), Map.class);
-        if (result == null) {
+//        String str = getRestTemplate().getForObject(accessTokenRequestUrl.toString(), String.class);
+        String str = "{\"access_token\":\"27_0g5ZU-IECv-x4gxWOl7HuJ4n_I-YmEgWGvXNLUgFpWLz8gEZPMV9CIRKcQdHS17wDWBVVC2KaB0c78OOf84S-N1ZXW_LupBFY_Ok1W79fm4\",\"expires_in\":7200,\"refresh_token\":\"27_Z603A_WNrYaDPSO9uwMM0jgqdD9L-TSznsGw0Esu1eOLAl3X7r_maeDa8qmk1-gW8R3nwmhmCbCNaCtM6b3H85rvAFyZfYd06ZXFXcVaDhQ\",\"openid\":\"od4PTw7Iijvj9qAw3RtLXSUZpMOU\",\"scope\":\"snsapi_login\",\"unionid\":\"oEg8VuH4KoidJSzmviOKsY9n7igU\"}";
+        if (str == null) {
             throw new IllegalArgumentException("获取weixin access token失败：无响应");
         }
-//        String rsp = "{\"access_token\":\"20_OjoL-GvnjMYFn5YSluEp3y1MmthbcaNRuh3bLk6RHyjA2SpA2Y58w86pcQT6r_b9102AIFZ5OhIKeIKY_wV98g\",\"expires_in\":7200,\"refresh_token\":\"20_fRN5EVnN4c-LM5dyhJW88jZV17EgHzE_XvZacurLdoJyBjUaAr12h0iKwL32JkTxoQAV5gu2GzMjzEdgVfh8OQ\",\"openid\":\"od4PTw7Iijvj9qAw3RtLXSUZpMOU\",\"scope\":\"snsapi_login\",\"unionid\":\"oEg8VuH4KoidJSzmviOKsY9n7igU\"}";
-        logger.info("获取weixin access_token响应: " + result);
+        logger.info("获取weixin access_token响应: " + str);
+
+        Map<String, Object> result;
+        try {
+            result = (Map<String, Object>)objectMapper.readValue(str, Map.class);
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
 
         //返回错误码时直接返回空
         if (result.get("errcode") != null) {
@@ -106,15 +114,15 @@ public class WeixinOAuth2Template extends OAuth2Template {
     public String buildAuthorizeUrl(OAuth2Parameters parameters) {
         return buildAuthenticateUrl(parameters);
     }
-//
-//    /**
-//     * 微信返回的contentType是html/text，添加相应的HttpMessageConverter来处理。
-//     */
-//    @Override
-//    protected RestTemplate createRestTemplate() {
-//        RestTemplate restTemplate = super.createRestTemplate();
-//        restTemplate.getMessageConverters().add(new StringHttpMessageConverter(StandardCharsets.UTF_8));
-//        return restTemplate;
-//    }
+
+    /**
+     * 微信返回的contentType是html/text，添加相应的HttpMessageConverter来处理。
+     */
+    @Override
+    protected RestTemplate createRestTemplate() {
+        RestTemplate restTemplate = super.createRestTemplate();
+        restTemplate.getMessageConverters().add(new StringHttpMessageConverter(StandardCharsets.UTF_8));
+        return restTemplate;
+    }
 
 }

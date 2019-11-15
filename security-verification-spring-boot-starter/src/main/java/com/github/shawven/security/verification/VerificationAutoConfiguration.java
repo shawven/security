@@ -77,7 +77,7 @@ public class VerificationAutoConfiguration {
 
         @Bean
         @ConditionalOnMissingBean
-        public VerificationRepository verificationRepository(RedisTemplate<Object, Object> redisTemplate) {
+        public VerificationRepository verificationRepository(RedisTemplate redisTemplate) {
             return new RedisVerificationRepository(redisTemplate);
         }
     }

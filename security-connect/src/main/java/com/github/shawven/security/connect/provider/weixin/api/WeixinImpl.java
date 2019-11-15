@@ -52,9 +52,9 @@ public class WeixinImpl extends AbstractOAuth2ApiBinding implements Weixin {
 		String response = getRestTemplate().getForObject(url, String.class);
 
 		if(response != null && response.contains("errcode")) {
-            Map result;
+            Map<String, Object> result;
             try {
-                result = objectMapper.readValue(response, Map.class);
+                result = (Map<String, Object>)objectMapper.readValue(response, Map.class);
             } catch (Exception e) {
                 throw new RuntimeException(e.getMessage(), e);
             }
