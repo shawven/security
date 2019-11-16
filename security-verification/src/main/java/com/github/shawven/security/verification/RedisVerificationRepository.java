@@ -3,7 +3,6 @@ package com.github.shawven.security.verification;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.web.context.request.ServletWebRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.concurrent.TimeUnit;

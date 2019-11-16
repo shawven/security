@@ -1,7 +1,5 @@
 package com.github.shawven.security.connect.config;
 
-import com.github.shawven.security.connect.config.ProviderConfiguration;
-
 /**
  * @author Shoven
  * @date 2019-11-08

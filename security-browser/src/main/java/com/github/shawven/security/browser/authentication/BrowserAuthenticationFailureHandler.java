@@ -26,15 +26,12 @@ public class BrowserAuthenticationFailureHandler extends SimpleUrlAuthentication
 
     private final Logger logger = LoggerFactory.getLogger(BrowserAuthenticationFailureHandler.class);
 
-	private ObjectMapper objectMapper;
-
 	private BrowserConfiguration browserConfiguration;
 
     private BrowserLoginFailureHandler browserLoginFailureHandler;
 
     public BrowserAuthenticationFailureHandler(BrowserConfiguration browserConfiguration,
                                                BrowserLoginFailureHandler browserLoginFailureHandler) {
-        this.objectMapper = new ObjectMapper();
         this.browserConfiguration = browserConfiguration;
         this.browserLoginFailureHandler = browserLoginFailureHandler;
     }
@@ -55,7 +52,7 @@ public class BrowserAuthenticationFailureHandler extends SimpleUrlAuthentication
 
             response.setStatus(status);
 			response.setContentType("application/json;charset=UTF-8");
-            response.getWriter().write(objectMapper.writeValueAsString(result));
+            response.getWriter().write(new ObjectMapper().writeValueAsString(result));
 		}else{
 			super.onAuthenticationFailure(request, response, exception);
 		}

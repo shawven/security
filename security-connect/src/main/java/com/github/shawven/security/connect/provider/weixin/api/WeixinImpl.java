@@ -7,8 +7,6 @@ import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.social.oauth2.AbstractOAuth2ApiBinding;
 import org.springframework.social.oauth2.TokenStrategy;
 
-
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
@@ -18,8 +16,6 @@ import java.util.Map;
  */
 public class WeixinImpl extends AbstractOAuth2ApiBinding implements Weixin {
 
-
-	private ObjectMapper objectMapper = new ObjectMapper();
 	/**
 	 * 获取用户信息的url
 	 */
@@ -50,8 +46,8 @@ public class WeixinImpl extends AbstractOAuth2ApiBinding implements Weixin {
 	public WeixinUserInfo getUserInfo(String openId) {
 		String url = URL_GET_USER_INFO + openId;
 		String response = getRestTemplate().getForObject(url, String.class);
-
-		if(response != null && response.contains("errcode")) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        if(response != null && response.contains("errcode")) {
             Map<String, Object> result;
             try {
                 result = (Map<String, Object>)objectMapper.readValue(response, Map.class);

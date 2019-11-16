@@ -6,14 +6,10 @@ import com.github.shawven.security.authorization.Responses;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.oauth2.common.exceptions.BadClientCredentialsException;
 import org.springframework.security.oauth2.common.exceptions.InvalidTokenException;
 import org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint;
-
-import java.util.List;
 
 /**
  * @author Shoven

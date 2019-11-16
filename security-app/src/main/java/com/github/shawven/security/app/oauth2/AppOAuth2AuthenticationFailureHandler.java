@@ -22,12 +22,9 @@ public class AppOAuth2AuthenticationFailureHandler implements AuthenticationFail
 
     private final Logger logger = LoggerFactory.getLogger(AppOAuth2AuthenticationFailureHandler.class);
 
-	private ObjectMapper objectMapper;
-
 	private AppLoginFailureHandler loginFailureHandler;
 
     public AppOAuth2AuthenticationFailureHandler(AppLoginFailureHandler loginFailureHandler) {
-        this.objectMapper = new ObjectMapper();
         this.loginFailureHandler = loginFailureHandler;
     }
 
@@ -46,6 +43,6 @@ public class AppOAuth2AuthenticationFailureHandler implements AuthenticationFail
         response.setCharacterEncoding("UTF-8");
         response.setStatus(status);
 		response.setContentType("application/json;charset=UTF-8");
-		response.getWriter().write(objectMapper.writeValueAsString(newResponse));
+		response.getWriter().write(new ObjectMapper().writeValueAsString(newResponse));
 	}
 }

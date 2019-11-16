@@ -4,18 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.shawven.security.authorization.ResponseData;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.ObjectPostProcessor;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.security.oauth2.provider.client.ClientCredentialsTokenEndpointFilter;
 import org.springframework.security.web.AuthenticationEntryPoint;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.DelegatingAuthenticationFailureHandler;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 /**
  * 客户端认证过滤器，自带的无法控制响应格式

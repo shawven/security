@@ -4,13 +4,9 @@ package com.github.shawven.security.connect.provider.qq.connet;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.social.oauth2.AccessGrant;
 import org.springframework.social.oauth2.OAuth2Template;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
-
-import java.nio.charset.StandardCharsets;
 
 
 public class QQOAuth2Template extends OAuth2Template {

@@ -2,12 +2,12 @@
 package com.github.shawven.security.connect;
 
 import com.github.shawven.security.authorization.AuthenticationFilterProviderConfigurer;
+import com.github.shawven.security.authorization.AuthorizationConfigureProvider;
 import com.github.shawven.security.connect.config.ConnectConfiguration;
 import com.github.shawven.security.connect.config.QQConfiguration;
 import com.github.shawven.security.connect.config.WeixinConfiguration;
 import com.github.shawven.security.connect.provider.qq.connet.QQConnectionFactory;
 import com.github.shawven.security.connect.provider.weixin.connect.WeixinConnectionFactory;
-import com.github.shawven.security.authorization.AuthorizationConfigureProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -166,13 +166,6 @@ public class ConnectAutoConfiguration extends SocialConfigurerAdapter {
     public SocialUserDetailsService socialUserDetailsService() {
         return new DefaultSocialUserDetailsService();
     }
-
-    @Bean(name = "connect/status")
-    @ConditionalOnMissingBean
-    public AppConnectionStatusView appConnectionStatusView() {
-        return new AppConnectionStatusView();
-    }
-
 
     @Bean
     public AuthorizationConfigureProvider connectAuthorizationConfigurerProvider() {

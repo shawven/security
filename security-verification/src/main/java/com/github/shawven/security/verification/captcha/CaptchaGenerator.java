@@ -1,13 +1,11 @@
 
 package com.github.shawven.security.verification.captcha;
 
+import com.github.shawven.security.verification.VerificationGenerator;
 import com.github.shawven.security.verification.VerificationRequest;
 import com.github.shawven.security.verification.config.CaptchaConfiguration;
-import com.github.shawven.security.verification.VerificationGenerator;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.springframework.web.bind.ServletRequestUtils;
 
-import javax.servlet.http.HttpServletRequest;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Random;

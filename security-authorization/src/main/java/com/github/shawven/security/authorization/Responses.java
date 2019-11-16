@@ -1,7 +1,5 @@
 package com.github.shawven.security.authorization;
 
-import org.springframework.http.HttpStatus;
-
 /**
  * @author Shoven
  * @date 2019-11-13

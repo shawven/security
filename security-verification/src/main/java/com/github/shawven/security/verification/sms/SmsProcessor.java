@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Objects;
-import java.util.regex.Pattern;
 
 /**
  * 短信验证码处理器

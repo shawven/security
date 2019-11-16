@@ -2,14 +2,15 @@ package com.github.shawven.security.app;
 
 import com.github.shawven.security.authorization.ResponseData;
 import com.github.shawven.security.authorization.Responses;
-import com.github.shawven.security.connect.*;
+import com.github.shawven.security.connect.ConnectConstants;
+import com.github.shawven.security.connect.ConnectInfoExtendable;
+import com.github.shawven.security.connect.ConnectUserInfo;
+import com.github.shawven.security.connect.RedisSignInUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.social.connect.Connection;
 import org.springframework.social.connect.web.ProviderSignInUtils;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.ServletWebRequest;

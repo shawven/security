@@ -2,11 +2,8 @@ package com.github.shawven.security.connect;
 
 import com.github.shawven.security.authorization.AuthorizationConfigureProvider;
 import com.github.shawven.security.connect.config.ConnectConfiguration;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
-
-import java.util.Arrays;
 
 /**
  * @author Shoven

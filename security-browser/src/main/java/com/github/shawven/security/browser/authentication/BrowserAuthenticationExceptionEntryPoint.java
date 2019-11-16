@@ -27,11 +27,8 @@ public class BrowserAuthenticationExceptionEntryPoint extends LoginUrlAuthentica
 
     private BrowserConfiguration browserConfiguration;
 
-    private ObjectMapper objectMapper;
-
     public BrowserAuthenticationExceptionEntryPoint(BrowserConfiguration browserConfiguration) {
         super(browserConfiguration.getSignInUrl());
-        this.objectMapper = new ObjectMapper();
         this.browserConfiguration = browserConfiguration;
     }
 
@@ -53,7 +50,7 @@ public class BrowserAuthenticationExceptionEntryPoint extends LoginUrlAuthentica
             response.setCharacterEncoding("UTF-8");
             response.setStatus(status);
             response.setContentType("application/json;charset=UTF-8");
-            response.getWriter().write(objectMapper.writeValueAsString(rsp));
+            response.getWriter().write(new ObjectMapper().writeValueAsString(rsp));
         } else {
             super.commence(request, response, e);
         }

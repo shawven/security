@@ -7,7 +7,6 @@ import com.github.shawven.security.authorization.Responses;
 import com.github.shawven.security.browser.ResponseType;
 import com.github.shawven.security.browser.config.BrowserConfiguration;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;

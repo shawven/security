@@ -1,8 +1,6 @@
 
 package com.github.shawven.security.verification;
 
-import javax.servlet.http.HttpServletRequest;
-
 /**
  * 校验码生成器
  *

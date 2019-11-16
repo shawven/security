@@ -15,16 +15,6 @@
  */
 package com.github.shawven.security.connect;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
-
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -32,18 +22,15 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.security.crypto.encrypt.TextEncryptor;
-import org.springframework.social.connect.Connection;
-import org.springframework.social.connect.ConnectionData;
-import org.springframework.social.connect.ConnectionFactory;
-import org.springframework.social.connect.ConnectionFactoryLocator;
-import org.springframework.social.connect.ConnectionKey;
-import org.springframework.social.connect.ConnectionRepository;
-import org.springframework.social.connect.DuplicateConnectionException;
-import org.springframework.social.connect.NoSuchConnectionException;
-import org.springframework.social.connect.NotConnectedException;
+import org.springframework.social.connect.*;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
+import java.util.Map.Entry;
 
 public class MyConnectionRepository implements ConnectionRepository {
 

@@ -27,8 +27,6 @@ public class WeixinOAuth2Template extends OAuth2Template {
 
     private String refreshTokenUrl;
 
-    private ObjectMapper objectMapper = new ObjectMapper();
-
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
 
@@ -75,7 +73,7 @@ public class WeixinOAuth2Template extends OAuth2Template {
 
         Map<String, Object> result;
         try {
-            result = (Map<String, Object>)objectMapper.readValue(str, Map.class);
+            result = (Map<String, Object>)new ObjectMapper().readValue(str, Map.class);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         }

@@ -2,19 +2,12 @@ package com.github.shawven.security.app;
 
 import com.github.shawven.security.authorization.ResponseData;
 import com.github.shawven.security.authorization.Responses;
-import com.github.shawven.security.oauth2.OAuth2AutoConfiguration;
 import com.github.shawven.security.oauth2.OAuth2Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.common.exceptions.InvalidGrantException;
@@ -24,7 +17,6 @@ import org.springframework.security.oauth2.provider.authentication.OAuth2Authent
 import org.springframework.security.oauth2.provider.endpoint.TokenEndpoint;
 import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
-import org.springframework.security.oauth2.provider.token.ResourceServerTokenServices;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;

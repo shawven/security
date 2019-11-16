@@ -94,7 +94,6 @@ app:
     connect:
       # 拦截器处理的url
       filterProcessesUrl: /oauth/connect
-  #      signUpUrl:
       #QQ登录配置
       qq:
         appId:

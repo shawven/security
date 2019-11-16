@@ -53,8 +53,6 @@ public class WxMiniAuthenticationFilter extends AbstractAuthenticationProcessing
 
     private static final String BASE_URL = "https://api.weixin.qq.com/sns/jscode2session";
 
-    private ObjectMapper objectMapper = new ObjectMapper();
-
     private RedisSignInUtils redisSignInUtils;
 
     public WxMiniAuthenticationFilter() {
@@ -113,7 +111,7 @@ public class WxMiniAuthenticationFilter extends AbstractAuthenticationProcessing
 
         Map<String, Object> result;
         try {
-            result = objectMapper.readValue(rsp, new TypeReference<Map<String, Object>>(){});
+            result = new ObjectMapper().readValue(rsp, new TypeReference<Map<String, Object>>(){});
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage(), e);
         }

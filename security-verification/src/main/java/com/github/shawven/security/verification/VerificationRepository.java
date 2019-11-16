@@ -1,8 +1,6 @@
 
 package com.github.shawven.security.verification;
 
-import org.springframework.web.context.request.ServletWebRequest;
-
 import javax.servlet.http.HttpServletRequest;
 
 /**

@@ -1,7 +1,6 @@
 package com.github.shawven.security.browser.authentication;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.shawven.security.authorization.ResponseData;
 import com.github.shawven.security.authorization.Responses;
 import com.github.shawven.security.browser.ResponseType;
 import com.github.shawven.security.browser.config.BrowserConfiguration;
@@ -29,11 +28,8 @@ public class BrowserAccessDeniedHandler extends AccessDeniedHandlerImpl {
 
     private BrowserConfiguration browserConfiguration;
 
-    private ObjectMapper objectMapper;
-
     public BrowserAccessDeniedHandler(BrowserConfiguration browserConfiguration) {
         this.browserConfiguration = browserConfiguration;
-        this.objectMapper = new ObjectMapper();
     }
 
     @Override
@@ -44,7 +40,7 @@ public class BrowserAccessDeniedHandler extends AccessDeniedHandlerImpl {
             response.setCharacterEncoding("UTF-8");
             response.setStatus(HttpStatus.FORBIDDEN.value());
             response.setContentType("application/json;charset=UTF-8");
-            response.getWriter().write(objectMapper.writeValueAsString(Responses.accessDenied()));
+            response.getWriter().write(new ObjectMapper().writeValueAsString(Responses.accessDenied()));
         } else {
             super.handle(request, response, e);
         }

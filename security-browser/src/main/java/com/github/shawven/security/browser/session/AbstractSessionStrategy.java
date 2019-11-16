@@ -2,7 +2,6 @@
 package com.github.shawven.security.browser.session;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.shawven.security.authorization.MessageConstants;
 import com.github.shawven.security.authorization.ResponseData;
 import com.github.shawven.security.authorization.Responses;
 import com.github.shawven.security.browser.ResponseType;

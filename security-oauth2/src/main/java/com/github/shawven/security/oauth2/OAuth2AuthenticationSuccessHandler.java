@@ -6,7 +6,6 @@ import com.github.shawven.security.authorization.Responses;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;

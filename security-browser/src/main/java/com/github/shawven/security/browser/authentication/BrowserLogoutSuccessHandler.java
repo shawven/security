@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.shawven.security.authorization.Responses;
 import com.github.shawven.security.browser.ResponseType;
 import com.github.shawven.security.browser.config.BrowserConfiguration;
-import com.github.shawven.security.authorization.ResponseData;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
