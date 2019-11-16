@@ -1,5 +1,7 @@
 package com.github.shawven.security.connect.config;
 
+import com.github.shawven.security.connect.ConnectConstants;
+
 /**
  * @author Shoven
  * @date 2019-11-08
@@ -14,7 +16,7 @@ public class ConnectConfiguration {
     /**
      * 社交登录，如果需要用户注册，跳转的页面
      */
-    private String signUpUrl;
+    private String signUpUrl = ConnectConstants.DEFAULT_CONNECT_USER_INFO_URL;
 
     private QQConfiguration qq;
 

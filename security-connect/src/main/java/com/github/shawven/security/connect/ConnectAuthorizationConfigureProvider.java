@@ -22,11 +22,7 @@ public class ConnectAuthorizationConfigureProvider implements AuthorizationConfi
 
     @Override
     public boolean config(ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry config) {
-        String[] urls = {
-                ConnectConstants.DEFAULT_CURRENT_USER_INFO_URL,
-                configuration.getFilterProcessesUrl() + "/**",
-        };
-        config.antMatchers(Arrays.stream(urls).filter(StringUtils::isNotBlank).toArray(String[]::new)).permitAll();
+        config.antMatchers(configuration.getSignUpUrl()).permitAll();
         return false;
     }
 }

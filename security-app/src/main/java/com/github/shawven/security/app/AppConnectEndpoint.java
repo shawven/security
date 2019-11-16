@@ -35,7 +35,7 @@ public class AppConnectEndpoint extends ConnectInfoExtendable {
      * @param request
      * @return
      */
-    @GetMapping(ConnectConstants.DEFAULT_CURRENT_USER_INFO_URL)
+    @GetMapping(ConnectConstants.DEFAULT_CONNECT_USER_INFO_URL)
     public ResponseEntity getSocialUserInfo(HttpServletRequest request) {
         // 从请求中拿用户信息
         Connection<?> connection = providerSignInUtils.getConnectionFromSession(new ServletWebRequest(request));

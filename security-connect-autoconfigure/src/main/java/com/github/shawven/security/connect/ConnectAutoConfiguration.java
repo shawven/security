@@ -54,9 +54,6 @@ public class ConnectAutoConfiguration extends SocialConfigurerAdapter {
 	@Autowired(required = false)
 	private ConnectAuthenticationFilterPostProcessor connectAuthenticationFilterPostProcessor;
 
-    @Autowired(required = false)
-    private ConnectConfigurerProcessor connectConfigurerProcessor;
-
     @Override
     public UserIdSource getUserIdSource() {
         return new AuthenticationNameUserIdSource();
@@ -120,11 +117,6 @@ public class ConnectAutoConfiguration extends SocialConfigurerAdapter {
 
 		// 设置过滤器链的后处理器，例如app环境下的成功处理器与浏览器环境会不同
 		configurer.setConnectAuthenticationFilterPostProcessor(connectAuthenticationFilterPostProcessor);
-
-		// 不同环境下的社交配置不一样
-		if (connectConfigurerProcessor != null) {
-            connectConfigurerProcessor.proceed(configurer);
-        }
 		return new ConnectFilterProviderConfigurer(configurer);
 	}
 
@@ -156,7 +148,7 @@ public class ConnectAutoConfiguration extends SocialConfigurerAdapter {
 
         @Bean
         @ConditionalOnMissingBean
-        public RedisSignInUtils appSingUpUtils(RedisTemplate<Object, Object> redisTemplate,
+        public RedisSignInUtils appSingUpUtils(RedisTemplate redisTemplate,
                                                UsersConnectionRepository usersConnectionRepository,
                                                ConnectionFactoryLocator connectionFactoryLocator) {
             return new RedisSignInUtils(redisTemplate, usersConnectionRepository, connectionFactoryLocator);
@@ -192,7 +184,6 @@ public class ConnectAutoConfiguration extends SocialConfigurerAdapter {
         cfg.setFilterProcessesUrl(properties.getFilterProcessesUrl());
         cfg.setQq(properties.getQq());
         cfg.setWeixin(properties.getWeixin());
-        cfg.setSignUpUrl(properties.getSignUpUrl());
         return cfg;
     }
 }

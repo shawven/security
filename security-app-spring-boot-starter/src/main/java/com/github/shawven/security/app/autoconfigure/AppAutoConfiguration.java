@@ -3,7 +3,6 @@ package com.github.shawven.security.app.autoconfigure;
 import com.github.shawven.security.app.*;
 import com.github.shawven.security.app.oauth2.AppOAuth2AuthenticationHandler;
 import com.github.shawven.security.app.connect.AppConnectAuthenticationFilterPostProcessor;
-import com.github.shawven.security.app.connect.AppConnectConfigurerProcessor;
 import com.github.shawven.security.app.connect.AppConnectOAuth2AuthenticationFailureHandler;
 import com.github.shawven.security.app.oauth2.AppOAuth2AccessDeniedHandler;
 import com.github.shawven.security.app.oauth2.AppOAuth2AuthenticationExceptionEntryPoint;
@@ -13,9 +12,7 @@ import com.github.shawven.security.authorization.AuthenticationFilterProviderCon
 import com.github.shawven.security.connect.ConnectAuthenticationFilterPostProcessor;
 import com.github.shawven.security.connect.ConnectAutoConfiguration;
 import com.github.shawven.security.connect.ConnectConfigurerProcessor;
-import com.github.shawven.security.oauth2.AdaptedAuthenticationHandler;
 import com.github.shawven.security.oauth2.AuthenticationSuccessHandlerPostProcessor;
-import com.github.shawven.security.oauth2.OAuth2AuthenticationSuccessHandler;
 import com.github.shawven.security.oauth2.OAuth2AutoConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -78,12 +75,6 @@ public class AppAutoConfiguration {
     @ConditionalOnClass({ConnectAutoConfiguration.class, RedisTemplate.class})
     @Import(AppConnectEndpoint.class)
     public static class ConnectSupportConfiguration {
-
-        @Bean
-        @ConditionalOnMissingBean
-        public ConnectConfigurerProcessor appConnectConfigurerProcessor() {
-            return new AppConnectConfigurerProcessor();
-        }
 
         @Bean
         @ConditionalOnMissingBean

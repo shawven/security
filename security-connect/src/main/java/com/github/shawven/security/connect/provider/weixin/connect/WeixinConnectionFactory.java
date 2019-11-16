@@ -25,7 +25,9 @@ public class WeixinConnectionFactory extends OAuth2ConnectionFactory<Weixin> {
 	}
 
 	/**
-	 * 由于微信的openId是和accessToken一起返回的，所以在这里直接根据accessToken设置providerUserId即可，不用像QQ那样通过QQAdapter来获取
+	 * 由于微信的openId是和accessToken一起返回的，
+     * 所以在这里直接根据accessToken设置providerUserId即可，
+     * 不用像QQ那样通过QQAdapter来获取
 	 */
 	@Override
 	protected String extractProviderUserId(AccessGrant accessGrant) {
@@ -38,17 +40,19 @@ public class WeixinConnectionFactory extends OAuth2ConnectionFactory<Weixin> {
 
 	@Override
     public Connection<Weixin> createConnection(AccessGrant accessGrant) {
-		return new OAuth2Connection<Weixin>(getProviderId(), extractProviderUserId(accessGrant), accessGrant.getAccessToken(),
-				accessGrant.getRefreshToken(), accessGrant.getExpireTime(), getOAuth2ServiceProvider(), getApiAdapter(extractProviderUserId(accessGrant)));
+		return new OAuth2Connection<>(
+		        getProviderId(),
+                extractProviderUserId(accessGrant),
+                accessGrant.getAccessToken(),
+				accessGrant.getRefreshToken(),
+                accessGrant.getExpireTime(),
+                getOAuth2ServiceProvider(),
+                getApiAdapter(extractProviderUserId(accessGrant)));
 	}
 
-	/**
-     *  (non-Javadoc)
-	 * @see org.springframework.social.connect.support.OAuth2ConnectionFactory#createConnection(org.springframework.social.connect.ConnectionData)
-	 */
 	@Override
     public Connection<Weixin> createConnection(ConnectionData data) {
-		return new OAuth2Connection<Weixin>(data, getOAuth2ServiceProvider(), getApiAdapter(data.getProviderUserId()));
+		return new OAuth2Connection<>(data, getOAuth2ServiceProvider(), getApiAdapter(data.getProviderUserId()));
 	}
 
 	private ApiAdapter<Weixin> getApiAdapter(String providerUserId) {
@@ -56,7 +60,7 @@ public class WeixinConnectionFactory extends OAuth2ConnectionFactory<Weixin> {
 	}
 
 	private OAuth2ServiceProvider<Weixin> getOAuth2ServiceProvider() {
-		return (OAuth2ServiceProvider<Weixin>) getServiceProvider();
+		return (OAuth2ServiceProvider<Weixin>)getServiceProvider();
 	}
 
 

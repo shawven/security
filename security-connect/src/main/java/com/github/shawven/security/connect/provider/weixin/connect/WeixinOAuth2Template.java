@@ -67,8 +67,7 @@ public class WeixinOAuth2Template extends OAuth2Template {
 
     @SuppressWarnings("unchecked")
     private AccessGrant getAccessToken(StringBuilder accessTokenRequestUrl) {
-//        String str = getRestTemplate().getForObject(accessTokenRequestUrl.toString(), String.class);
-        String str = "{\"access_token\":\"27_0g5ZU-IECv-x4gxWOl7HuJ4n_I-YmEgWGvXNLUgFpWLz8gEZPMV9CIRKcQdHS17wDWBVVC2KaB0c78OOf84S-N1ZXW_LupBFY_Ok1W79fm4\",\"expires_in\":7200,\"refresh_token\":\"27_Z603A_WNrYaDPSO9uwMM0jgqdD9L-TSznsGw0Esu1eOLAl3X7r_maeDa8qmk1-gW8R3nwmhmCbCNaCtM6b3H85rvAFyZfYd06ZXFXcVaDhQ\",\"openid\":\"od4PTw7Iijvj9qAw3RtLXSUZpMOU\",\"scope\":\"snsapi_login\",\"unionid\":\"oEg8VuH4KoidJSzmviOKsY9n7igU\"}";
+        String str = getRestTemplate().getForObject(accessTokenRequestUrl.toString(), String.class);
         if (str == null) {
             throw new IllegalArgumentException("获取weixin access token失败：无响应");
         }
@@ -80,7 +79,6 @@ public class WeixinOAuth2Template extends OAuth2Template {
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         }
-
         //返回错误码时直接返回空
         if (result.get("errcode") != null) {
             throw new IllegalArgumentException("获取weixin access token失败："+ result);
@@ -91,9 +89,7 @@ public class WeixinOAuth2Template extends OAuth2Template {
                 result.get("scope").toString(),
                 result.get("refresh_token").toString(),
                 Long.valueOf(result.get("expires_in").toString()));
-
         accessToken.setOpenId(result.get("openid").toString());
-
         return accessToken;
     }
 

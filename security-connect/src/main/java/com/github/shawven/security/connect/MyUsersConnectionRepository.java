@@ -49,7 +49,7 @@ public class MyUsersConnectionRepository implements UsersConnectionRepository {
     @Override
     public List<String> findUserIdsWithConnection(Connection<?> connection) {
         ConnectionKey key = connection.getKey();
-        List<String> localUserIds = this.jdbcTemplate.queryForList("select userId from " + table + " where providerId = ? and providerUserId = ?", String.class, new Object[]{key.getProviderId(), key.getProviderUserId()});
+        List<String> localUserIds = this.jdbcTemplate.queryForList("select user_id from " + table + " where provider_id = ? and provider_user_id = ?", String.class, new Object[]{key.getProviderId(), key.getProviderUserId()});
         if (localUserIds.size() == 0 && this.connectionSignUp != null) {
             String newUserId = this.connectionSignUp.execute(connection);
             if (newUserId != null) {
@@ -66,7 +66,7 @@ public class MyUsersConnectionRepository implements UsersConnectionRepository {
         parameters.addValue("providerId", providerId);
         parameters.addValue("providerUserIds", providerUserIds);
         final Set<String> localUserIds = new HashSet<String>();
-        return new NamedParameterJdbcTemplate(jdbcTemplate).query("select userId from " + table + " where providerId = :providerId and providerUserId in (:providerUserIds)", parameters,
+        return new NamedParameterJdbcTemplate(jdbcTemplate).query("select user_id from " + table + " where provider_id = :providerId and provider_user_id in (:providerUserIds)", parameters,
                 rs -> {
                     while (rs.next()) {
                         localUserIds.add(rs.getString("userId"));

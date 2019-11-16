@@ -13,7 +13,7 @@ public class ConnectConstants {
     /**
      * 社交登陆需要注册时获取用户信息的处理url
      */
-    public static final String DEFAULT_CURRENT_USER_INFO_URL = "/social/user";
+    public static final String DEFAULT_CONNECT_USER_INFO_URL = "/connect/user";
 
     /**
      * openid参数名

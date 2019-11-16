@@ -91,7 +91,7 @@ public class WxMiniAuthenticationFilter extends AbstractAuthenticationProcessing
             result.remove("errcode");
             result.remove("errmsg");
             redisSignInUtils.saveWxMiniConnection(new ServletWebRequest(request), result);
-            throw new SocialAuthenticationRedirectException(ConnectConstants.DEFAULT_CURRENT_USER_INFO_URL);
+            throw new SocialAuthenticationRedirectException(ConnectConstants.DEFAULT_CONNECT_USER_INFO_URL);
         }
     }
 
