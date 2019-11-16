@@ -1,5 +1,5 @@
 
-package com.github.shawven.security.connect;
+package com.github.shawven.security.app.connect;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.social.connect.Connection;
