@@ -1,10 +1,12 @@
 package com.github.shawven.security.browser;
 
-import com.github.shawven.security.authorization.AuthenticationFilterProviderConfigurer;
+import com.github.shawven.security.authorization.HttpSecurityConfigurer;
 import com.github.shawven.security.authorization.AuthorizationConfigurerManager;
 import com.github.shawven.security.browser.config.BrowserConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -64,7 +66,13 @@ public class BrowserWebSecurityConfiguration extends WebSecurityConfigurerAdapte
     private DataSource dataSource;
 
     @Autowired(required = false)
-    private List<AuthenticationFilterProviderConfigurer> providerConfigurers = Collections.emptyList();
+    private List<HttpSecurityConfigurer> providerConfigurers = Collections.emptyList();
+
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
 
     @Override
     public void configure(WebSecurity web) throws Exception {
@@ -78,12 +86,18 @@ public class BrowserWebSecurityConfiguration extends WebSecurityConfigurerAdapte
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
+        boolean redirectSupported = false;
         try {
+            // oauth2环境下已经配置了一遍
             Class.forName("com.github.shawven.security.oauth2.OAuth2AutoConfiguration");
             http.csrf().disable();
-        } catch (ClassNotFoundException e) {
-            for (AuthenticationFilterProviderConfigurer configurer : providerConfigurers) {
-                http = http.apply(configurer).and();
+            if (configuration.getResponseType()  == ResponseType.REDIRECT) {
+                redirectSupported = true;
+            }
+        } catch (ClassNotFoundException ignored) { }
+        if (redirectSupported) {
+            for (HttpSecurityConfigurer configurer : providerConfigurers) {
+                http.apply(configurer);
             }
             authorizationConfigurerManager.config(http.authorizeRequests());
             configureExceptionHandler(http);

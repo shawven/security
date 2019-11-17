@@ -21,7 +21,7 @@
 				<td>图形验证码:</td>
 				<td>
 					<input type="text" name="captcha">
-					<img src="/code/image?width=200">
+					<img src="/verification/captcha?width=60&height=30&sid=123456789">
 				</td>
 			</tr>
 			<tr>
@@ -44,7 +44,7 @@
 				<td>短信验证码:</td>
 				<td>
 					<input type="text" name="sms">
-					<a href="/code/sms?mobile=13012345678">发送验证码</a>
+					<button type="button" onclick="send()">发送验证码</button>
 				</td>
 			</tr>
 			<tr>
@@ -58,7 +58,20 @@
 	<br>
 	<h3>社交登录</h3>
 	<a href="/login/connect/qq">QQ登录</a>
-	&nbsp;&nbsp;&nbsp;&nbsp;
 	<a href="/login/connect/weixin">微信登录</a>
 </body>
+<script>
+    function send() {
+        var request = new XMLHttpRequest();
+        request.open("get", "/verification/sms?phone=13012345678")
+        request.send()
+        request.onreadystatechange = function(e) {
+            if (this.readyState === 4 && this.status === 200) {
+                console.log(this.responseText)
+            } else {
+            }
+        }
+    }
+
+</script>
 </html>

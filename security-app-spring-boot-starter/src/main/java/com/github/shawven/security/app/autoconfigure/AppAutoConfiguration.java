@@ -2,17 +2,18 @@ package com.github.shawven.security.app.autoconfigure;
 
 import com.github.shawven.security.app.*;
 import com.github.shawven.security.app.connect.AppConnectAuthenticationFilterPostProcessor;
-import com.github.shawven.security.app.connect.AppConnectOAuth2AuthenticationFailureHandler;
+import com.github.shawven.security.app.connect.AppConnectAuthenticationFailureHandler;
 import com.github.shawven.security.app.oauth2.AppOAuth2AccessDeniedHandler;
 import com.github.shawven.security.app.oauth2.AppOAuth2AuthenticationExceptionEntryPoint;
 import com.github.shawven.security.app.oauth2.AppOAuth2AuthenticationFailureHandler;
 import com.github.shawven.security.app.oauth2.AppOAuth2AuthenticationHandler;
 import com.github.shawven.security.app.openid.OpenIdFilterProviderConfigurer;
-import com.github.shawven.security.authorization.AuthenticationFilterProviderConfigurer;
+import com.github.shawven.security.authorization.HttpSecurityConfigurer;
 import com.github.shawven.security.connect.ConnectAuthenticationFilterPostProcessor;
 import com.github.shawven.security.connect.ConnectAutoConfiguration;
 import com.github.shawven.security.oauth2.AuthenticationSuccessHandlerPostProcessor;
-import com.github.shawven.security.oauth2.OAuth2AutoConfiguration;
+import com.github.shawven.security.verification.authentication.EnableSmsAuthentication;
+import com.github.shawven.security.verification.authentication.SmsAuthenticationConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -20,6 +21,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -41,7 +43,6 @@ import org.springframework.social.security.SocialUserDetailsService;
  * @date 2019-08-20
  */
 @Configuration
-@AutoConfigureAfter
 public class AppAutoConfiguration {
 
     /**
@@ -56,7 +57,7 @@ public class AppAutoConfiguration {
     }
 
     /**
-     * 验证成功处理器
+     * 验证成功处理器后处理器
      *
      * @return
      */
@@ -71,33 +72,6 @@ public class AppAutoConfiguration {
     }
 
     @Configuration
-    @ConditionalOnClass({ConnectAutoConfiguration.class, RedisTemplate.class})
-    @Import(AppConnectEndpoint.class)
-    public static class ConnectSupportConfiguration {
-
-        @Bean
-        @ConditionalOnMissingBean
-        public ConnectAuthenticationFilterPostProcessor connectAuthenticationFilterPostProcessor(
-                AuthenticationSuccessHandler authenticationSuccessHandler,
-                @Autowired(required = false) AppLoginFailureHandler loginFailureHandler) {
-
-            return new AppConnectAuthenticationFilterPostProcessor(authenticationSuccessHandler,
-                    new AppConnectOAuth2AuthenticationFailureHandler(loginFailureHandler));
-        }
-
-        @Bean
-        public AuthenticationFilterProviderConfigurer openIdFilterProviderConfigurer(
-                AuthenticationSuccessHandler authenticationSuccessHandler,
-                AuthenticationFailureHandler authenticationFailureHandler,
-                SocialUserDetailsService userDetailsService,
-                UsersConnectionRepository usersConnectionRepository) {
-            return new OpenIdFilterProviderConfigurer(authenticationSuccessHandler,
-                    authenticationFailureHandler, userDetailsService, usersConnectionRepository);
-        }
-    }
-
-    @Configuration
-    @ConditionalOnClass(OAuth2AutoConfiguration.class)
     @Import(AppOAuth2Endpoint.class)
     public static class OAuth2SupportConfiguration {
 
@@ -135,6 +109,39 @@ public class AppAutoConfiguration {
             return new AppOAuth2AccessDeniedHandler();
         }
     }
+
+    @Configuration
+    @ConditionalOnClass({ConnectAutoConfiguration.class, RedisTemplate.class})
+    @Import(AppConnectEndpoint.class)
+    @AutoConfigureAfter(AppAutoConfiguration.class)
+    public static class ConnectSupportConfiguration {
+
+        @Bean
+        @ConditionalOnMissingBean
+        public ConnectAuthenticationFilterPostProcessor connectAuthenticationFilterPostProcessor(
+                @Lazy AuthenticationSuccessHandler authenticationSuccessHandler,
+                @Autowired(required = false) AppLoginFailureHandler loginFailureHandler) {
+
+            return new AppConnectAuthenticationFilterPostProcessor(authenticationSuccessHandler,
+                    new AppConnectAuthenticationFailureHandler(loginFailureHandler));
+        }
+
+        @Bean
+        public HttpSecurityConfigurer openIdFilterProviderConfigurer(
+                @Lazy AuthenticationSuccessHandler authenticationSuccessHandler,
+                AuthenticationFailureHandler authenticationFailureHandler,
+                SocialUserDetailsService userDetailsService,
+                UsersConnectionRepository usersConnectionRepository) {
+            return new OpenIdFilterProviderConfigurer(authenticationSuccessHandler,
+                    authenticationFailureHandler, userDetailsService, usersConnectionRepository);
+        }
+
+    }
+
+    @Configuration
+    @ConditionalOnClass(SmsAuthenticationConfiguration.class)
+    @EnableSmsAuthentication
+    public static class OAuth2PhoneSupportConfiguration { }
 
     @Configuration
     public static class AppWebSecurityConfiguration extends WebSecurityConfigurerAdapter {

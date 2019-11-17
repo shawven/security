@@ -16,7 +16,7 @@ public class SessionVerificationRepository implements VerificationRepository {
 	/**
 	 * 验证码放入session时的前缀
 	 */
-	public static String SESSION_KEY_PREFIX = "SESSION_KEY_FOR_CODE_";
+	public static String VERIFICATION_CODE_KEY = "VERIFICATION_CODE_KEY";
 
 	@Override
 	public void save(HttpServletRequest request, Verification verification, VerificationType verificationCodeType) {
@@ -35,7 +35,7 @@ public class SessionVerificationRepository implements VerificationRepository {
 
     @Override
     public String getKey(HttpServletRequest request, VerificationType verificationCodeType) {
-        return SESSION_KEY_PREFIX + verificationCodeType.toString().toUpperCase();
+        return VERIFICATION_CODE_KEY + verificationCodeType.toString().toUpperCase();
     }
     private HttpSession getSession(HttpServletRequest request) {
 	    return request.getSession();

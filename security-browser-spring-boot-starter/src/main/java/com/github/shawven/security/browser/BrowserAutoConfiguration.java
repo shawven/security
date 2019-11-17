@@ -5,16 +5,21 @@ import com.github.shawven.security.authorization.AuthorizationConfigureProvider;
 import com.github.shawven.security.browser.authentication.*;
 import com.github.shawven.security.browser.config.BrowserConfiguration;
 import com.github.shawven.security.browser.config.SessionConfiguration;
+import com.github.shawven.security.browser.connect.BrowserConnectAuthenticationFailureHandler;
 import com.github.shawven.security.browser.session.BrowserExpiredSessionStrategy;
 import com.github.shawven.security.browser.session.BrowserInvalidSessionStrategy;
 import com.github.shawven.security.connect.ConnectAuthenticationFilterPostProcessor;
 import com.github.shawven.security.connect.ConnectAutoConfiguration;
+import com.github.shawven.security.verification.authentication.EnableSmsAuthentication;
+import com.github.shawven.security.verification.authentication.SmsAuthenticationConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -32,9 +37,10 @@ import org.springframework.security.web.session.SessionInformationExpiredStrateg
  */
 @Configuration
 @EnableConfigurationProperties(BrowserProperties.class)
+@AutoConfigureAfter(BrowserAutoConfiguration.ConnectSupportConfiguration.class)
 public class BrowserAutoConfiguration {
 
-	@Autowired(required = false)
+	@Autowired
 	private BrowserProperties properties;
 
 	/**
@@ -139,6 +145,7 @@ public class BrowserAutoConfiguration {
 
     @Configuration
     @ConditionalOnClass(ConnectAutoConfiguration.class)
+    @Import(BrowserConnectEndpoint.class)
     public static class ConnectSupportConfiguration {
 
         @Bean
@@ -150,6 +157,23 @@ public class BrowserAutoConfiguration {
                     authenticationFailureHandler);
         }
 
+
+        /**
+         * 验证失败处理器
+         *
+         * @return
+         */
+        @Bean
+        @ConditionalOnMissingBean
+        public AuthenticationFailureHandler authenticationFailureHandler(
+                BrowserConfiguration browserConfiguration,
+                @Autowired(required = false) BrowserLoginFailureHandler loginFailureHandler) {
+            return new BrowserConnectAuthenticationFailureHandler(browserConfiguration, loginFailureHandler);
+        }
     }
 
+    @Configuration
+    @ConditionalOnClass(SmsAuthenticationConfiguration.class)
+    @EnableSmsAuthentication
+    public static class OAuth2PhoneSupportConfiguration { }
 }

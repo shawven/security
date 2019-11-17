@@ -4,6 +4,7 @@ package com.github.shawven.security.verification.config;
  * 图片验证码配置项
  */
 public class CaptchaConfiguration extends VerificationConfiguration{
+
     /**
      * 验证码长度
      */
@@ -50,6 +51,7 @@ public class CaptchaConfiguration extends VerificationConfiguration{
     public int getHeight() {
         return height;
     }
+
     public void setHeight(int height) {
         this.height = height;
     }

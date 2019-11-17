@@ -32,7 +32,6 @@ import java.io.IOException;
  * @since 2019-05-08 21:54
  */
 @Controller
-@ConditionalOnClass(ConnectAutoConfiguration.class)
 public class BrowserConnectEndpoint extends ConnectInfoExtendable {
 
     private static final Logger logger = LoggerFactory.getLogger(BrowserConnectEndpoint.class);

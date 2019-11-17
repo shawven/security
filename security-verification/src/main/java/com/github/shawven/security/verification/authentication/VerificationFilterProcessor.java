@@ -1,4 +1,6 @@
-package com.github.shawven.security.verification;
+package com.github.shawven.security.verification.authentication;
+
+import com.github.shawven.security.verification.VerificationFilter;
 
 /**
  * @author Shoven

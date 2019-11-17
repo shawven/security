@@ -20,44 +20,10 @@ spring:
   redis:
     host: 127.0.0.1
 
-
-logging:
-  level:
-    root: info
-    org:
-      springframework:
-        security: DEBUG
-        social: DEBUG
-
-#浏览器环境配置项，参见BrowserProperties
-
 app:
   security:
-
-    #浏览器环境配置项，参见BrowserProperties
-    browser:
-      # 登录地址
-      signInUrl: /signIn.html
-      # 登录提交地址
-      signInProcessUrl: /login/form
-      # 登录成功地址
-      singInSuccessUrl: /index.html
-      # 注册地址
-      signUpUrl: /signUp.html
-      # 退出处理地址
-      signOutProcessingUrl: /logout
-      # 退出成功地址
-      signOutSuccessUrl: /
-      # 记住我时间
-      rememberMeSeconds: 294000
-      # 响应类型，REDIRECT页面传统跳转，vue、react api请求方式
-      responseType: REDIRECT
-      #session管理相关配置，参见SessionProperties
-      session:
-        maximumSessions: 1
-        maxSessionsPreventsLogin: false
-        sessionInvalidUrl: /session-invalid.html
-
+    # 白名单 （未登录用户可访问）
+    whitelist: /user/register,/verification/sms,/verification/captcha
     # 验证码配置 参见VerificationProperties
     verification:
       #图片验证码配置项，参见ImageCodeProperties
@@ -68,9 +34,10 @@ app:
         expireIn: 30
         # 配置需要图形验证码验证的url, 两个验证码如果配的url中相同部分则短信优先级要高
         url:
-
       #短信验证码配置项，参见SmsCodeProperties
       sms:
+        # 短信验证码登录处理的url
+        loginProcessesUrl: /oauth/connect
         length: 6
         expireIn: 60
         # 配置需要短信验证码验证的url
@@ -78,16 +45,13 @@ app:
 
     #社交登录功能拦截的url,参见SocialProperties
     connect:
-      # 拦截器处理的url
-      filterProcessesUrl: /oauth/connect
-  #      signUpUrl:
+      #      signUpUrl:
       #QQ登录配置，参见QQProperties
       qq:
         appId:
         appSecret:
         providerId: qq
-
-      #微信登录配置，参见WeixinProperties
+      #微信登录配置
       weixin:
         appId: wxd99431bbff8305a0
         appSecret: 60f78681d063590a469f1b297feff3c4
@@ -95,9 +59,6 @@ app:
 
     #认证服务器注册的第三方应用配置项，参见OAuth2ClientProperties
     oauth2:
-      # 短信拦截url
-      phoneProcessingUrl: /oauth/phone
-
       # 第三方客户端配置
       clients:
         - clientId: app
@@ -108,3 +69,48 @@ app:
       tokenStore: jwt
       #使用jwt时为token签名的秘钥
       jwtSigningKey: aXo3t%12_Ao
+
+logging:
+  level:
+    root: info
+    org:
+      springframework:
+        security: DEBUG
+        social: DEBUG
+
+---
+spring:
+  profiles: browser
+app:
+  security:
+    #浏览器环境配置项，参见BrowserProperties
+    browser:
+      # 登录地址
+      signInUrl: /signIn.html
+      # 登录提交地址
+      signInProcessingUrl: /login/form
+      # 登录成功地址
+      singInSuccessUrl: /index.html
+      # 注册地址
+      signUpUrl: /signUp.html
+      # 退出处理地址
+      signOutProcessingUrl: /logout
+      # 退出成功地址
+      signOutSuccessUrl: /signIn.html
+      # 响应类型，REDIRECT页面传统跳转，vue、react api请求方式
+      responseType: REDIRECT
+      #session管理相关配置，参见SessionProperties
+      session:
+        maximumSessions: 1
+        maxSessionsPreventsLogin: false
+        sessionInvalidUrl: /session-invalid.html
+
+    verification:
+      #短信验证码配置项
+      sms:
+        # 短信验证码登录处理的url
+        loginProcessesUrl: /login/phone
+    connect:
+      #社交登录功能拦截的url
+      filterProcessesUrl: /login/connect
+---

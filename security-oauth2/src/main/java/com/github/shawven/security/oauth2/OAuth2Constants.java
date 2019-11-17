@@ -16,9 +16,4 @@ public class OAuth2Constants {
      * 社交登陆（获取令牌）：/oauth/connect/qq、/login/connect/weixin 等
      */
     public static final String DEFAULT_OAUTH_TOKEN_ENDPOINTS = "/oauth/token";
-
-	/**
-	 * 默认的手机验证码登录请求处理url
-	 */
-	public static final String DEFAULT_PHONE_TOKEN_PROCESSING_URL = "/oauth/phone";
 }

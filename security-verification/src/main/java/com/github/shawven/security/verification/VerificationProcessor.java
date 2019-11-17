@@ -14,7 +14,7 @@ public interface VerificationProcessor<T extends Verification> {
 	 * @param data
 	 * @throws Exception
 	 */
-	void create(VerificationRequest<T> data);
+	void processed(VerificationRequest<T> data);
 
 	/**
 	 * 校验验证码

@@ -16,4 +16,9 @@ public class TestController {
     public ResponseEntity index(Authentication authentication) {
         return ResponseEntity.ok(authentication);
     }
+
+    @GetMapping("/hello")
+    public ResponseEntity hello() {
+        return ResponseEntity.ok("hello world");
+    }
 }

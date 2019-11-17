@@ -1,6 +1,7 @@
 
-package com.github.shawven.security.verification;
+package com.github.shawven.security.verification.authentication;
 
+import com.github.shawven.security.verification.authentication.PhoneUserDetailsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.UserDetails;

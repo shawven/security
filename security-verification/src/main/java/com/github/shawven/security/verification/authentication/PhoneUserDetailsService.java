@@ -1,4 +1,4 @@
-package com.github.shawven.security.verification;
+package com.github.shawven.security.verification.authentication;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

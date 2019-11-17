@@ -1,8 +1,8 @@
 
-package com.github.shawven.security.oauth2.sms;
+package com.github.shawven.security.verification.authentication;
 
-import com.github.shawven.security.authorization.AuthenticationFilterProviderConfigurer;
-import com.github.shawven.security.verification.PhoneUserDetailsService;
+import com.github.shawven.security.authorization.HttpSecurityConfigurer;
+import com.github.shawven.security.verification.config.SmsConfiguration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -12,9 +12,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 /**
  * 短信登录配置
  */
-public class SmsFilterProviderConfigurer extends AuthenticationFilterProviderConfigurer {
+public class SmsFilterProviderConfigurer extends HttpSecurityConfigurer {
 
-    private SmsConfiguration configuration;
+    private String loginProcessingUrl;
 
     private PhoneUserDetailsService userDetailsService;
 
@@ -22,10 +22,10 @@ public class SmsFilterProviderConfigurer extends AuthenticationFilterProviderCon
 
     private AuthenticationFailureHandler authenticationFailureHandler;
 
-    public SmsFilterProviderConfigurer(SmsConfiguration configuration, PhoneUserDetailsService userDetailsService,
+    public SmsFilterProviderConfigurer(String loginProcessingUrl, PhoneUserDetailsService userDetailsService,
                                        AuthenticationSuccessHandler authenticationSuccessHandler,
                                        AuthenticationFailureHandler authenticationFailureHandler) {
-        this.configuration = configuration;
+        this.loginProcessingUrl = loginProcessingUrl;
         this.userDetailsService = userDetailsService;
         this.authenticationSuccessHandler = authenticationSuccessHandler;
         this.authenticationFailureHandler = authenticationFailureHandler;
@@ -34,7 +34,7 @@ public class SmsFilterProviderConfigurer extends AuthenticationFilterProviderCon
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
 
-		SmsAuthenticationFilter smsAuthenticationFilter = new SmsAuthenticationFilter(configuration);
+		SmsAuthenticationFilter smsAuthenticationFilter = new SmsAuthenticationFilter(loginProcessingUrl);
 		smsAuthenticationFilter.setAuthenticationManager(http.getSharedObject(AuthenticationManager.class));
 		smsAuthenticationFilter.setAuthenticationSuccessHandler(authenticationSuccessHandler);
 		smsAuthenticationFilter.setAuthenticationFailureHandler(authenticationFailureHandler);

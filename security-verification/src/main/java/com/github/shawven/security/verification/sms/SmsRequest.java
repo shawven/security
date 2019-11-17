@@ -4,6 +4,7 @@ import com.github.shawven.security.verification.VerificationRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 /**
@@ -55,12 +56,14 @@ public class SmsRequest extends VerificationRequest<Sms> {
     }
 
     private void validatePhone(String phone) {
+        Objects.requireNonNull(phone, "手机号不能为空");
         if (!Pattern.compile("[1]([3-9])[0-9]{9}").matcher(phone).find()) {
             throw new IllegalArgumentException("手机号格式不正确");
         }
     }
 
     private void validateTemplate(String messageTemplate) {
+        Objects.requireNonNull(messageTemplate, "短信模板不能为空");
         if (!Pattern.compile("\\{\\d(,?\\w+)?}").matcher(messageTemplate).find()) {
             throw new IllegalArgumentException("短信模板错误，至少有一个填充位，参考MessageFormat");
         }

@@ -1,5 +1,5 @@
 
-package com.github.shawven.security.oauth2.sms;
+package com.github.shawven.security.verification.authentication;
 
 import com.github.shawven.security.verification.VerificationConstants;
 import org.apache.commons.lang3.StringUtils;
@@ -20,13 +20,13 @@ public class SmsAuthenticationFilter extends AbstractAuthenticationProcessingFil
 	// ~ Static fields/initializers
 	// =====================================================================================
 
-	private String phoneParameter = VerificationConstants.DEFAULT_PHONE_PARAMETER_NAME;
+	private String phoneParameter = VerificationConstants.PHONE_PARAMETER_NAME;
 
 	// ~ Constructors
 	// ===================================================================================================
 
-	public SmsAuthenticationFilter(SmsConfiguration config) {
-		super(new AntPathRequestMatcher(config.getFilterProcessingUrl(), "POST"));
+	public SmsAuthenticationFilter(String processingUrl) {
+		super(new AntPathRequestMatcher(processingUrl, "POST"));
 	}
 
 	// ~ Methods

@@ -5,7 +5,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.DefaultSecurityFilterChain;
 
 /**
- * 验证过滤器提供者，实际就是apply应用的目标
+ * 验证过滤器提供者配置器，实际就是apply应用的目标
  *  void configure(HttpSecurity http) {
  *      http.apply( )
  *  }
@@ -14,6 +14,6 @@ import org.springframework.security.web.DefaultSecurityFilterChain;
  * @author Shoven
  * @date 2019-11-11
  */
-public class AuthenticationFilterProviderConfigurer extends SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity> {
+public class HttpSecurityConfigurer extends SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity> {
 
 }

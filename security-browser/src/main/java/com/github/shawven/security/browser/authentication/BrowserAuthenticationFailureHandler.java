@@ -53,7 +53,7 @@ public class BrowserAuthenticationFailureHandler extends SimpleUrlAuthentication
             response.setStatus(status);
 			response.setContentType("application/json;charset=UTF-8");
             response.getWriter().write(new ObjectMapper().writeValueAsString(result));
-		}else{
+		} else{
 			super.onAuthenticationFailure(request, response, exception);
 		}
 	}

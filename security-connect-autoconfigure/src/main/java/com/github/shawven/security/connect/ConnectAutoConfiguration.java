@@ -1,7 +1,7 @@
 
 package com.github.shawven.security.connect;
 
-import com.github.shawven.security.authorization.AuthenticationFilterProviderConfigurer;
+import com.github.shawven.security.authorization.HttpSecurityConfigurer;
 import com.github.shawven.security.authorization.AuthorizationConfigureProvider;
 import com.github.shawven.security.connect.config.ConnectConfiguration;
 import com.github.shawven.security.connect.config.QQConfiguration;
@@ -104,7 +104,7 @@ public class ConnectAutoConfiguration extends SocialConfigurerAdapter {
 	 * @return
 	 */
 	@Bean
-	public AuthenticationFilterProviderConfigurer connectFilterProviderConfigurer() {
+	public HttpSecurityConfigurer connectFilterProviderConfigurer() {
         ConnectConfiguration connectConfiguration = getConnectConfiguration();
         // 设置过滤器拦截社交登录的url
 		String filterProcessesUrl = connectConfiguration.getFilterProcessesUrl();

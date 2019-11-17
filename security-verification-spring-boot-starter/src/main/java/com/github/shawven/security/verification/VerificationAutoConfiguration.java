@@ -1,7 +1,7 @@
 package com.github.shawven.security.verification;
 
-import com.github.shawven.security.authorization.AuthenticationFilterProviderConfigurer;
-import com.github.shawven.security.authorization.AuthorizationConfigureProvider;
+import com.github.shawven.security.authorization.HttpSecurityConfigurer;
+import com.github.shawven.security.verification.authentication.SmsFilterProviderConfigurer;
 import com.github.shawven.security.verification.captcha.CaptchaGenerator;
 import com.github.shawven.security.verification.captcha.CaptchaProcessor;
 import com.github.shawven.security.verification.config.VerificationConfiguration;
@@ -16,7 +16,10 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,13 +34,8 @@ public class VerificationAutoConfiguration {
 
     private VerificationProperties properties;
 
-    private List<VerificationFilterProcessor> filterProcessors;
-
-    public VerificationAutoConfiguration(VerificationProperties properties,
-                                         @Autowired(required = false)
-                                         List<VerificationFilterProcessor> filterProcessors) {
+    public VerificationAutoConfiguration(VerificationProperties properties) {
         this.properties = properties;
-        this.filterProcessors = filterProcessors;
     }
 
     /**
@@ -138,19 +136,5 @@ public class VerificationAutoConfiguration {
         configurations.add(properties.getSms());
         return new VerificationFilter(processors, configurations);
     }
-
-    @Bean
-    public AuthorizationConfigureProvider verificationAuthorizationConfigureProvider() {
-        return new VerificationAuthorizationConfigureProvider();
-    }
-
-    @Bean
-    public AuthenticationFilterProviderConfigurer verificationFilterProviderConfigurer(VerificationFilter filter) {
-        if (filterProcessors != null && !filterProcessors.isEmpty()) {
-            filterProcessors.forEach(processor -> processor.proceed(filter));
-        }
-        return new VerificationFilterProviderConfigurer(filter);
-    }
-
 }
 

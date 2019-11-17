@@ -30,12 +30,18 @@ public abstract class AbstractVerificationProcessor<T extends Verification> impl
     }
 
     @Override
-	public void create(VerificationRequest<T> verificationRequest) {
+	public void processed(VerificationRequest<T> verificationRequest) {
         Objects.requireNonNull(verificationRequest);
+        HttpServletRequest request = verificationRequest.getRequest();
         try {
-            HttpServletRequest request = verificationRequest.getRequest();
+            // 生成校验码
             T verification = verificationGenerator.generate(verificationRequest);
-            save(request, verification);
+
+            // 保存最基本的信息
+            Verification base = new Verification(verification.getCode(), verification.getExpireTime());
+            verificationRepository.save(request, base, getVerificationType(request));
+
+            // 发送校验码
             send(verificationRequest, verification);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -64,15 +70,6 @@ public abstract class AbstractVerificationProcessor<T extends Verification> impl
         verificationRepository.remove(request, codeType);
     }
 
-	/**
-	 * 保存校验码
-	 *  @param request
-	 * @param verification
-     */
-	private void save(HttpServletRequest request, T verification) {
-		Verification simpleVerification = new Verification(verification.getCode(), verification.getExpireTime());
-		verificationRepository.save(request, simpleVerification, getVerificationType(request));
-	}
 
 	/**
 	 * 发送校验码，由子类实现

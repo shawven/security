@@ -74,8 +74,8 @@ public class SmsProcessor extends AbstractVerificationProcessor<Sms> {
     }
 
 	private String getPhone(HttpServletRequest request) {
-        String mobile = request.getParameter(VerificationConstants.DEFAULT_PHONE_PARAMETER_NAME);
-        return Objects.isNull(mobile) ? String.valueOf(request.getAttribute(VerificationConstants.DEFAULT_PHONE_PARAMETER_NAME)) : mobile;
+        String mobile = request.getParameter(VerificationConstants.PHONE_PARAMETER_NAME);
+        return Objects.isNull(mobile) ? String.valueOf(request.getAttribute(VerificationConstants.PHONE_PARAMETER_NAME)) : mobile;
     }
 
     public void setSmsSender(SmsSender smsSender) {
