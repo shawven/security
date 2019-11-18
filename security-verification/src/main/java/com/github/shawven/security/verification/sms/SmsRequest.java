@@ -57,7 +57,7 @@ public class SmsRequest extends VerificationRequest<Sms> {
 
     private void validatePhone(String phone) {
         Objects.requireNonNull(phone, "手机号不能为空");
-        if (!Pattern.compile("[1]([3-9])[0-9]{9}").matcher(phone).find()) {
+        if (!Pattern.compile("[1]([3-9])[0-9]{9}").matcher(phone).matches()) {
             throw new IllegalArgumentException("手机号格式不正确");
         }
     }

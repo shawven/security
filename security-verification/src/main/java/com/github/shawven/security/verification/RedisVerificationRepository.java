@@ -6,6 +6,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 import static com.github.shawven.security.verification.VerificationConstants.*;
 
@@ -59,12 +60,18 @@ public class RedisVerificationRepository implements VerificationRepository {
         String uniqueId = null;
 	    // 先尝试获取手机号
         if (type == VerificationType.SMS) {
-            uniqueId = request.getParameter(PHONE_PARAMETER_NAME);
+            Object attribute = request.getAttribute(PHONE_ATTRIBUTE_NAME);
+            if (attribute != null) {
+                uniqueId = String.valueOf(attribute);
+            }
             if (StringUtils.isBlank(uniqueId)) {
-                uniqueId = String.valueOf(request.getAttribute(PHONE_PARAMETER_NAME));
+                uniqueId = request.getParameter(PHONE_PARAMETER_NAME);
             }
         }
         if (StringUtils.isNotBlank(uniqueId)) {
+            if (!Pattern.compile("[1]([3-9])[0-9]{9}").matcher(uniqueId).matches()) {
+                throw new VerificationException("手机号：" + uniqueId + "错误");
+            }
             return uniqueId;
         } else {
             // 再尝试获取session id
@@ -78,6 +85,5 @@ public class RedisVerificationRepository implements VerificationRepository {
             }
             return uniqueId;
         }
-
     }
 }

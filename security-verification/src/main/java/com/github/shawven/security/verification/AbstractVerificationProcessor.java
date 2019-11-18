@@ -32,11 +32,10 @@ public abstract class AbstractVerificationProcessor<T extends Verification> impl
     @Override
 	public void processed(VerificationRequest<T> verificationRequest) {
         Objects.requireNonNull(verificationRequest);
-        HttpServletRequest request = verificationRequest.getRequest();
         try {
             // 生成校验码
             T verification = verificationGenerator.generate(verificationRequest);
-
+            HttpServletRequest request = verificationRequest.getRequest();
             // 保存最基本的信息
             Verification base = new Verification(verification.getCode(), verification.getExpireTime());
             verificationRepository.save(request, base, getVerificationType(request));

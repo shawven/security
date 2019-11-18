@@ -1,6 +1,8 @@
 
 package com.github.shawven.security.verification.sms;
 
+import com.github.shawven.security.verification.Verification;
+import com.github.shawven.security.verification.VerificationConstants;
 import com.github.shawven.security.verification.VerificationGenerator;
 import com.github.shawven.security.verification.VerificationRequest;
 import com.github.shawven.security.verification.config.SmsConfiguration;
@@ -33,6 +35,8 @@ public class SmsGenerator implements VerificationGenerator<Sms> {
         String code = RandomStringUtils.randomNumeric(length);
         String message = toMessage(template, code, expireIn);
 
+        // 重要，用作存储的key
+        request.getRequest().setAttribute(VerificationConstants.PHONE_ATTRIBUTE_NAME, smsReq.getPhone());
         return new Sms(smsReq.getPhone(), message, code, expireIn);
     }
 

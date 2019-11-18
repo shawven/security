@@ -28,6 +28,11 @@ public class VerificationConstants {
 	public static final String PHONE_PARAMETER_NAME = "phone";
 
     /**
+     * reqeust attribute传递
+     */
+    public static final String PHONE_ATTRIBUTE_NAME = "verification_phone_attribute";
+
+    /**
      * reids 会话id参数
      */
     public static final String REDIS_SESSION_ID_PARAMETER_NAME = "sid";
