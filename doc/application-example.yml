@@ -1,51 +1,3 @@
-server:
-  port: 9090
-
-spring:
-  jpa:
-    #是否在控制台打印sql语句
-    show-sql: true
-    hibernate:
-      ddl-auto: update
-      naming:
-        # 隐私转换策略，如果实体类上没有@TableName注解，则默认适用于该策略
-        implicit-strategy: com.github.shawven.security.rbac.repository.support.AppImplicitNamingStrategy
-    #是否自动生成/修改数据库表
-    generate-ddl: true
-    properties:
-      hibernate:
-        format_sql: true:
-
-  #数据库连接配置
-  datasource:
-    driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/test?useUnicode=yes&characterEncoding=UTF-8&useSSL=false
-    username: root
-    password: root
-    #连接池及重试配置，防止mysql如果8小时自动断开连接问题
-    tomcat:
-      max-active: 100
-      min-idle: 10
-      min-evictable-idle-time-millis:  1800000
-      test-on-borrow: true
-      test-on-return: true
-      test-while-idle: true
-      validation-query: select 1
-
-  session:
-    #集群session存储方式
-    store-type: none
-    #session超时时间，单位秒
-    timeout: 3000
-
-
-logging:
-  level:
-    root: info
-    org:
-      springframework:
-        security: DEBUG
-
 app:
   security:
     #浏览器环境配置项
@@ -122,4 +74,3 @@ app:
       tokenStore: jwt
       #使用jwt时为token签名的秘钥
       jwtSigningKey: aXo3t%12_Ao
-

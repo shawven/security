@@ -30,7 +30,7 @@ import java.util.List;
  * @date 2019-11-09
  */
 @Configuration
-public class BrowserWebSecurityConfiguration extends WebSecurityConfigurerAdapter {
+public class BrowserWebSecurityConfiguration extends HttpSecurityConfigurer {
 
     @Autowired
     private BrowserConfiguration configuration;
@@ -68,44 +68,26 @@ public class BrowserWebSecurityConfiguration extends WebSecurityConfigurerAdapte
     @Autowired(required = false)
     private List<HttpSecurityConfigurer> providerConfigurers = Collections.emptyList();
 
-    @Bean
-    @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
-    }
-
-    @Override
-    public void configure(WebSecurity web) throws Exception {
-        web.ignoring().mvcMatchers(
-                "/error",
-                "/**/favicon.ico",
-                "/**/*.js",
-                "/**/*.css"
-        );
-    }
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
-        boolean redirectSupported = false;
         try {
-            // oauth2环境下已经配置了一遍
             Class.forName("com.github.shawven.security.oauth2.OAuth2AutoConfiguration");
-            http.csrf().disable();
-            if (configuration.getResponseType()  == ResponseType.REDIRECT) {
-                redirectSupported = true;
-            }
-        } catch (ClassNotFoundException ignored) { }
-        if (redirectSupported) {
+        } catch (ClassNotFoundException ignored) {
+            // OAuth2 已经配置到资源服务去了，所以只有没有OAuth2模块时才配置
             for (HttpSecurityConfigurer configurer : providerConfigurers) {
                 http.apply(configurer);
             }
             authorizationConfigurerManager.config(http.authorizeRequests());
+            // 只有不是OAuth2时就加载这些
             configureExceptionHandler(http);
             configureSession(http);
             configureRememberMe(http);
             configureFormLogin(http);
             configureLogout(http);
         }
+
+
     }
 
     public void configureExceptionHandler(HttpSecurity http) throws Exception {
@@ -156,4 +138,23 @@ public class BrowserWebSecurityConfiguration extends WebSecurityConfigurerAdapte
         }
     }
 
+    @Configuration
+    public static class AuthenticationManagerConfiguration extends WebSecurityConfigurerAdapter {
+
+        @Override
+        public void configure(WebSecurity web) throws Exception {
+            web.ignoring().mvcMatchers(
+                    "/error",
+                    "/**/favicon.ico",
+                    "/**/*.js",
+                    "/**/*.css"
+            );
+        }
+
+        @Bean
+        @Override
+        public AuthenticationManager authenticationManagerBean() throws Exception {
+            return super.authenticationManagerBean();
+        }
+    }
 }
