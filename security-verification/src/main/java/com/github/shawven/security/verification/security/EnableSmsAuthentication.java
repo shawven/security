@@ -1,4 +1,4 @@
-package com.github.shawven.security.verification.authentication;
+package com.github.shawven.security.verification.security;
 
 /**
  * @author Shoven

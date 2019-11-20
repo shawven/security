@@ -1,9 +1,10 @@
 package com.github.shawven.security.browser;
 
-import com.github.shawven.security.authorization.HttpSecurityConfigurer;
+import com.github.shawven.security.authorization.HttpSecuritySupportConfigurer;
 import com.github.shawven.security.authorization.AuthorizationConfigurerManager;
 import com.github.shawven.security.browser.config.BrowserConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,6 +21,9 @@ import org.springframework.security.web.authentication.logout.LogoutSuccessHandl
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.session.InvalidSessionStrategy;
 import org.springframework.security.web.session.SessionInformationExpiredStrategy;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 import javax.sql.DataSource;
 import java.util.Collections;
@@ -30,7 +34,7 @@ import java.util.List;
  * @date 2019-11-09
  */
 @Configuration
-public class BrowserWebSecurityConfiguration extends HttpSecurityConfigurer {
+public class BrowserSecuritySupportConfiguration extends HttpSecuritySupportConfigurer {
 
     @Autowired
     private BrowserConfiguration configuration;
@@ -66,7 +70,7 @@ public class BrowserWebSecurityConfiguration extends HttpSecurityConfigurer {
     private DataSource dataSource;
 
     @Autowired(required = false)
-    private List<HttpSecurityConfigurer> providerConfigurers = Collections.emptyList();
+    private List<HttpSecuritySupportConfigurer> providerConfigurers = Collections.emptyList();
 
 
     @Override
@@ -75,7 +79,7 @@ public class BrowserWebSecurityConfiguration extends HttpSecurityConfigurer {
             Class.forName("com.github.shawven.security.oauth2.OAuth2AutoConfiguration");
         } catch (ClassNotFoundException ignored) {
             // OAuth2 已经配置到资源服务去了，所以只有没有OAuth2模块时才配置
-            for (HttpSecurityConfigurer configurer : providerConfigurers) {
+            for (HttpSecuritySupportConfigurer configurer : providerConfigurers) {
                 http.apply(configurer);
             }
             authorizationConfigurerManager.config(http.authorizeRequests());
@@ -155,6 +159,24 @@ public class BrowserWebSecurityConfiguration extends HttpSecurityConfigurer {
         @Override
         public AuthenticationManager authenticationManagerBean() throws Exception {
             return super.authenticationManagerBean();
+        }
+
+        /**
+         * 跨域支持
+         *
+         * @return
+         */
+        @Bean
+        @ConditionalOnMissingBean
+        public CorsFilter corsFilter() {
+            CorsConfiguration configuration = new CorsConfiguration();
+            configuration.addAllowedOrigin("*");
+            configuration.addAllowedMethod("*");
+            configuration.addAllowedHeader("*");
+            configuration.setAllowCredentials(true);
+            UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+            source.registerCorsConfiguration("/**", configuration);
+            return new CorsFilter(source);
         }
     }
 }

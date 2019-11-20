@@ -7,13 +7,13 @@ import com.github.shawven.security.app.oauth2.AppOAuth2AccessDeniedHandler;
 import com.github.shawven.security.app.oauth2.AppOAuth2AuthenticationExceptionEntryPoint;
 import com.github.shawven.security.app.oauth2.AppOAuth2AuthenticationFailureHandler;
 import com.github.shawven.security.app.oauth2.AppOAuth2AuthenticationHandler;
-import com.github.shawven.security.app.openid.OpenIdFilterProviderConfigurer;
-import com.github.shawven.security.authorization.HttpSecurityConfigurer;
+import com.github.shawven.security.app.openid.OpenIdSecuritySupportConfigurer;
+import com.github.shawven.security.authorization.HttpSecuritySupportConfigurer;
 import com.github.shawven.security.connect.ConnectAuthenticationFilterPostProcessor;
 import com.github.shawven.security.connect.ConnectAutoConfiguration;
 import com.github.shawven.security.oauth2.AuthenticationSuccessHandlerPostProcessor;
-import com.github.shawven.security.verification.authentication.EnableSmsAuthentication;
-import com.github.shawven.security.verification.authentication.SmsAuthenticationConfiguration;
+import com.github.shawven.security.verification.security.EnableSmsAuthentication;
+import com.github.shawven.security.verification.security.SmsAuthenticationConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -28,6 +28,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.provider.endpoint.TokenEndpoint;
+import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -35,6 +37,9 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.social.connect.UsersConnectionRepository;
 import org.springframework.social.security.SocialUserDetailsService;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 /**
  * 适用于APP端，全部json返回，适配手机验证码、社交登录
@@ -72,8 +77,15 @@ public class AppAutoConfiguration {
     }
 
     @Configuration
-    @Import(AppOAuth2Endpoint.class)
     public static class OAuth2SupportConfiguration {
+
+        @Bean
+        @ConditionalOnMissingBean
+        public AppOAuth2Endpoint appOAuth2Endpoint(TokenEndpoint tokenEndpoint, AuthorizationServerTokenServices services,
+                                                   @Autowired(required = false) AppLoginSuccessHandler loginSuccessHandler,
+                                                   @Autowired(required = false) AppLoginFailureHandler loginFailureHandler) {
+            return new AppOAuth2Endpoint(tokenEndpoint, services, loginSuccessHandler, loginFailureHandler);
+        }
 
         /**
          * 验证失败处理器
@@ -112,9 +124,14 @@ public class AppAutoConfiguration {
 
     @Configuration
     @ConditionalOnClass({ConnectAutoConfiguration.class, RedisTemplate.class})
-    @Import(AppConnectEndpoint.class)
     @AutoConfigureAfter(AppAutoConfiguration.class)
     public static class ConnectSupportConfiguration {
+
+        @Bean
+        @ConditionalOnMissingBean
+        public AppConnectEndpoint appConnectEndpoint() {
+            return new AppConnectEndpoint();
+        }
 
         @Bean
         @ConditionalOnMissingBean
@@ -127,12 +144,13 @@ public class AppAutoConfiguration {
         }
 
         @Bean
-        public HttpSecurityConfigurer openIdFilterProviderConfigurer(
+        @ConditionalOnMissingBean(name = "openIdSecuritySupportConfigurer")
+        public HttpSecuritySupportConfigurer openIdSecuritySupportConfigurer(
                 @Lazy AuthenticationSuccessHandler authenticationSuccessHandler,
                 AuthenticationFailureHandler authenticationFailureHandler,
                 SocialUserDetailsService userDetailsService,
                 UsersConnectionRepository usersConnectionRepository) {
-            return new OpenIdFilterProviderConfigurer(authenticationSuccessHandler,
+            return new OpenIdSecuritySupportConfigurer(authenticationSuccessHandler,
                     authenticationFailureHandler, userDetailsService, usersConnectionRepository);
         }
 
@@ -166,6 +184,24 @@ public class AppAutoConfiguration {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                     .and()
                         .csrf().disable();
+        }
+
+        /**
+         * 跨域支持
+         *
+         * @return
+         */
+        @Bean
+        @ConditionalOnMissingBean
+        public CorsFilter corsFilter() {
+            CorsConfiguration configuration = new CorsConfiguration();
+            configuration.addAllowedOrigin("*");
+            configuration.addAllowedMethod("*");
+            configuration.addAllowedHeader("*");
+            configuration.setAllowCredentials(true);
+            UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+            source.registerCorsConfiguration("/**", configuration);
+            return new CorsFilter(source);
         }
     }
 

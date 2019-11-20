@@ -1,16 +1,11 @@
 # Security
-![spring-securiy](./doc/images/spring-security-logo.png)
- 
-只需要简单的配置就能接入OAuth2授权认证流程、短信登录、第三方登录等功能
----
-
-- **基于[Spring Security](https://spring.io/projects/spring-security)开发**
+#### 只需要简单的配置就能接入OAuth2授权认证流程、短信登录、第三方登录等功能
+![spring-securiy](./doc/images/logo.png)
+- **基于[Spring Security](https://spring.io/projects/spring-security)开发，更多信息请参考官方文档**
 - **提供浏览器和APP环境spring-boot-starter支持，分别以session 和 token认保存会话**
 - **支持表单登陆、短信登录、OAuth2授权登录、第三方登录（微信、QQ）**
-# Security
-只需要简单的配置就能接入OAuth2授权认证流程、短信登录、第三方登录等功能
-
 ---
+
 ## 自动配置
 **spring-boot-starter支持，配置属性即可成功使用**
 ### security-app-spring-boot-starter
@@ -37,3 +32,7 @@ OAuth2自动配置包，
 -- 会话保持主要依赖session，支持传统页面跳转，和前后端分离json响应
 **App环境**
 -- 无状态，会话主要存储依赖redis，仅支持json响应
+
+## License
+Security is Open Source software released under the
+https://www.apache.org/licenses/LICENSE-2.0.html[Apache 2.0 license].

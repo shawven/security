@@ -10,8 +10,8 @@ import com.github.shawven.security.browser.session.BrowserExpiredSessionStrategy
 import com.github.shawven.security.browser.session.BrowserInvalidSessionStrategy;
 import com.github.shawven.security.connect.ConnectAuthenticationFilterPostProcessor;
 import com.github.shawven.security.connect.ConnectAutoConfiguration;
-import com.github.shawven.security.verification.authentication.EnableSmsAuthentication;
-import com.github.shawven.security.verification.authentication.SmsAuthenticationConfiguration;
+import com.github.shawven.security.verification.security.EnableSmsAuthentication;
+import com.github.shawven.security.verification.security.SmsAuthenticationConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -36,12 +36,19 @@ import org.springframework.security.web.session.SessionInformationExpiredStrateg
  * @since 2019-05-08 21:53
  */
 @Configuration
+@Import(BrowserSecuritySupportConfiguration.class)
 @EnableConfigurationProperties(BrowserProperties.class)
 @AutoConfigureAfter(BrowserAutoConfiguration.ConnectSupportConfiguration.class)
 public class BrowserAutoConfiguration {
 
 	@Autowired
 	private BrowserProperties properties;
+
+	@Bean
+    @ConditionalOnMissingBean
+    public BrowserConnectEndpoint browserConnectEndpoint() {
+	    return new BrowserConnectEndpoint();
+    }
 
 	/**
 	 * session失效时的处理策略配置

@@ -1,7 +1,6 @@
 
 package com.github.shawven.security.verification.sms;
 
-import com.github.shawven.security.verification.Verification;
 import com.github.shawven.security.verification.VerificationConstants;
 import com.github.shawven.security.verification.VerificationGenerator;
 import com.github.shawven.security.verification.VerificationRequest;
@@ -15,10 +14,11 @@ import java.text.MessageFormat;
  */
 public class SmsGenerator implements VerificationGenerator<Sms> {
 
-    private static final String DEFAULT_TEMPLATE = "短信验证码【{0}】，{1,number}分钟内输入有效";
+    private static final String DEFAULT_TEMPLATE = "短信验证码[{0}]，{1,number}分钟按页面提示提交验证码，请勿将验证码泄漏于他人";
 
 	private SmsConfiguration configuration;
 
+	private String defaultTemplate = DEFAULT_TEMPLATE;
 
     public SmsGenerator(SmsConfiguration configuration) {
         this.configuration = configuration;
@@ -43,5 +43,13 @@ public class SmsGenerator implements VerificationGenerator<Sms> {
     private String toMessage(String template, String code, int expireIn) {
         int seconds = expireIn / 60;
         return MessageFormat.format(template, code, seconds);
+    }
+
+    public String getDefaultTemplate() {
+        return defaultTemplate;
+    }
+
+    public void setDefaultTemplate(String defaultTemplate) {
+        this.defaultTemplate = defaultTemplate;
     }
 }

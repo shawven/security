@@ -1,7 +1,7 @@
 
-package com.github.shawven.security.verification.authentication;
+package com.github.shawven.security.verification.security;
 
-import com.github.shawven.security.authorization.HttpSecurityConfigurer;
+import com.github.shawven.security.authorization.HttpSecuritySupportConfigurer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 
@@ -10,11 +10,11 @@ import javax.servlet.Filter;
 /**
  * 校验码相关安全配置
  */
-public class VerificationFilterProviderConfigurer extends HttpSecurityConfigurer {
+public class VerificationSecuritySupportConfigurer extends HttpSecuritySupportConfigurer {
 
 	private Filter verificationFilter;
 
-    public VerificationFilterProviderConfigurer(Filter verificationFilter) {
+    public VerificationSecuritySupportConfigurer(Filter verificationFilter) {
         this.verificationFilter = verificationFilter;
     }
 
@@ -22,6 +22,5 @@ public class VerificationFilterProviderConfigurer extends HttpSecurityConfigurer
 	public void configure(HttpSecurity http) throws Exception {
 		http.addFilterAfter(verificationFilter, LogoutFilter.class);
 	}
-
 
 }

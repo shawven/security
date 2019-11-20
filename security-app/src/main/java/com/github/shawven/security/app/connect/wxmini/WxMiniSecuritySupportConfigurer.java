@@ -1,7 +1,7 @@
 
 package com.github.shawven.security.app.connect.wxmini;
 
-import com.github.shawven.security.authorization.HttpSecurityConfigurer;
+import com.github.shawven.security.authorization.HttpSecuritySupportConfigurer;
 import com.github.shawven.security.connect.RedisSignInUtils;
 import com.github.shawven.security.connect.config.ConnectConfiguration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -11,7 +11,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.social.security.SocialUserDetailsService;
 
-public class WxMiniFilterProviderConfigurer extends HttpSecurityConfigurer {
+public class WxMiniSecuritySupportConfigurer extends HttpSecuritySupportConfigurer {
 
     private AuthenticationSuccessHandler appAuthenticationSuccessHandler;
 

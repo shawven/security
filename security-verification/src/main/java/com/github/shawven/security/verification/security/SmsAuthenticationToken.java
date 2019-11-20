@@ -1,5 +1,5 @@
 
-package com.github.shawven.security.verification.authentication;
+package com.github.shawven.security.verification.security;
 
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;

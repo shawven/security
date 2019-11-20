@@ -1,7 +1,7 @@
 package com.github.shawven.security.verification;
 
-import com.github.shawven.security.authorization.HttpSecurityConfigurer;
-import com.github.shawven.security.verification.authentication.SmsFilterProviderConfigurer;
+import com.github.shawven.security.authorization.HttpSecuritySupportConfigurer;
+import com.github.shawven.security.verification.security.VerificationSecuritySupportConfigurer;
 import com.github.shawven.security.verification.captcha.CaptchaGenerator;
 import com.github.shawven.security.verification.captcha.CaptchaProcessor;
 import com.github.shawven.security.verification.config.VerificationConfiguration;
@@ -13,13 +13,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,11 +33,8 @@ import java.util.List;
 @EnableConfigurationProperties(VerificationProperties.class)
 public class VerificationAutoConfiguration {
 
+    @Autowired
     private VerificationProperties properties;
-
-    public VerificationAutoConfiguration(VerificationProperties properties) {
-        this.properties = properties;
-    }
 
     /**
      * 短信验证码生成器
@@ -44,7 +42,7 @@ public class VerificationAutoConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean
-    public SmsGenerator smsCodeGenerator() {
+    public SmsGenerator smsGenerator() {
         return new SmsGenerator(properties.getSms());
     }
 
@@ -54,7 +52,7 @@ public class VerificationAutoConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean
-    public SmsSender smsCodeSender() {
+    public SmsSender smsSender() {
         return new DefaultSmsSender();
     }
 
@@ -64,34 +62,9 @@ public class VerificationAutoConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean
-    public CaptchaGenerator imageCodeGenerator() {
+    public CaptchaGenerator captchaGenerator() {
         return new CaptchaGenerator(properties.getCaptcha());
     }
-
-    @Configuration
-    @AutoConfigureOrder(1)
-    @ConditionalOnClass(RedisTemplate.class)
-    public static class RedisSupportConfiguration {
-
-        @Bean
-        @ConditionalOnMissingBean
-        public VerificationRepository verificationRepository(RedisTemplate redisTemplate) {
-            return new RedisVerificationRepository(redisTemplate);
-        }
-    }
-
-    /**
-     * 基于session的验证码存取器
-     *
-     * @return
-     */
-    @Bean
-    @AutoConfigureOrder(2)
-    @ConditionalOnMissingBean
-    public VerificationRepository verificationRepository() {
-        return new SessionVerificationRepository();
-    }
-
 
     /**
      * 短信验证码处理器
@@ -122,19 +95,91 @@ public class VerificationAutoConfiguration {
         return new CaptchaProcessor(verificationRepository, captchaGenerator);
     }
 
+    @Configuration
+    @AutoConfigureOrder(1)
+    @ConditionalOnClass(RedisTemplate.class)
+    public static class RedisSupportConfiguration {
+
+        @Bean
+        @ConditionalOnMissingBean
+        public VerificationRepository verificationRepository(RedisTemplate redisTemplate) {
+            return new RedisVerificationRepository(redisTemplate);
+        }
+    }
 
     /**
-     * 验证码校验过滤器
+     * 基于session的验证码存取器
      *
      * @return
      */
     @Bean
+    @AutoConfigureOrder(2)
     @ConditionalOnMissingBean
-    public VerificationFilter verificationFilter(List<VerificationProcessor> processors) {
-        ArrayList<VerificationConfiguration> configurations = new ArrayList<>();
-        configurations.add(properties.getCaptcha());
-        configurations.add(properties.getSms());
-        return new VerificationFilter(processors, configurations);
+    public VerificationRepository verificationRepository() {
+        return new SessionVerificationRepository();
+    }
+
+    @Configuration
+    @ConditionalOnMissingClass("org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration")
+    public static class NotSecuritySupportConfiguration {
+
+        private VerificationProperties properties;
+
+        private List<VerificationProcessor> processors;
+
+        public NotSecuritySupportConfiguration(VerificationProperties properties,
+                                               List<VerificationProcessor> processors) {
+            this.properties = properties;
+            this.processors = processors;
+        }
+
+        /**
+         * 验证码校验过滤器
+         *
+         * @return
+         */
+        @Bean
+        @Order(Ordered.HIGHEST_PRECEDENCE)
+        @ConditionalOnMissingBean
+        public VerificationFilter verificationFilter() {
+            ArrayList<VerificationConfiguration> configurations = new ArrayList<>();
+            configurations.add(properties.getCaptcha());
+            configurations.add(properties.getSms());
+            return new VerificationFilter(processors, configurations);
+        }
+    }
+
+    @Configuration
+    @ConditionalOnClass(WebSecurityConfiguration.class)
+    public static class SecuritySupportConfiguration {
+
+        private VerificationProperties properties;
+
+        private List<VerificationProcessor> processors;
+
+        private List<VerificationFilterPostProcessor> filterPostProcessors;
+
+        public SecuritySupportConfiguration(VerificationProperties properties,
+                                            List<VerificationProcessor> processors,
+                                            List<VerificationFilterPostProcessor> filterPostProcessors) {
+            this.properties = properties;
+            this.processors = processors;
+            this.filterPostProcessors = filterPostProcessors;
+        }
+
+        @Bean
+        @Order(Ordered.HIGHEST_PRECEDENCE)
+        @ConditionalOnMissingBean(name = "verificationSecuritySupportConfigurer")
+        public HttpSecuritySupportConfigurer verificationSecuritySupportConfigurer() {
+            ArrayList<VerificationConfiguration> configurations = new ArrayList<>();
+            configurations.add(properties.getCaptcha());
+            configurations.add(properties.getSms());
+            VerificationFilter filter = new VerificationFilter(processors, configurations);
+            for (VerificationFilterPostProcessor filterPostProcessor : filterPostProcessors) {
+                filterPostProcessor.proceed(filter);
+            }
+            return new VerificationSecuritySupportConfigurer(filter);
+        }
     }
 }
 

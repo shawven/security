@@ -3,7 +3,7 @@ package com.github.shawven.security.verification;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.shawven.security.authorization.ResponseData;
-import com.github.shawven.security.verification.authentication.VerificationFilterProviderConfigurer;
+import com.github.shawven.security.verification.security.VerificationSecuritySupportConfigurer;
 import com.github.shawven.security.verification.config.VerificationConfiguration;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -30,7 +30,7 @@ import static java.util.Collections.emptyMap;
 
 public class VerificationFilter extends OncePerRequestFilter {
 
-    private static final Logger logger = LoggerFactory.getLogger(VerificationFilterProviderConfigurer.class);
+    private static final Logger logger = LoggerFactory.getLogger(VerificationSecuritySupportConfigurer.class);
 
     /**
      * 处理器

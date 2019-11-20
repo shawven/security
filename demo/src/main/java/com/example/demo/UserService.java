@@ -1,6 +1,6 @@
 package com.example.demo;
 
-import com.github.shawven.security.verification.authentication.PhoneUserDetailsService;
+import com.github.shawven.security.verification.security.PhoneUserDetailsService;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

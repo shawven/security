@@ -1,5 +1,5 @@
 
-package com.github.shawven.security.verification.authentication;
+package com.github.shawven.security.verification.security;
 
 import com.github.shawven.security.verification.VerificationConstants;
 import org.apache.commons.lang3.StringUtils;

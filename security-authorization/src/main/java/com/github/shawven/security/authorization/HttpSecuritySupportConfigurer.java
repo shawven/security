@@ -14,6 +14,6 @@ import org.springframework.security.web.DefaultSecurityFilterChain;
  * @author Shoven
  * @date 2019-11-11
  */
-public class HttpSecurityConfigurer extends SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity> {
+public class HttpSecuritySupportConfigurer extends SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity> {
 
 }
