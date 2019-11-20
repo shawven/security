@@ -1,8 +1,8 @@
 package com.github.shawven.security.app.autoconfigure;
 
 import com.github.shawven.security.app.*;
-import com.github.shawven.security.app.connect.AppConnectAuthenticationFilterPostProcessor;
 import com.github.shawven.security.app.connect.AppConnectAuthenticationFailureHandler;
+import com.github.shawven.security.app.connect.AppConnectAuthenticationFilterPostProcessor;
 import com.github.shawven.security.app.oauth2.AppOAuth2AccessDeniedHandler;
 import com.github.shawven.security.app.oauth2.AppOAuth2AuthenticationExceptionEntryPoint;
 import com.github.shawven.security.app.oauth2.AppOAuth2AuthenticationFailureHandler;
@@ -20,7 +20,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;

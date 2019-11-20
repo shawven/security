@@ -3,8 +3,8 @@ package com.github.shawven.security.verification;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.shawven.security.authorization.ResponseData;
-import com.github.shawven.security.verification.security.VerificationSecuritySupportConfigurer;
 import com.github.shawven.security.verification.config.VerificationConfiguration;
+import com.github.shawven.security.verification.security.VerificationSecuritySupportConfigurer;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

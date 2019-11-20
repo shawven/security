@@ -1,10 +1,10 @@
 package com.github.shawven.security.verification;
 
 import com.github.shawven.security.authorization.HttpSecuritySupportConfigurer;
-import com.github.shawven.security.verification.security.VerificationSecuritySupportConfigurer;
 import com.github.shawven.security.verification.captcha.CaptchaGenerator;
 import com.github.shawven.security.verification.captcha.CaptchaProcessor;
 import com.github.shawven.security.verification.config.VerificationConfiguration;
+import com.github.shawven.security.verification.security.VerificationSecuritySupportConfigurer;
 import com.github.shawven.security.verification.sms.DefaultSmsSender;
 import com.github.shawven.security.verification.sms.SmsGenerator;
 import com.github.shawven.security.verification.sms.SmsProcessor;

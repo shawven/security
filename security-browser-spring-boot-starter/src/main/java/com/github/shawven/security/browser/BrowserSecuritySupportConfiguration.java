@@ -1,7 +1,7 @@
 package com.github.shawven.security.browser;
 
-import com.github.shawven.security.authorization.HttpSecuritySupportConfigurer;
 import com.github.shawven.security.authorization.AuthorizationConfigurerManager;
+import com.github.shawven.security.authorization.HttpSecuritySupportConfigurer;
 import com.github.shawven.security.browser.config.BrowserConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;

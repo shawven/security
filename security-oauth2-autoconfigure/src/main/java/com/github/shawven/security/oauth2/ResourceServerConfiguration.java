@@ -1,8 +1,8 @@
 
 package com.github.shawven.security.oauth2;
 
-import com.github.shawven.security.authorization.HttpSecuritySupportConfigurer;
 import com.github.shawven.security.authorization.AuthorizationConfigurerManager;
+import com.github.shawven.security.authorization.HttpSecuritySupportConfigurer;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.expression.SecurityExpressionHandler;
