@@ -62,7 +62,7 @@ app:
       # 第三方客户端配置
       clients:
         - clientId: app
-          accessTokenValidateSeconds: 3600
+          accessTokenValidateSeconds: 2592000
           refreshTokenValidateSeconds: 2592000
         - clientId: test
       #OAuth2认证服务器的tokenStore的类型，可选值为redis和jwt，值为jwt时发出的token为jwt

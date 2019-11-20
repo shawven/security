@@ -1,5 +1,9 @@
 
-package com.github.shawven.security.verification;
+package com.github.shawven.security.verification.repository;
+
+import com.github.shawven.security.verification.Verification;
+import com.github.shawven.security.verification.VerificationRepository;
+import com.github.shawven.security.verification.VerificationType;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;

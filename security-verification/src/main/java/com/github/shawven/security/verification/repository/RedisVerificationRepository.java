@@ -1,11 +1,16 @@
 
-package com.github.shawven.security.verification;
+package com.github.shawven.security.verification.repository;
 
+import com.github.shawven.security.verification.Verification;
+import com.github.shawven.security.verification.VerificationException;
+import com.github.shawven.security.verification.VerificationRepository;
+import com.github.shawven.security.verification.VerificationType;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BiFunction;
 import java.util.regex.Pattern;
 
 import static com.github.shawven.security.verification.VerificationConstants.*;
@@ -20,6 +25,8 @@ import static com.github.shawven.security.verification.VerificationConstants.*;
 public class RedisVerificationRepository implements VerificationRepository {
 
 	private RedisTemplate redisTemplate;
+
+    private BiFunction<HttpServletRequest, VerificationType, String> keyFunction;
 
     public RedisVerificationRepository(RedisTemplate redisTemplate) {
         this.redisTemplate = redisTemplate;
@@ -52,13 +59,23 @@ public class RedisVerificationRepository implements VerificationRepository {
 	 */
 	@Override
     public String getKey(HttpServletRequest request, VerificationType type) {
-        String uniqueId = getUniqueId(request, type);
-        return REDIS_CODE_KEY + ":" + type.getLabel() + ":" + uniqueId;
-	}
-
-    private String getUniqueId(HttpServletRequest request, VerificationType type) {
         String uniqueId = null;
-	    // 先尝试获取手机号
+        if (keyFunction != null) {
+            uniqueId = keyFunction.apply(request, type);
+        }
+        if (uniqueId == null) {
+            uniqueId = tryExtractUniqueId(request, type);
+        }
+        if (uniqueId == null) {
+            throw new UnsupportedOperationException("当前无法提取存储key值，请自行实现："
+                    + RedisVerificationRepository.class.getSimpleName());
+        }
+        return REDIS_CODE_KEY + ":" + type.getLabel() + ":" + uniqueId;
+    }
+
+    private String tryExtractUniqueId(HttpServletRequest request, VerificationType type) {
+        String uniqueId = null;
+        // 先尝试获取手机号
         if (type == VerificationType.SMS) {
             Object attribute = request.getAttribute(PHONE_ATTRIBUTE_NAME);
             if (attribute != null) {
@@ -74,16 +91,17 @@ public class RedisVerificationRepository implements VerificationRepository {
             }
             return uniqueId;
         } else {
-            // 再尝试获取session id
-            if (StringUtils.isBlank(uniqueId = request.getHeader(REDIS_SESSION_ID_PARAMETER_NAME))
-                    && StringUtils.isBlank(uniqueId = request.getParameter(REDIS_SESSION_ID_PARAMETER_NAME))) {
-                if (type == VerificationType.SMS) {
-                    throw new VerificationException("请求头或参数中缺少" + PHONE_PARAMETER_NAME +"，值可以为手机号");
-                }
-                throw new VerificationException("请在请求头或参数中缺少" + REDIS_SESSION_ID_PARAMETER_NAME
-                        + "，值可以为代表当前用户临时身份的任意唯一ID");
+            // 再尝试获取sid: 简称会话id
+            uniqueId = request.getHeader(REDIS_SESSION_ID_PARAMETER_NAME);
+            if (StringUtils.isBlank(uniqueId)) {
+                uniqueId = request.getParameter(REDIS_SESSION_ID_PARAMETER_NAME);
             }
             return uniqueId;
         }
     }
+
+    public void setKeyFunction(BiFunction<HttpServletRequest, VerificationType, String> keyFunction) {
+        this.keyFunction = keyFunction;
+    }
+
 }

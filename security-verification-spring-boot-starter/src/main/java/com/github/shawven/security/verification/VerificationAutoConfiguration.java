@@ -4,6 +4,8 @@ import com.github.shawven.security.authorization.HttpSecuritySupportConfigurer;
 import com.github.shawven.security.verification.captcha.CaptchaGenerator;
 import com.github.shawven.security.verification.captcha.CaptchaProcessor;
 import com.github.shawven.security.verification.config.VerificationConfiguration;
+import com.github.shawven.security.verification.repository.*;
+import com.github.shawven.security.verification.repository.SpringSecurityContextKeyExtractor;
 import com.github.shawven.security.verification.security.VerificationSecuritySupportConfigurer;
 import com.github.shawven.security.verification.sms.DefaultSmsSender;
 import com.github.shawven.security.verification.sms.SmsGenerator;
@@ -95,29 +97,6 @@ public class VerificationAutoConfiguration {
         return new CaptchaProcessor(verificationRepository, captchaGenerator);
     }
 
-    @Configuration
-    @AutoConfigureOrder(1)
-    @ConditionalOnClass(RedisTemplate.class)
-    public static class RedisSupportConfiguration {
-
-        @Bean
-        @ConditionalOnMissingBean
-        public VerificationRepository verificationRepository(RedisTemplate redisTemplate) {
-            return new RedisVerificationRepository(redisTemplate);
-        }
-    }
-
-    /**
-     * 基于session的验证码存取器
-     *
-     * @return
-     */
-    @Bean
-    @AutoConfigureOrder(2)
-    @ConditionalOnMissingBean
-    public VerificationRepository verificationRepository() {
-        return new SessionVerificationRepository();
-    }
 
     @Configuration
     @ConditionalOnMissingClass("org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration")
@@ -146,6 +125,18 @@ public class VerificationAutoConfiguration {
             configurations.add(properties.getCaptcha());
             configurations.add(properties.getSms());
             return new VerificationFilter(processors, configurations);
+        }
+
+        @Configuration
+        @AutoConfigureOrder(1)
+        @ConditionalOnClass(RedisTemplate.class)
+        public static class RedisSupportConfiguration {
+
+            @Bean
+            @ConditionalOnMissingBean
+            public VerificationRepository redisVerificationRepository(RedisTemplate redisTemplate) {
+                return new RedisVerificationRepository(redisTemplate);
+            }
         }
     }
 
@@ -180,6 +171,33 @@ public class VerificationAutoConfiguration {
             }
             return new VerificationSecuritySupportConfigurer(filter);
         }
+
+        @Configuration
+        @AutoConfigureOrder(1)
+        @ConditionalOnClass(RedisTemplate.class)
+        public static class RedisSupportConfiguration {
+
+            @Bean
+            @ConditionalOnMissingBean
+            public VerificationRepository redisVerificationRepository(RedisTemplate redisTemplate) {
+                RedisVerificationRepository repository = new RedisVerificationRepository(redisTemplate);
+                repository.setKeyFunction(new SpringSecurityContextKeyExtractor().get());
+                return repository;
+            }
+        }
+    }
+
+
+    /**
+     * 基于session的验证码存取器
+     *
+     * @return
+     */
+    @Bean
+    @AutoConfigureOrder(2)
+    @ConditionalOnMissingBean
+    public VerificationRepository verificationRepository() {
+        return new SessionVerificationRepository();
     }
 }
 

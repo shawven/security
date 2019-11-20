@@ -3,7 +3,7 @@ package com.github.shawven.security.verification.security;
 
 import com.github.shawven.security.authorization.HttpSecuritySupportConfigurer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.web.authentication.logout.LogoutFilter;
+import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
 
 import javax.servlet.Filter;
 
@@ -20,7 +20,7 @@ public class VerificationSecuritySupportConfigurer extends HttpSecuritySupportCo
 
     @Override
 	public void configure(HttpSecurity http) throws Exception {
-		http.addFilterAfter(verificationFilter, LogoutFilter.class);
+		http.addFilterAfter(verificationFilter, AbstractPreAuthenticatedProcessingFilter.class);
 	}
 
 }

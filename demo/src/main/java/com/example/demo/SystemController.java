@@ -31,8 +31,20 @@ public class SystemController {
      * @param response
      */
     @RequestMapping("verification/sms")
-    public void createRestrictedSmsCode(HttpServletRequest request, HttpServletResponse response, String phone){
+    public void sendSms(HttpServletRequest request, HttpServletResponse response, String phone){
         SmsRequest smsRequest = new SmsRequest(request, response, phone);
+        smsProcessor.processed(smsRequest);
+    }
+
+    /**
+     * 给指定手机号发送短信验证码
+     *
+     * @param request
+     * @param response
+     */
+    @RequestMapping("verification/sms/me")
+    public void sendSmsToMe(HttpServletRequest request, HttpServletResponse response){
+        SmsRequest smsRequest = new SmsRequest(request, response, "18684844593");
         smsProcessor.processed(smsRequest);
     }
 
@@ -43,8 +55,8 @@ public class SystemController {
      * @param response
      */
     @RequestMapping("verification/captcha")
-    public void createImageCode(HttpServletRequest request, HttpServletResponse response,
-                                Integer width, Integer height, Integer length){
+    public void getCaptcha(HttpServletRequest request, HttpServletResponse response,
+                           Integer width, Integer height, Integer length){
         CaptchaRequest captchaRequest = new CaptchaRequest(request, response);
         captchaRequest.setWidth(width);
         captchaRequest.setHeight(height);
