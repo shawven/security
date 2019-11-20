@@ -1,4 +1,4 @@
-package com.github.shawven.security.verification.authentication;
+package com.github.shawven.security.verification;
 
 import com.github.shawven.security.verification.VerificationFilter;
 
@@ -7,7 +7,7 @@ import com.github.shawven.security.verification.VerificationFilter;
  * @date 2019-11-13
  */
 @FunctionalInterface
-public interface VerificationFilterProcessor {
+public interface VerificationFilterPostProcessor {
 
     void proceed(VerificationFilter filter);
 }
