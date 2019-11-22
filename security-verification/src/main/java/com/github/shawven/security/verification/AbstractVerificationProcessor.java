@@ -50,20 +50,21 @@ public abstract class AbstractVerificationProcessor<T extends Verification> impl
     @Override
     public void validate(HttpServletRequest request) {
         VerificationType codeType = getVerificationType(request);
+        String name = codeType.getName();
         Verification verificationInSession = verificationRepository.get(request, codeType);
 
         String codeInRequest = request.getParameter(codeType.getLabel());
         if (StringUtils.isBlank(codeInRequest)) {
-            throw new VerificationException("请输入" + codeType.getName() + "验证码");
+            throw new VerificationException("请输入" + name + "验证码");
         }
 
         if (verificationInSession == null || verificationInSession.isExpired()) {
             verificationRepository.remove(request, codeType);
-            throw new VerificationException(codeType.getName() + "验证码已过期");
+            throw new VerificationException(name + "验证码已过期");
         }
 
         if (!StringUtils.equalsIgnoreCase(verificationInSession.getCode(), codeInRequest)) {
-            throw new VerificationException(codeType.getName() + "验证码错误");
+            throw new VerificationException(name + "验证码错误");
         }
 
         verificationRepository.remove(request, codeType);

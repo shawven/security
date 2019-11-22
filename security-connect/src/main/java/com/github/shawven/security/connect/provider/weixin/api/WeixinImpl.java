@@ -2,6 +2,7 @@
 package com.github.shawven.security.connect.provider.weixin.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.shawven.security.connect.provider.weixin.WeixinConfig;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.social.oauth2.AbstractOAuth2ApiBinding;
@@ -15,11 +16,6 @@ import java.util.Map;
  * Weixin API调用模板， scope为Request的Spring bean, 根据当前用户的accessToken创建。
  */
 public class WeixinImpl extends AbstractOAuth2ApiBinding implements Weixin {
-
-	/**
-	 * 获取用户信息的url
-	 */
-	private static final String URL_GET_USER_INFO = "https://api.weixin.qq.com/sns/userinfo?openid=";
 
 	/**
 	 * @param accessToken
@@ -44,7 +40,7 @@ public class WeixinImpl extends AbstractOAuth2ApiBinding implements Weixin {
 	 */
 	@Override
 	public WeixinUserInfo getUserInfo(String openId) {
-		String url = URL_GET_USER_INFO + openId;
+		String url = WeixinConfig.USER_INFO_URL+ "?openid=%s" + openId;
 		String response = getRestTemplate().getForObject(url, String.class);
         ObjectMapper objectMapper = new ObjectMapper();
         if(response != null && response.contains("errcode")) {

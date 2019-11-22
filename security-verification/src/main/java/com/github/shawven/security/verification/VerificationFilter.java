@@ -63,8 +63,8 @@ public class VerificationFilter extends OncePerRequestFilter {
         VerificationType type = getVerificationType(request);
         if (type != null) {
             String name = type.getName();
-            logger.info("正在校验" + name + "验证码");
             try {
+                logger.info("正在校验" + name + "验证码");
                 getProcessor(type).validate(request);
                 logger.info(name + "验证码校验通过");
             } catch (VerificationException e) {

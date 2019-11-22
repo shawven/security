@@ -19,7 +19,6 @@ spring:
 #      validation-query: select 1
   redis:
     host: 127.0.0.1
-
 app:
   security:
     # 白名单 （未登录用户可访问）
@@ -77,7 +76,6 @@ logging:
       springframework:
         security: DEBUG
         social: DEBUG
-
 ---
 #spring:
 #  profiles: browser
