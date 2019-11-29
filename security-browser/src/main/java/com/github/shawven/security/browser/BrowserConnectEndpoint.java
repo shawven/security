@@ -47,7 +47,7 @@ public class BrowserConnectEndpoint extends ConnectInfoExtendable {
 	 * @param request
 	 * @return
 	 */
-	@GetMapping(ConnectConstants.DEFAULT_CONNECT_USER_INFO_URL)
+	@GetMapping(ConnectConstants.CONNECT_USER_INFO_URL)
 	public void getSocialUserInfo(HttpServletRequest request, HttpServletResponse response) {
 		Connection<?> connection = providerSignInUtils.getConnectionFromSession(new ServletWebRequest(request));
         ConnectUserInfo connectUserInfo = buildSocialUserInfo(connection);

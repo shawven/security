@@ -18,8 +18,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class OpenIdAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
-	private String openIdParameter = ConnectConstants.DEFAULT_OPENID_PARAMETER_NAME;
-	private String providerIdParameter = ConnectConstants.DEFAULT_PROVIDER_ID_PARAMETER_NAME;
+	private String openIdParameter = ConnectConstants.OPENID_PARAMETER_NAME;
+	private String providerIdParameter = ConnectConstants.PROVIDER_ID_PARAMETER_NAME;
 	private boolean postOnly = true;
 
 	public OpenIdAuthenticationFilter() {

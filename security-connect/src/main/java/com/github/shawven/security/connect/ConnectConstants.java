@@ -13,15 +13,15 @@ public class ConnectConstants {
     /**
      * 社交登陆需要注册时获取用户信息的处理url
      */
-    public static final String DEFAULT_CONNECT_USER_INFO_URL = "/connect/user";
+    public static final String CONNECT_USER_INFO_URL = "/connect/user";
 
     /**
      * openid参数名
      */
-    public static final String DEFAULT_OPENID_PARAMETER_NAME = "openId";
+    public static final String OPENID_PARAMETER_NAME = "openId";
 
     /**
      * providerId参数名
      */
-    public static final String DEFAULT_PROVIDER_ID_PARAMETER_NAME = "providerId";
+    public static final String PROVIDER_ID_PARAMETER_NAME = "providerId";
 }

@@ -9,16 +9,17 @@ spring:
     username: root
     password: root
     #连接池及重试配置，防止mysql如果8小时自动断开连接问题
-#    tomcat:
-#      max-active: 100
-#      min-idle: 10
-#      min-evictable-idle-time-millis:  1800000
-#      test-on-borrow: true
-#      test-on-return: true
-#      test-while-idle: true
-#      validation-query: select 1
+    tomcat:
+      max-active: 100
+      min-idle: 10
+      min-evictable-idle-time-millis:  1800000
+      test-on-borrow: true
+      test-on-return: true
+      test-while-idle: true
+      validation-query: select 1
   redis:
     host: 127.0.0.1
+
 app:
   security:
     # 白名单 （未登录用户可访问）
@@ -76,39 +77,40 @@ logging:
       springframework:
         security: DEBUG
         social: DEBUG
+
 ---
-#spring:
-#  profiles: browser
-#app:
-#  security:
-#    #浏览器环境配置项，参见BrowserProperties
-#    browser:
-#      # 登录地址
-#      signInUrl: /signIn.html
-#      # 登录提交地址
-#      signInProcessingUrl: /login/form
-#      # 登录成功地址
-#      singInSuccessUrl: /index.html
-#      # 注册地址
-#      signUpUrl: /signUp.html
-#      # 退出处理地址
-#      signOutProcessingUrl: /logout
-#      # 退出成功地址
-#      signOutSuccessUrl: /signIn.html
-#      # 响应类型，REDIRECT页面传统跳转，vue、react api请求方式
-#      responseType: REDIRECT
-#      #session管理相关配置，参见SessionProperties
-#      session:
-#        maximumSessions: 1
-#        maxSessionsPreventsLogin: false
-#        sessionInvalidUrl: /session-invalid.html
-#
-#    verification:
-#      #短信验证码配置项
-#      sms:
-#        # 短信验证码登录处理的url
-#        loginProcessesUrl: /login/phone
-#    connect:
-#      #社交登录功能拦截的url
-#      filterProcessesUrl: /login/connect
+spring:
+  profiles: browser
+app:
+  security:
+    #浏览器环境配置项，参见BrowserProperties
+    browser:
+      # 登录地址
+      signInUrl: /signIn.html
+      # 登录提交地址
+      signInProcessingUrl: /login/form
+      # 登录成功地址
+      singInSuccessUrl: /index.html
+      # 注册地址
+      signUpUrl: /signUp.html
+      # 退出处理地址
+      signOutProcessingUrl: /logout
+      # 退出成功地址
+      signOutSuccessUrl: /signIn.html
+      # 响应类型，REDIRECT页面传统跳转，vue、react api请求方式
+      responseType: REDIRECT
+      #session管理相关配置，参见SessionProperties
+      session:
+        maximumSessions: 1
+        maxSessionsPreventsLogin: false
+        sessionInvalidUrl: /session-invalid.html
+
+    verification:
+      #短信验证码配置项
+      sms:
+        # 短信验证码登录处理的url
+        loginProcessesUrl: /login/phone
+    connect:
+      #社交登录功能拦截的url
+      filterProcessesUrl: /login/connect
 ---
