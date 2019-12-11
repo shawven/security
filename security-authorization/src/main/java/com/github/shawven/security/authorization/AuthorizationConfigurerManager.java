@@ -16,17 +16,11 @@ public class AuthorizationConfigurerManager {
 
 	private List<AuthorizationConfigureProvider> providers;
 
-    private AuthorizationConfiguration configuration;
-
-    public AuthorizationConfigurerManager(List<AuthorizationConfigureProvider> providers,
-                                          AuthorizationConfiguration configuration) {
+    public AuthorizationConfigurerManager(List<AuthorizationConfigureProvider> providers) {
         this.providers = providers;
-        this.configuration = configuration;
     }
 
     public void config(ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry config) {
-        configWhitelist(config);
-
 		boolean existAnyRequestConfig = false;
 		String existAnyRequestConfigName = null;
 
@@ -45,13 +39,4 @@ public class AuthorizationConfigurerManager {
 			config.anyRequest().authenticated();
 		}
 	}
-
-	public void configWhitelist(ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry config) {
-        String whitelistStr = configuration.getWhitelist();
-        if (whitelistStr != null) {
-            String[] whitelist = whitelistStr.split(",");
-            whitelist = Arrays.stream(whitelist).filter(s -> !s.isEmpty()).toArray(String[]::new);
-            config.antMatchers(whitelist).permitAll();
-        }
-    }
 }

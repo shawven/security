@@ -148,7 +148,6 @@ public class BrowserSecuritySupportConfiguration extends HttpSecuritySupportConf
         @Override
         public void configure(WebSecurity web) throws Exception {
             web.ignoring().mvcMatchers(
-                    "/error",
                     "/**/favicon.ico",
                     "/**/*.js",
                     "/**/*.css"

@@ -1,13 +1,11 @@
 package com.github.shawven.security.verification.config;
 
 import com.github.shawven.security.verification.VerificationConstants;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
  * @author Shoven
  * @date 2019-08-16
  */
-@ConfigurationProperties(prefix = "app.security.verification.sms")
 public class SmsConfiguration extends VerificationConfiguration {
 
     /**

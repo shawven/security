@@ -170,11 +170,6 @@ public class AppAutoConfiguration {
         }
 
         @Override
-        public void configure(WebSecurity web) throws Exception {
-            web.ignoring().mvcMatchers("/error");
-        }
-
-        @Override
         protected void configure(HttpSecurity http) throws Exception {
             http
                     .authorizeRequests()

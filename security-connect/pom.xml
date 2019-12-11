@@ -13,6 +13,10 @@
     <version>2.0.0</version>
     <description>spring-social 第三方社交登陆</description>
 
+    <properties>
+        <spring-social.version>1.1.6.RELEASE</spring-social.version>
+    </properties>
+
 	<dependencies>
         <dependency>
             <groupId>com.github.shawven</groupId>
@@ -22,47 +26,49 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-web</artifactId>
-            <version>${spring.security.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-config</artifactId>
-            <version>${spring.security.version}</version>
         </dependency>
+
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
         </dependency>
+
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-jdbc</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-redis</artifactId>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-redis</artifactId>
             <optional>true</optional>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.social</groupId>
             <artifactId>spring-social-config</artifactId>
-            <version>1.1.6.RELEASE</version>
+            <version>${spring-social.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.social</groupId>
             <artifactId>spring-social-core</artifactId>
-            <version>1.1.6.RELEASE</version>
+            <version>${spring-social.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.social</groupId>
             <artifactId>spring-social-security</artifactId>
-            <version>1.1.6.RELEASE</version>
+            <version>${spring-social.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.social</groupId>
             <artifactId>spring-social-web</artifactId>
-            <version>1.1.6.RELEASE</version>
+            <version>${spring-social.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>

@@ -6,7 +6,7 @@ import com.github.shawven.security.verification.VerificationType;
 import com.github.shawven.security.verification.config.SmsConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -20,7 +20,6 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
  * @date 2019-11-17
  */
 @Configuration
-@EnableConfigurationProperties(SmsConfiguration.class)
 public class SmsAuthenticationConfiguration {
 
     @Autowired
@@ -69,5 +68,11 @@ public class SmsAuthenticationConfiguration {
             // 把短信登录支持的路径假如拦截名单
             filter.getUrlMap().put(configuration.getLoginProcessingUrl(), VerificationType.SMS);
         };
+    }
+
+    @Configuration
+    @ConfigurationProperties(prefix = "app.security.verification.sms")
+    public static class InternalSmsConfiguration extends SmsConfiguration {
+
     }
 }
