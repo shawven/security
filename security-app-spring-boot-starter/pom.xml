@@ -5,12 +5,12 @@
     <parent>
         <groupId>com.github.shawven</groupId>
         <artifactId>security</artifactId>
-        <version>2.0.2-SNAPSHOT</version>
+        <version>2.0.1-SNAPSHOT</version>
         <relativePath>../</relativePath>
     </parent>
 
     <artifactId>security-app-spring-boot-starter</artifactId>
-    <version>2.0.2-SNAPSHOT</version>
+    <version>2.0.1-SNAPSHOT</version>
     <name>security-app-spring-boot-starter</name>
     <description>App security environment for Spring Boot starter</description>
 
@@ -38,28 +38,28 @@
         <dependency>
             <groupId>com.github.shawven</groupId>
             <artifactId>security-app</artifactId>
-            <version>2.0.2-SNAPSHOT</version>
+            <version>2.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.github.shawven</groupId>
             <artifactId>security-authorization-autoconfigure</artifactId>
-            <version>2.0.2-SNAPSHOT</version>
+            <version>2.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.github.shawven</groupId>
             <artifactId>security-oauth2-autoconfigure</artifactId>
-            <version>2.0.2-SNAPSHOT</version>
+            <version>2.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.github.shawven</groupId>
             <artifactId>security-connect-autoconfigure</artifactId>
-            <version>2.0.2-SNAPSHOT</version>
+            <version>2.0.1-SNAPSHOT</version>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>com.github.shawven</groupId>
             <artifactId>security-verification-spring-boot-starter</artifactId>
-            <version>2.0.2-SNAPSHOT</version>
+            <version>2.0.1-SNAPSHOT</version>
             <optional>true</optional>
         </dependency>
 
