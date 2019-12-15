@@ -27,6 +27,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.session.InvalidSessionStrategy;
 import org.springframework.security.web.session.SessionInformationExpiredStrategy;
+import org.springframework.social.connect.web.ProviderSignInUtils;
 
 /**
  * 浏览器环境下扩展点配置，配置在这里的bean，业务系统都可以通过声明同类型或同名的bean来覆盖安全
@@ -41,13 +42,17 @@ import org.springframework.security.web.session.SessionInformationExpiredStrateg
 @AutoConfigureAfter(BrowserAutoConfiguration.ConnectSupportConfiguration.class)
 public class BrowserAutoConfiguration {
 
-	@Autowired
 	private BrowserProperties properties;
 
-	@Bean
+    public BrowserAutoConfiguration(BrowserProperties properties) {
+        this.properties = properties;
+    }
+
+    @Bean
     @ConditionalOnMissingBean
-    public BrowserConnectEndpoint browserConnectEndpoint() {
-	    return new BrowserConnectEndpoint();
+    public BrowserConnectEndpoint browserConnectEndpoint(ProviderSignInUtils providerSignInUtils,
+                                                         BrowserConfiguration browserConfiguration) {
+	    return new BrowserConnectEndpoint(providerSignInUtils, browserConfiguration);
     }
 
 	/**

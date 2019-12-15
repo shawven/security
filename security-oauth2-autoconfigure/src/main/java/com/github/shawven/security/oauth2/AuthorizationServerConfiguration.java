@@ -43,7 +43,7 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
 
     private TokenStore tokenStore;
 
-    private OAuth2Properties oAuth2Properties;
+    private OAuth2Properties properties;
 
     private PasswordEncoder passwordEncoder;
 
@@ -58,7 +58,7 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
     public AuthorizationServerConfiguration(UserDetailsService userDetailsService,
                                             AuthenticationManager authenticationManager,
                                             TokenStore tokenStore,
-                                            OAuth2Properties oAuth2Properties,
+                                            OAuth2Properties properties,
                                             PasswordEncoder passwordEncoder,
                                             AccessDeniedHandler accessDeniedHandler,
                                             AuthenticationEntryPoint authenticationEntryPoint,
@@ -69,7 +69,7 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
         this.userDetailsService = userDetailsService;
         this.authenticationManager = authenticationManager;
         this.tokenStore = tokenStore;
-        this.oAuth2Properties = oAuth2Properties;
+        this.properties = properties;
         this.passwordEncoder = passwordEncoder;
         this.accessDeniedHandler = accessDeniedHandler;
         this.authenticationEntryPoint = authenticationEntryPoint;
@@ -88,8 +88,6 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
                 .userDetailsService(userDetailsService);
 
         if (jwtAccessTokenConverter != null && jwtTokenEnhancer != null) {
-            jwtAccessTokenConverter.setSigningKey(oAuth2Properties.getJwtSigningKey());
-
             TokenEnhancerChain enhancerChain = new TokenEnhancerChain();
             List<TokenEnhancer> enhancers = new ArrayList<>();
             enhancers.add(jwtTokenEnhancer);
@@ -125,11 +123,11 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
 	@Override
 	public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
 		InMemoryClientDetailsServiceBuilder builder = clients.inMemory();
-        OAuth2ClientProperties[] clientArray = oAuth2Properties.getClients();
-        if (ArrayUtils.isEmpty(clientArray)) {
+        List<OAuth2ClientProperties> userClients = properties.getClients();
+        if (userClients.isEmpty()) {
 			return;
 		}
-        for (OAuth2ClientProperties client : oAuth2Properties.getClients()) {
+        for (OAuth2ClientProperties client : userClients) {
             if (client == null) {
                 continue;
             }

@@ -3,26 +3,26 @@ app:
     #浏览器环境配置项
     browser:
       # 登录地址
-      signInUrl: /signIn.html
+      sign-in-url: /signIn.html
       # 登录提交地址
-      signInProcessUrl: /login/form
+      sign-in-process-url: /login/form
       # 登录成功地址
-      singInSuccessUrl: /index.html
+      sing-in-success-url: /index.html
       # 注册地址
-      signUpUrl: /signUp.html
+      sign-up-url: /signUp.html
       # 退出处理地址
-      signOutProcessingUrl: /logout
+      sign-out-processing-url: /logout
       # 退出成功地址
-      signOutSuccessUrl: /
+      sign-out-success-url: /
       # 记住我时间
-      rememberMeSeconds: 294000
+      remember-me-seconds: 294000
       # 响应类型，REDIRECT页面跳转、JSON响应
-      responseType: REDIRECT
+      response-type: REDIRECT
       #session管理相关配置
       session:
-        maximumSessions: 1
-        maxSessionsPreventsLogin: false
-        sessionInvalidUrl: /session-invalid.html
+        maximum-sessions: 1
+        max-sessions-prevents-login: false
+        session-invalid-url: /session-invalid.html
 
     # 验证码配置
     verification:
@@ -31,7 +31,7 @@ app:
         length: 4
         width: 100
         height: 30
-        expireIn: 30
+        expire-in: 30
         # 配置需要图形验证码验证的url, 两个验证码如果配的url中相同部分则短信优先级要高
         url: /verification/sms
 
@@ -45,32 +45,37 @@ app:
     #社交登录功能拦截的url
     connect:
       # 拦截器处理的url
-      filterProcessesUrl: /oauth/connect
+      filter-processes-url: /oauth/connect
       #QQ登录配置
       qq:
-        appId:
-        appSecret:
-        providerId: qq
+        app-id:
+        app-secret:
+        provider-id: qq
 
       #微信登录配置
       weixin:
-        appId: wxd99431bbff8305a0
-        appSecret: 60f78681d063590a469f1b297feff3c4
-        providerId: weixin
+        app-id: wxd99431bbff8305a0
+        app-secret: 60f78681d063590a469f1b297feff3c4
+        provider-id: weixin
 
     #认证服务器注册的第三方应用配置项
     oauth2:
       # 短信拦截url
-      phoneProcessingUrl: /oauth/phone
+      phone-processing-url: /oauth/phone
       # 第三方客户端配置
       clients:
-        - clientId: app
-          clientSecret: appsecret
-          accessTokenValidateSeconds: 3600
-          refreshTokenValidateSeconds: 2592000
-        - clientId: test
-          clientSecret: test
+        - client-id: app
+          client-secret: appsecret
+          access-token-validate-seconds: 3600
+          refresh-token-validate-seconds: 2592000
+        - client-id: test
+          client-secret: test
       #OAuth2认证服务器的tokenStore的类型
-      tokenStore: jwt
-      #使用jwt时为token签名的秘钥
-      jwtSigningKey: aXo3t%12_Ao
+      token-store: jwt
+      jwt:
+        # token签名的对称秘钥
+        signing-key: aXo3t%12_Ao
+        # 非对称密钥 （优先级高）
+        key-store: classpath:/demo.jks
+        key-alias: demo
+        key-store-password: 123456

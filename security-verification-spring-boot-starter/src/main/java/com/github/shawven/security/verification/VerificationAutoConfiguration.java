@@ -35,8 +35,11 @@ import java.util.List;
 @EnableConfigurationProperties(VerificationProperties.class)
 public class VerificationAutoConfiguration {
 
-    @Autowired
     private VerificationProperties properties;
+
+    public VerificationAutoConfiguration(VerificationProperties properties) {
+        this.properties = properties;
+    }
 
     /**
      * 短信验证码生成器

@@ -36,42 +36,55 @@ import java.util.List;
 @Configuration
 public class BrowserSecuritySupportConfiguration extends HttpSecuritySupportConfigurer {
 
-    @Autowired
     private BrowserConfiguration configuration;
 
-    @Autowired
     private AuthenticationSuccessHandler authenticationSuccessHandler;
 
-    @Autowired
     private AuthenticationFailureHandler authenticationFailureHandler;
 
-    @Autowired
     private SessionInformationExpiredStrategy sessionInformationExpiredStrategy;
 
-    @Autowired
     private InvalidSessionStrategy invalidSessionStrategy;
 
-    @Autowired
     private AuthenticationEntryPoint authenticationEntryPoint;
 
-    @Autowired
     private AccessDeniedHandler accessDeniedHandler;
 
-    @Autowired
     private AuthorizationConfigurerManager authorizationConfigurerManager;
 
-    @Autowired
     private UserDetailsService userDetailsService;
 
-    @Autowired
     private LogoutSuccessHandler logoutSuccessHandler;
 
-    @Autowired(required = false)
     private DataSource dataSource;
 
-    @Autowired(required = false)
-    private List<HttpSecuritySupportConfigurer> providerConfigurers = Collections.emptyList();
+    private List<HttpSecuritySupportConfigurer> providerConfigurers;
 
+    public BrowserSecuritySupportConfiguration(BrowserConfiguration configuration,
+                                               AuthenticationSuccessHandler authenticationSuccessHandler,
+                                               AuthenticationFailureHandler authenticationFailureHandler,
+                                               SessionInformationExpiredStrategy sessionInformationExpiredStrategy,
+                                               InvalidSessionStrategy invalidSessionStrategy,
+                                               AuthenticationEntryPoint authenticationEntryPoint,
+                                               AccessDeniedHandler accessDeniedHandler,
+                                               AuthorizationConfigurerManager authorizationConfigurerManager,
+                                               UserDetailsService userDetailsService,
+                                               LogoutSuccessHandler logoutSuccessHandler,
+                                               @Autowired(required = false) DataSource dataSource,
+                                               @Autowired(required = false) List<HttpSecuritySupportConfigurer> providerConfigurers) {
+        this.configuration = configuration;
+        this.authenticationSuccessHandler = authenticationSuccessHandler;
+        this.authenticationFailureHandler = authenticationFailureHandler;
+        this.sessionInformationExpiredStrategy = sessionInformationExpiredStrategy;
+        this.invalidSessionStrategy = invalidSessionStrategy;
+        this.authenticationEntryPoint = authenticationEntryPoint;
+        this.accessDeniedHandler = accessDeniedHandler;
+        this.authorizationConfigurerManager = authorizationConfigurerManager;
+        this.userDetailsService = userDetailsService;
+        this.logoutSuccessHandler = logoutSuccessHandler;
+        this.dataSource = dataSource;
+        this.providerConfigurers = providerConfigurers;
+    }
 
     @Override
     public void configure(HttpSecurity http) throws Exception {

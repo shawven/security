@@ -22,8 +22,11 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 @Configuration
 public class SmsAuthenticationConfiguration {
 
-    @Autowired
     private SmsConfiguration configuration;
+
+    public SmsAuthenticationConfiguration(SmsConfiguration configuration) {
+        this.configuration = configuration;
+    }
 
     /**
      * 默认的手机号用户获取服务

@@ -4,17 +4,13 @@ package com.github.shawven.security.connect;
 import com.github.shawven.security.authorization.AuthorizationConfigureProvider;
 import com.github.shawven.security.authorization.HttpSecuritySupportConfigurer;
 import com.github.shawven.security.connect.config.ConnectConfiguration;
-import com.github.shawven.security.connect.config.QQConfiguration;
-import com.github.shawven.security.connect.config.WeixinConfiguration;
-import com.github.shawven.security.connect.provider.qq.connet.QQConnectionFactory;
-import com.github.shawven.security.connect.provider.weixin.connect.WeixinConnectionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.env.Environment;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.encrypt.Encryptors;
@@ -37,22 +33,32 @@ import java.util.List;
 @Configuration
 @EnableSocial
 @EnableConfigurationProperties(ConnectProperties.class)
+@Import(ConnectProviderConfiguration.class)
 public class ConnectAutoConfiguration extends SocialConfigurerAdapter {
 
-	@Autowired
 	private DataSource dataSource;
 
-	@Autowired
-	private ConnectProperties properties;
+	private ConnectConfiguration connectConfiguration;
 
-	@Autowired(required = false)
     private List<ConnectionFactory<?>> connectionFactories;
 
-    @Autowired(required = false)
 	private ConnectionSignUp connectionSignUp;
 
-	@Autowired(required = false)
 	private ConnectAuthenticationFilterPostProcessor connectAuthenticationFilterPostProcessor;
+
+    public ConnectAutoConfiguration(DataSource dataSource,
+                                    ConnectProperties properties,
+                                    List<ConnectionFactory<?>> connectionFactories,
+                                    ConnectConfiguration connectConfiguration,
+                                    @Autowired(required = false) ConnectionSignUp connectionSignUp,
+                                    @Autowired(required = false)
+                                    ConnectAuthenticationFilterPostProcessor connectAuthenticationFilterPostProcessor) {
+        this.dataSource = dataSource;
+        this.connectConfiguration = connectConfiguration;
+        this.connectionFactories = connectionFactories;
+        this.connectionSignUp = connectionSignUp;
+        this.connectAuthenticationFilterPostProcessor = connectAuthenticationFilterPostProcessor;
+    }
 
     @Override
     public UserIdSource getUserIdSource() {
@@ -83,21 +89,6 @@ public class ConnectAutoConfiguration extends SocialConfigurerAdapter {
         }
     }
 
-    @Bean
-    @ConditionalOnProperty(prefix = "app.security.connect.weixin", name = "app-id")
-    public ConnectionFactory<?> createWeixinConnectionFactory() {
-        WeixinConfiguration weixinConfig = getConnectConfiguration().getWeixin();
-        return new WeixinConnectionFactory(weixinConfig.getProviderId(), weixinConfig.getAppId(),
-                weixinConfig.getAppSecret());
-    }
-
-    @Bean
-    @ConditionalOnProperty(prefix = "app.security.connect.qq", name = "app-id")
-    public ConnectionFactory<?> createQqConnectionFactory() {
-        QQConfiguration qqConfig = getConnectConfiguration().getQq();
-        return new QQConnectionFactory(qqConfig.getProviderId(), qqConfig.getAppId(),
-                qqConfig.getAppSecret());
-    }
 
     /**
 	 * 社交登录配置类，供浏览器或app模块引入设计登录配置用。
@@ -106,7 +97,6 @@ public class ConnectAutoConfiguration extends SocialConfigurerAdapter {
 	@Bean
     @ConditionalOnMissingBean(name = "connectSecuritySupportConfigurer")
 	public HttpSecuritySupportConfigurer connectSecuritySupportConfigurer() {
-        ConnectConfiguration connectConfiguration = getConnectConfiguration();
         // 设置过滤器拦截社交登录的url
 		String filterProcessesUrl = connectConfiguration.getFilterProcessesUrl();
         ConnectConfigurer configurer = new ConnectConfigurer(filterProcessesUrl);
@@ -149,9 +139,9 @@ public class ConnectAutoConfiguration extends SocialConfigurerAdapter {
 
         @Bean
         @ConditionalOnMissingBean
-        public RedisSignInUtils appSingUpUtils(RedisTemplate redisTemplate,
-                                               UsersConnectionRepository usersConnectionRepository,
-                                               ConnectionFactoryLocator connectionFactoryLocator) {
+        public RedisSignInUtils redisSignInUtils(RedisTemplate redisTemplate,
+                                                 UsersConnectionRepository usersConnectionRepository,
+                                                 ConnectionFactoryLocator connectionFactoryLocator) {
             return new RedisSignInUtils(redisTemplate, usersConnectionRepository, connectionFactoryLocator);
         }
     }
@@ -170,14 +160,7 @@ public class ConnectAutoConfiguration extends SocialConfigurerAdapter {
 
     @Bean
     public AuthorizationConfigureProvider connectAuthorizationConfigurerProvider() {
-        return new ConnectAuthorizationConfigureProvider(getConnectConfiguration());
+        return new ConnectAuthorizationConfigureProvider(connectConfiguration);
     }
 
-    private ConnectConfiguration getConnectConfiguration() {
-        ConnectConfiguration cfg = new ConnectConfiguration();
-        cfg.setFilterProcessesUrl(properties.getFilterProcessesUrl());
-        cfg.setQq(properties.getQq());
-        cfg.setWeixin(properties.getWeixin());
-        return cfg;
-    }
 }

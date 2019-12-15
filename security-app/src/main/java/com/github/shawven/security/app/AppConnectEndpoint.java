@@ -24,11 +24,14 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 public class AppConnectEndpoint extends ConnectInfoExtendable {
 
-    @Autowired
     private RedisSignInUtils redisSignInUtils;
 
-    @Autowired
     private ProviderSignInUtils providerSignInUtils;
+
+    public AppConnectEndpoint(RedisSignInUtils redisSignInUtils, ProviderSignInUtils providerSignInUtils) {
+        this.redisSignInUtils = redisSignInUtils;
+        this.providerSignInUtils = providerSignInUtils;
+    }
 
     /**
      * 需要引导用户注册或绑定时，通过此服务获取当前社交用户的信息

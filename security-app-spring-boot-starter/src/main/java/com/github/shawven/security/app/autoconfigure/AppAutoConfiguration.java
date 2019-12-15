@@ -11,6 +11,7 @@ import com.github.shawven.security.app.openid.OpenIdSecuritySupportConfigurer;
 import com.github.shawven.security.authorization.HttpSecuritySupportConfigurer;
 import com.github.shawven.security.connect.ConnectAuthenticationFilterPostProcessor;
 import com.github.shawven.security.connect.ConnectAutoConfiguration;
+import com.github.shawven.security.connect.RedisSignInUtils;
 import com.github.shawven.security.oauth2.AuthenticationSuccessHandlerPostProcessor;
 import com.github.shawven.security.verification.security.EnableSmsAuthentication;
 import com.github.shawven.security.verification.security.SmsAuthenticationConfiguration;
@@ -35,6 +36,7 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.social.connect.UsersConnectionRepository;
+import org.springframework.social.connect.web.ProviderSignInUtils;
 import org.springframework.social.security.SocialUserDetailsService;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -128,8 +130,9 @@ public class AppAutoConfiguration {
 
         @Bean
         @ConditionalOnMissingBean
-        public AppConnectEndpoint appConnectEndpoint() {
-            return new AppConnectEndpoint();
+        public AppConnectEndpoint appConnectEndpoint(RedisSignInUtils redisSignInUtils,
+                                                     ProviderSignInUtils providerSignInUtils) {
+            return new AppConnectEndpoint(redisSignInUtils, providerSignInUtils);
         }
 
         @Bean

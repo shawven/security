@@ -34,13 +34,16 @@ public class BrowserConnectEndpoint extends ConnectInfoExtendable {
 
     private static final Logger logger = LoggerFactory.getLogger(BrowserConnectEndpoint.class);
 
-	@Autowired
 	private ProviderSignInUtils providerSignInUtils;
 
-	@Autowired
     private BrowserConfiguration browserConfiguration;
 
-	/**
+    public BrowserConnectEndpoint(ProviderSignInUtils providerSignInUtils, BrowserConfiguration browserConfiguration) {
+        this.providerSignInUtils = providerSignInUtils;
+        this.browserConfiguration = browserConfiguration;
+    }
+
+    /**
 	 * 需要引导用户注册或绑定时，通过此服务获取当前社交用户的信息
 	 * 返回401（表示认证失败，第一次登陆）和用户信息
      *

@@ -5,12 +5,12 @@
     <parent>
         <groupId>com.github.shawven</groupId>
         <artifactId>security</artifactId>
-        <version>2.0.1-SNAPSHOT</version>
+        <version>2.0.2-SNAPSHOT</version>
         <relativePath>../</relativePath>
     </parent>
 
 	<artifactId>security-authorization</artifactId>
-    <version>2.0.1-SNAPSHOT</version>
+    <version>2.0.2-SNAPSHOT</version>
 	<name>security-authorization</name>
     <description>安全授权配置</description>
 
