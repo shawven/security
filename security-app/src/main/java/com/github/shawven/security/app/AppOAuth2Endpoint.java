@@ -13,6 +13,7 @@ import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.common.exceptions.InvalidGrantException;
 import org.springframework.security.oauth2.common.exceptions.InvalidTokenException;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
+import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetailsSource;
 import org.springframework.security.oauth2.provider.endpoint.TokenEndpoint;
 import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
@@ -101,12 +102,14 @@ public class AppOAuth2Endpoint  {
 
     private OAuth2Authentication buildOAuth2Authentication(HttpServletRequest request,
                                                            ResponseEntity<OAuth2AccessToken> result) {
+        OAuth2AccessToken accessToken = result.getBody();
+        request.setAttribute(OAuth2AuthenticationDetails.ACCESS_TOKEN_VALUE, accessToken.getValue());
+        request.setAttribute(OAuth2AuthenticationDetails.ACCESS_TOKEN_TYPE, accessToken.getTokenType());
         if (result.getBody() == null) {
             throw new IllegalStateException("OAuth2AccessToken invalid");
         }
-        OAuth2Authentication authentication = services.loadAuthentication(result.getBody().getValue());
+        OAuth2Authentication authentication = services.loadAuthentication(accessToken.getValue());
         authentication.setDetails(detailsSource.buildDetails(request));
-        SecurityContextHolder.getContext().setAuthentication(authentication);
         return authentication;
     }
 }
