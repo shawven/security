@@ -52,10 +52,10 @@ public class TokenStoreConfiguration {
 		 * @return
 		 */
 		@Bean
+        @ConditionalOnMissingBean
 		public TokenStore redisTokenStore() {
 			return new RedisTokenStore(redisConnectionFactory);
 		}
-
 	}
 
 	/**
@@ -73,6 +73,7 @@ public class TokenStoreConfiguration {
             this.jwt = properties.getJwt();
         }
 
+        @Override
         public void setApplicationContext(ApplicationContext context) throws BeansException {
             this.context = context;
         }
@@ -81,6 +82,7 @@ public class TokenStoreConfiguration {
 		 * @return
 		 */
         @Bean
+        @ConditionalOnMissingBean
 		public TokenStore jwtTokenStore(JwtAccessTokenConverter jwtAccessTokenConverter) {
 			return new JwtTokenStore(jwtAccessTokenConverter);
 		}
@@ -122,8 +124,9 @@ public class TokenStoreConfiguration {
 		 */
 		@Bean
 		@ConditionalOnBean(TokenEnhancer.class)
+        @ConditionalOnMissingBean
 		public TokenEnhancer jwtTokenEnhancer(){
-			return new TokenJwtEnhancer();
+			return new JwtTokenEnhancer();
 		}
 	}
 }

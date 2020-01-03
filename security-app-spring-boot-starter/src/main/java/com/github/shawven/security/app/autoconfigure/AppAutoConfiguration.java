@@ -25,7 +25,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.provider.endpoint.TokenEndpoint;
@@ -38,9 +37,6 @@ import org.springframework.security.web.authentication.logout.LogoutSuccessHandl
 import org.springframework.social.connect.UsersConnectionRepository;
 import org.springframework.social.connect.web.ProviderSignInUtils;
 import org.springframework.social.security.SocialUserDetailsService;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 
 /**
  * 适用于APP端，全部json返回，适配手机验证码、社交登录
@@ -181,24 +177,6 @@ public class AppAutoConfiguration {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                     .and()
                         .csrf().disable();
-        }
-
-        /**
-         * 跨域支持
-         *
-         * @return
-         */
-        @Bean
-        @ConditionalOnMissingBean
-        public CorsFilter corsFilter() {
-            CorsConfiguration configuration = new CorsConfiguration();
-            configuration.addAllowedOrigin("*");
-            configuration.addAllowedMethod("*");
-            configuration.addAllowedHeader("*");
-            configuration.setAllowCredentials(true);
-            UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-            source.registerCorsConfiguration("/**", configuration);
-            return new CorsFilter(source);
         }
     }
 
