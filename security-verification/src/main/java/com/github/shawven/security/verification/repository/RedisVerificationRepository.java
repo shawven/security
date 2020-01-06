@@ -85,20 +85,6 @@ public class RedisVerificationRepository implements VerificationRepository {
         if (StringUtils.isNotBlank(uniqueId)) {
             return uniqueId;
         }
-        // 先尝试获取手机号
-        if (type == VerificationType.SMS) {
-            Object attribute = request.getAttribute(PHONE_ATTRIBUTE_NAME);
-            if (attribute != null) {
-                uniqueId = String.valueOf(attribute);
-            }
-            if (StringUtils.isBlank(uniqueId)) {
-                uniqueId = request.getParameter(PHONE_PARAMETER_NAME);
-            }
-            if (!Pattern.compile("[1]([3-9])[0-9]{9}").matcher(uniqueId).matches()) {
-                throw new VerificationException("手机号：" + uniqueId + "错误");
-            }
-            return uniqueId;
-        }
         return null;
     }
 
