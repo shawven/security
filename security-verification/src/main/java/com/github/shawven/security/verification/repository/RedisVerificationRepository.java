@@ -2,7 +2,6 @@
 package com.github.shawven.security.verification.repository;
 
 import com.github.shawven.security.verification.Verification;
-import com.github.shawven.security.verification.VerificationException;
 import com.github.shawven.security.verification.VerificationRepository;
 import com.github.shawven.security.verification.VerificationType;
 import org.apache.commons.lang3.StringUtils;
@@ -11,9 +10,9 @@ import org.springframework.data.redis.core.RedisTemplate;
 import javax.servlet.http.HttpServletRequest;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
-import java.util.regex.Pattern;
 
-import static com.github.shawven.security.verification.VerificationConstants.*;
+import static com.github.shawven.security.verification.VerificationConstants.REDIS_CODE_KEY;
+import static com.github.shawven.security.verification.VerificationConstants.REQUEST_ID;
 
 
 /**
@@ -63,29 +62,22 @@ public class RedisVerificationRepository implements VerificationRepository {
         if (keyFunction != null) {
             uniqueId = keyFunction.apply(request, type);
         }
-        if (uniqueId == null) {
-            uniqueId = tryExtractUniqueId(request, type);
+        if (StringUtils.isBlank(uniqueId)) {
+            // 尝试获取requestId
+            uniqueId= request.getHeader(REQUEST_ID);
+            if (StringUtils.isBlank(uniqueId)) {
+                uniqueId = request.getParameter(REQUEST_ID);
+            }
+            if (StringUtils.isBlank(uniqueId)) {
+                Object attribute = request.getAttribute(REQUEST_ID);
+                uniqueId = attribute != null ? attribute.toString() : null;
+            }
         }
-        if (uniqueId == null) {
+        if (StringUtils.isBlank(uniqueId)) {
             throw new UnsupportedOperationException("当前无法提取存储key值，请自行实现："
                     + RedisVerificationRepository.class.getSimpleName());
         }
         return REDIS_CODE_KEY + ":" + type.getLabel() + ":" + uniqueId;
-    }
-
-    private String tryExtractUniqueId(HttpServletRequest request, VerificationType type) {
-        // 尝试获取requestId
-        String uniqueId = request.getHeader(REQUEST_ID);
-        if (StringUtils.isBlank(uniqueId)) {
-            uniqueId = request.getParameter(REQUEST_ID);
-        }
-        if (StringUtils.isBlank(uniqueId)) {
-            uniqueId = String.valueOf(request.getAttribute(REQUEST_ID));
-        }
-        if (StringUtils.isNotBlank(uniqueId)) {
-            return uniqueId;
-        }
-        return null;
     }
 
     public void setKeyFunction(BiFunction<HttpServletRequest, VerificationType, String> keyFunction) {
