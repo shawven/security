@@ -41,7 +41,7 @@ app:
         length: 6
         expire-in: 60
         # 配置需要短信验证码验证的url
-        url:
+        url: /hello
 
     # 社交登录功能拦截的url,参见SocialProperties
     connect:

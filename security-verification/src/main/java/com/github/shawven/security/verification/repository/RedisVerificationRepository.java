@@ -75,9 +75,9 @@ public class RedisVerificationRepository implements VerificationRepository {
 
     private String tryExtractUniqueId(HttpServletRequest request, VerificationType type) {
         // 尝试获取requestId
-        String uniqueId = request.getParameter(REQUEST_ID);
+        String uniqueId = request.getHeader(REQUEST_ID);
         if (StringUtils.isBlank(uniqueId)) {
-            uniqueId = request.getHeader(REQUEST_ID);
+            uniqueId = request.getParameter(REQUEST_ID);
         }
         if (StringUtils.isBlank(uniqueId)) {
             uniqueId = String.valueOf(request.getAttribute(REQUEST_ID));
