@@ -2,6 +2,7 @@
 package com.github.shawven.security.verification.repository;
 
 import com.github.shawven.security.verification.Verification;
+import com.github.shawven.security.verification.VerificationException;
 import com.github.shawven.security.verification.VerificationRepository;
 import com.github.shawven.security.verification.VerificationType;
 import org.apache.commons.lang3.StringUtils;
@@ -10,9 +11,10 @@ import org.springframework.data.redis.core.RedisTemplate;
 import javax.servlet.http.HttpServletRequest;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
+import java.util.regex.Pattern;
 
-import static com.github.shawven.security.verification.VerificationConstants.REDIS_CODE_KEY;
-import static com.github.shawven.security.verification.VerificationConstants.REQUEST_ID;
+import static com.github.shawven.security.verification.VerificationConstants.*;
+import static com.github.shawven.security.verification.VerificationConstants.PHONE_PARAMETER_NAME;
 
 
 /**
@@ -61,6 +63,19 @@ public class RedisVerificationRepository implements VerificationRepository {
         String uniqueId = null;
         if (keyFunction != null) {
             uniqueId = keyFunction.apply(request, type);
+        }
+        // 先尝试获取手机号
+        if (StringUtils.isBlank(uniqueId) && type == VerificationType.SMS) {
+            Object attribute = request.getAttribute(PHONE_ATTRIBUTE_NAME);
+            uniqueId = attribute != null ? attribute.toString() : null;
+            if (StringUtils.isBlank(uniqueId)) {
+                uniqueId = request.getParameter(PHONE_PARAMETER_NAME);
+            }
+            if (StringUtils.isBlank(uniqueId)) {
+                throw new VerificationException("无验证手机号");
+            } else if (!Pattern.compile("[1]([3-9])[0-9]{9}").matcher(uniqueId).matches()) {
+                throw new VerificationException("手机号：" + uniqueId + "错误");
+            }
         }
         if (StringUtils.isBlank(uniqueId)) {
             // 尝试获取requestId

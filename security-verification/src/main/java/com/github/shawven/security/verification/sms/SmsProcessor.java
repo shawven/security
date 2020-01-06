@@ -43,7 +43,7 @@ public class SmsProcessor extends AbstractVerificationProcessor<Sms> {
         try {
             smsSender.send(sms);
             String message = String.valueOf(sms.getExpireIn() / 60).concat("分钟内有效");
-            responseMessage(response, message, smsRequest.getRequestId());
+            responseMessage(response, message);
         } catch (VerificationException e) {
             responseErrorMessage(response, e.getMessage(), HttpStatus.BAD_REQUEST.value());
         } catch (Exception e) {
@@ -51,10 +51,9 @@ public class SmsProcessor extends AbstractVerificationProcessor<Sms> {
         }
 	}
 
-    private void responseMessage(HttpServletResponse response, String message, String requestId) {
+    private void responseMessage(HttpServletResponse response, String message) {
         try {
             ResponseData result = new ResponseData(message);
-            response.setHeader(VerificationConstants.REQUEST_ID, requestId);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("application/json;charset=UTF-8");
             response.getWriter().write(objectMapper.writeValueAsString(result));
