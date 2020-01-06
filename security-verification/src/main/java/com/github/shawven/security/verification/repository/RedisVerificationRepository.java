@@ -74,7 +74,17 @@ public class RedisVerificationRepository implements VerificationRepository {
     }
 
     private String tryExtractUniqueId(HttpServletRequest request, VerificationType type) {
-        String uniqueId = null;
+        // 尝试获取requestId
+        String uniqueId = request.getParameter(REQUEST_ID);
+        if (StringUtils.isBlank(uniqueId)) {
+            uniqueId = request.getHeader(REQUEST_ID);
+        }
+        if (StringUtils.isBlank(uniqueId)) {
+            uniqueId = String.valueOf(request.getAttribute(REQUEST_ID));
+        }
+        if (StringUtils.isNotBlank(uniqueId)) {
+            return uniqueId;
+        }
         // 先尝试获取手机号
         if (type == VerificationType.SMS) {
             Object attribute = request.getAttribute(PHONE_ATTRIBUTE_NAME);
@@ -84,24 +94,15 @@ public class RedisVerificationRepository implements VerificationRepository {
             if (StringUtils.isBlank(uniqueId)) {
                 uniqueId = request.getParameter(PHONE_PARAMETER_NAME);
             }
-        }
-        if (StringUtils.isNotBlank(uniqueId)) {
             if (!Pattern.compile("[1]([3-9])[0-9]{9}").matcher(uniqueId).matches()) {
                 throw new VerificationException("手机号：" + uniqueId + "错误");
             }
             return uniqueId;
-        } else {
-            // 再尝试获取sid: 简称会话id
-            uniqueId = request.getHeader(REDIS_SESSION_ID_PARAMETER_NAME);
-            if (StringUtils.isBlank(uniqueId)) {
-                uniqueId = request.getParameter(REDIS_SESSION_ID_PARAMETER_NAME);
-            }
-            return uniqueId;
         }
+        return null;
     }
 
     public void setKeyFunction(BiFunction<HttpServletRequest, VerificationType, String> keyFunction) {
         this.keyFunction = keyFunction;
     }
-
 }

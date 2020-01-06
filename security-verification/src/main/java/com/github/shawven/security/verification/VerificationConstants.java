@@ -28,14 +28,14 @@ public class VerificationConstants {
 	public static final String PHONE_PARAMETER_NAME = "phone";
 
     /**
-     * reqeust attribute传递
+     * request attribute传递
      */
     public static final String PHONE_ATTRIBUTE_NAME = "verification_phone_attribute";
 
     /**
-     * reids 会话id参数
+     * request id参数
      */
-    public static final String REDIS_SESSION_ID_PARAMETER_NAME = "sid";
+    public static final String REQUEST_ID = "Request-Id";
 
     /**
      * 发送短信验证码 或 验证短信验证码时，传递手机号的参数的名称

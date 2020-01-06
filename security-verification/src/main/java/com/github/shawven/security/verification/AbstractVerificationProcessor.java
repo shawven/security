@@ -36,6 +36,8 @@ public abstract class AbstractVerificationProcessor<T extends Verification> impl
             // 生成校验码
             T verification = verificationGenerator.generate(verificationRequest);
             HttpServletRequest request = verificationRequest.getRequest();
+            request.setAttribute(VerificationConstants.REQUEST_ID, verificationRequest.getRequestId());
+
             // 保存最基本的信息
             Verification base = new Verification(verification.getCode(), verification.getExpireTime());
             verificationRepository.save(request, base, getVerificationType(request));

@@ -1,15 +1,12 @@
 
 package com.github.shawven.security.verification.captcha;
 
-import com.github.shawven.security.verification.AbstractVerificationProcessor;
-import com.github.shawven.security.verification.VerificationGenerator;
-import com.github.shawven.security.verification.VerificationRepository;
-import com.github.shawven.security.verification.VerificationRequest;
+import com.github.shawven.security.verification.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
-import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
@@ -32,8 +29,9 @@ public class CaptchaProcessor extends AbstractVerificationProcessor<Captcha> {
     @Override
     protected void send(VerificationRequest<Captcha> captchaRequest, Captcha captcha) {
         try {
-            ServletOutputStream outputStream = captchaRequest.getResponse().getOutputStream();
-            ImageIO.write(captcha.getImage(), "JPEG", outputStream);
+            HttpServletResponse response = captchaRequest.getResponse();
+            response.setHeader(VerificationConstants.REQUEST_ID, captchaRequest.getRequestId());
+            ImageIO.write(captcha.getImage(), "JPEG", response.getOutputStream());
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
         }

@@ -2,6 +2,7 @@ package com.github.shawven.security.verification;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.UUID;
 
 /**
  * @author Shoven
@@ -14,11 +15,14 @@ public abstract class VerificationRequest<T extends Verification> {
      */
     private Integer expireIn;
 
+    private String requestId;
+
     private HttpServletRequest request;
 
     private HttpServletResponse response;
 
     public VerificationRequest(HttpServletRequest request, HttpServletResponse response) {
+        this.requestId = getUUID();
         this.request = request;
         this.response = response;
     }
@@ -29,6 +33,14 @@ public abstract class VerificationRequest<T extends Verification> {
 
     public void setExpireIn(Integer expireIn) {
         this.expireIn = expireIn;
+    }
+
+    public String getRequestId() {
+        return requestId;
+    }
+
+    public void setRequestId(String requestId) {
+        this.requestId = requestId;
     }
 
     public HttpServletRequest getRequest() {
@@ -45,5 +57,9 @@ public abstract class VerificationRequest<T extends Verification> {
 
     public void setResponse(HttpServletResponse response) {
         this.response = response;
+    }
+
+    private String getUUID() {
+        return UUID.randomUUID().toString().replace("-", "");
     }
 }
