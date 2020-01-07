@@ -73,7 +73,7 @@ public class RedisVerificationRepository implements VerificationRepository {
             }
             if (StringUtils.isBlank(uniqueId)) {
                 throw new VerificationException("无验证手机号");
-            } else if (!Pattern.compile("[1]([3-9])[0-9]{9}").matcher(uniqueId).matches()) {
+            } else if (!Pattern.matches("[1]([3-9])[0-9]{9}", uniqueId)) {
                 throw new VerificationException("手机号：" + uniqueId + "错误");
             }
         }
