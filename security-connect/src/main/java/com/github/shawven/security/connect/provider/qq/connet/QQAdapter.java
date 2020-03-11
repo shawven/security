@@ -18,17 +18,14 @@ public class QQAdapter implements ApiAdapter<QQ> {
 	@Override
 	public void setConnectionValues(QQ api, ConnectionValues values) {
 		QQUserInfo userInfo = api.getUserInfo();
-
-		values.setDisplayName(userInfo.getNickname());
-		values.setImageUrl(userInfo.getFigureurl_qq_1());
-		values.setProfileUrl(null);
-		values.setProviderUserId(userInfo.getOpenId());
+        values.setProviderUserId(userInfo.getOpenId());
+        values.setDisplayName(userInfo.getNickname());
+        values.setImageUrl(userInfo.getFigureurl_qq_1());
 	}
 
 	@Override
 	public UserProfile fetchUserProfile(QQ api) {
-		// TODO Auto-generated method stub
-		return null;
+        return UserProfile.EMPTY;
 	}
 
 	@Override

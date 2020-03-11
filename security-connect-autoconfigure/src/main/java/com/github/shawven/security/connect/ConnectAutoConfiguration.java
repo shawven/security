@@ -47,7 +47,6 @@ public class ConnectAutoConfiguration extends SocialConfigurerAdapter {
 	private ConnectAuthenticationFilterPostProcessor connectAuthenticationFilterPostProcessor;
 
     public ConnectAutoConfiguration(DataSource dataSource,
-                                    ConnectProperties properties,
                                     List<ConnectionFactory<?>> connectionFactories,
                                     ConnectConfiguration connectConfiguration,
                                     @Autowired(required = false) ConnectionSignUp connectionSignUp,
@@ -67,7 +66,7 @@ public class ConnectAutoConfiguration extends SocialConfigurerAdapter {
 
 	@Override
 	public UsersConnectionRepository getUsersConnectionRepository(ConnectionFactoryLocator connectionFactoryLocator) {
-        MyUsersConnectionRepository repository = new MyUsersConnectionRepository(dataSource,
+        MyJdbcUsersConnectionRepository repository = new MyJdbcUsersConnectionRepository(dataSource,
 				connectionFactoryLocator, Encryptors.noOpText());
 
 		// 配置无感知注册处理程序，用户第一次登陆时需要注册的，调用该程序处理

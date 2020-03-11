@@ -4,7 +4,7 @@ package com.github.shawven.security.app.connect.wxmini;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.shawven.security.connect.ConnectConstants;
-import com.github.shawven.security.connect.MyConnectionRepository;
+import com.github.shawven.security.connect.MyJdbcConnectionRepository;
 import com.github.shawven.security.connect.RedisSignInUtils;
 import com.github.shawven.security.connect.config.ConnectConfiguration;
 import com.github.shawven.security.connect.config.WeixinConfiguration;
@@ -82,8 +82,8 @@ public class WxMiniAuthenticationFilter extends AbstractAuthenticationProcessing
             ConnectionData connectionData = new ConnectionData(providerId, openId,
                     null, null, null, null, sessionKey, null, null);
 
-            MyConnectionRepository repository = (MyConnectionRepository) connectionRepository;
-            repository.updateConnection(connectionData);
+            MyJdbcConnectionRepository repository = (MyJdbcConnectionRepository) connectionRepository;
+            repository.updateConnectionData(connectionData);
             return success;
         } catch (AuthenticationException e) {
             result.remove("errcode");

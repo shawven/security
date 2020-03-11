@@ -16,7 +16,7 @@ import java.util.Set;
  * @author Shoven
  * @since 2019-04-24 20:54
  */
-public class MyUsersConnectionRepository implements UsersConnectionRepository {
+public class MyJdbcUsersConnectionRepository implements UsersConnectionRepository {
 
     private final JdbcTemplate jdbcTemplate;
     private final ConnectionFactoryLocator connectionFactoryLocator;
@@ -24,7 +24,9 @@ public class MyUsersConnectionRepository implements UsersConnectionRepository {
     private ConnectionSignUp connectionSignUp;
     private String table = "user_connection";
 
-    public MyUsersConnectionRepository(DataSource dataSource, ConnectionFactoryLocator connectionFactoryLocator, TextEncryptor textEncryptor) {
+    public MyJdbcUsersConnectionRepository(DataSource dataSource,
+                                           ConnectionFactoryLocator connectionFactoryLocator,
+                                           TextEncryptor textEncryptor) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
         this.connectionFactoryLocator = connectionFactoryLocator;
         this.textEncryptor = textEncryptor;
@@ -80,7 +82,7 @@ public class MyUsersConnectionRepository implements UsersConnectionRepository {
         if (userId == null) {
             throw new IllegalArgumentException("userId cannot be null");
         } else {
-            return new MyConnectionRepository(userId, this.jdbcTemplate, this.connectionFactoryLocator,
+            return new MyJdbcConnectionRepository(userId, this.jdbcTemplate, this.connectionFactoryLocator,
                     this.textEncryptor, this.table);
         }
     }

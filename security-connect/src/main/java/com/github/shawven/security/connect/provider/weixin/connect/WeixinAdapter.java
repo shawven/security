@@ -47,7 +47,7 @@ public class WeixinAdapter implements ApiAdapter<Weixin> {
 	 */
 	@Override
 	public UserProfile fetchUserProfile(Weixin api) {
-		return null;
+        return UserProfile.EMPTY;
 	}
 
 	/**
