@@ -71,7 +71,7 @@ public class MyJdbcUsersConnectionRepository implements UsersConnectionRepositor
         return new NamedParameterJdbcTemplate(jdbcTemplate).query("select user_id from " + table + " where provider_id = :providerId and provider_user_id in (:providerUserIds)", parameters,
                 rs -> {
                     while (rs.next()) {
-                        localUserIds.add(rs.getString("userId"));
+                        localUserIds.add(rs.getString("user_id"));
                     }
                     return localUserIds;
                 });
