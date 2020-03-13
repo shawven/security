@@ -8,9 +8,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.*;
+import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
+import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetailsSource;
 import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
@@ -35,6 +38,8 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
     private AuthorizationServerTokenServices tokenServices;
 
     private AdaptedAuthenticationHandler handler;
+
+    private OAuth2AuthenticationDetailsSource detailsSource = new OAuth2AuthenticationDetailsSource();
 
     public OAuth2AuthenticationSuccessHandler(ClientDetailsService clientDetailsService,
                                               PasswordEncoder passwordEncoder,
@@ -75,8 +80,12 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
 
         try {
             OAuth2AccessToken token = tokenServices.createAccessToken(oAuth2Authentication);
+            request.setAttribute(OAuth2AuthenticationDetails.ACCESS_TOKEN_VALUE, token.getValue());
+            request.setAttribute(OAuth2AuthenticationDetails.ACCESS_TOKEN_TYPE, token.getTokenType());
+            oAuth2Authentication.setDetails(detailsSource.buildDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(oAuth2Authentication);
             if (handler != null) {
-                handler.onSuccess(request, response, authentication, token);
+                handler.onSuccess(request, response, oAuth2Authentication, token);
             }
         } catch (AuthenticationException e) {
             if (handler != null) {

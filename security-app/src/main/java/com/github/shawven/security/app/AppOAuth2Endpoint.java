@@ -110,6 +110,7 @@ public class AppOAuth2Endpoint  {
         }
         OAuth2Authentication authentication = services.loadAuthentication(accessToken.getValue());
         authentication.setDetails(detailsSource.buildDetails(request));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
         return authentication;
     }
 }

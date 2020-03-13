@@ -1,6 +1,4 @@
-
 package com.github.shawven.security.connect;
-
 
 public class ConnectUserInfo {
 
@@ -10,7 +8,7 @@ public class ConnectUserInfo {
 
 	private String nickname;
 
-	private String headimg;
+	private String avatar;
 
 	public String getProviderId() {
 		return providerId;
@@ -36,12 +34,12 @@ public class ConnectUserInfo {
 		this.nickname = nickname;
 	}
 
-	public String getHeadimg() {
-		return headimg;
+	public String getAvatar() {
+		return avatar;
 	}
 
-	public void setHeadimg(String headimg) {
-		this.headimg = headimg;
+	public void setAvatar(String avatar) {
+		this.avatar = avatar;
 	}
 
 }
