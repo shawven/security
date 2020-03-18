@@ -129,18 +129,6 @@ public class VerificationAutoConfiguration {
             configurations.add(properties.getSms());
             return new VerificationFilter(processors, configurations);
         }
-
-        @Configuration
-        @AutoConfigureOrder(1)
-        @ConditionalOnClass(RedisTemplate.class)
-        public static class RedisSupportConfiguration {
-
-            @Bean
-            @ConditionalOnMissingBean
-            public VerificationRepository redisVerificationRepository(RedisTemplate redisTemplate) {
-                return new RedisVerificationRepository(redisTemplate);
-            }
-        }
     }
 
     @Configuration
@@ -174,22 +162,31 @@ public class VerificationAutoConfiguration {
             }
             return new VerificationSecuritySupportConfigurer(filter);
         }
-
-        @Configuration
-        @AutoConfigureOrder(1)
-        @ConditionalOnClass(RedisTemplate.class)
-        public static class RedisSupportConfiguration {
-
-            @Bean
-            @ConditionalOnMissingBean
-            public VerificationRepository redisVerificationRepository(RedisTemplate redisTemplate) {
-                RedisVerificationRepository repository = new RedisVerificationRepository(redisTemplate);
-                repository.setKeyFunction(new SpringSecurityContextKeyExtractor().get());
-                return repository;
-            }
-        }
     }
 
+
+    /**
+     * redis支持配置
+     */
+    @Configuration
+    @AutoConfigureOrder(1)
+    @ConditionalOnClass(RedisTemplate.class)
+    public static class RedisSupportConfiguration {
+
+        /**
+         * 基于redis的验证码存取器
+         *
+         * @param redisTemplate
+         * @return
+         */
+        @Bean
+        @ConditionalOnMissingBean
+        public VerificationRepository redisVerificationRepository(RedisTemplate redisTemplate) {
+            RedisVerificationRepository repository = new RedisVerificationRepository(redisTemplate);
+            repository.setKeyFunction(new SpringSecurityContextKeyExtractor().get());
+            return repository;
+        }
+    }
 
     /**
      * 基于session的验证码存取器

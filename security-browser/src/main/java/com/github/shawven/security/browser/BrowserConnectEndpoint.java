@@ -11,12 +11,15 @@ import com.github.shawven.security.connect.ConnectInfoExtendable;
 import com.github.shawven.security.connect.ConnectUserInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.social.connect.Connection;
+import org.springframework.social.connect.ConnectionFactoryLocator;
+import org.springframework.social.connect.ConnectionRepository;
+import org.springframework.social.connect.web.ConnectController;
 import org.springframework.social.connect.web.ProviderSignInUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.request.ServletWebRequest;
 
 import javax.servlet.http.HttpServletRequest;
@@ -30,7 +33,8 @@ import java.io.IOException;
  * @since 2019-05-08 21:54
  */
 @Controller
-public class BrowserConnectEndpoint extends ConnectInfoExtendable {
+@RequestMapping("/connect")
+public class BrowserConnectEndpoint extends ConnectController implements ConnectInfoExtendable {
 
     private static final Logger logger = LoggerFactory.getLogger(BrowserConnectEndpoint.class);
 
@@ -38,7 +42,11 @@ public class BrowserConnectEndpoint extends ConnectInfoExtendable {
 
     private BrowserConfiguration browserConfiguration;
 
-    public BrowserConnectEndpoint(ProviderSignInUtils providerSignInUtils, BrowserConfiguration browserConfiguration) {
+    public BrowserConnectEndpoint(ConnectionFactoryLocator connectionFactoryLocator,
+                                  ConnectionRepository connectionRepository,
+                                  ProviderSignInUtils providerSignInUtils,
+                                  BrowserConfiguration browserConfiguration) {
+        super(connectionFactoryLocator, connectionRepository);
         this.providerSignInUtils = providerSignInUtils;
         this.browserConfiguration = browserConfiguration;
     }
@@ -56,7 +64,7 @@ public class BrowserConnectEndpoint extends ConnectInfoExtendable {
         ConnectUserInfo connectUserInfo = buildSocialUserInfo(connection);
 
         if (ResponseType.JSON.equals(browserConfiguration.getResponseType())) {
-            ResponseData result = Responses.firstLoginNeedBindAccount().setData(connectUserInfo);
+            ResponseData result = Responses.firstLoginNeedBinding().setData(connectUserInfo);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("application/json;charset=UTF-8");
             response.setStatus(HttpStatus.UNAUTHORIZED.value());

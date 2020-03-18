@@ -21,7 +21,7 @@ public class BrowserAuthorizationConfigureProvider implements AuthorizationConfi
     }
 
     @Override
-    public boolean config(ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry config) {
+    public void config(ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry config) {
         String[] urls = {
                 browserConfiguration.getSignInUrl(),
                 browserConfiguration.getSignUpUrl(),
@@ -29,7 +29,10 @@ public class BrowserAuthorizationConfigureProvider implements AuthorizationConfi
                 browserConfiguration.getSignOutSuccessUrl()
         };
         config.antMatchers(Arrays.stream(urls).filter(StringUtils::isNotBlank).toArray(String[]::new)).permitAll();
+    }
 
+    @Override
+    public boolean isAnyRequest() {
         return false;
     }
 }

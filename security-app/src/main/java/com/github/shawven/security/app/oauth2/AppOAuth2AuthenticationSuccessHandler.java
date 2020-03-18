@@ -1,6 +1,8 @@
-package com.github.shawven.security.oauth2;
+package com.github.shawven.security.app.oauth2;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.shawven.security.app.AppLoginFailureHandler;
+import com.github.shawven.security.app.AppLoginSuccessHandler;
 import com.github.shawven.security.authorization.ResponseData;
 import com.github.shawven.security.authorization.Responses;
 import org.apache.commons.lang3.StringUtils;
@@ -29,7 +31,13 @@ import java.util.Collections;
  * @author Shoven
  * @date 2019-11-12
  */
-public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccessHandler {
+public class AppOAuth2AuthenticationSuccessHandler implements AuthenticationSuccessHandler {
+
+    private ObjectMapper objectMapper;
+
+    private AppLoginSuccessHandler loginSuccessHandler;
+
+    private AppLoginFailureHandler loginFailureHandler;
 
     private PasswordEncoder passwordEncoder;
 
@@ -37,25 +45,25 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
 
     private AuthorizationServerTokenServices tokenServices;
 
-    private AdaptedAuthenticationHandler handler;
+    private OAuth2AuthenticationDetailsSource detailsSource ;
 
-    private OAuth2AuthenticationDetailsSource detailsSource = new OAuth2AuthenticationDetailsSource();
-
-    public OAuth2AuthenticationSuccessHandler(ClientDetailsService clientDetailsService,
-                                              PasswordEncoder passwordEncoder,
-                                              AuthorizationServerTokenServices tokenServices) {
+    public AppOAuth2AuthenticationSuccessHandler(ClientDetailsService clientDetailsService,
+                                                 AuthorizationServerTokenServices tokenServices,
+                                                 PasswordEncoder passwordEncoder,
+                                                 AppLoginSuccessHandler loginSuccessHandler,
+                                                 AppLoginFailureHandler loginFailureHandler) {
+        this.detailsSource = new OAuth2AuthenticationDetailsSource();
+        this.objectMapper = new ObjectMapper();
         this.clientDetailsService = clientDetailsService;
-        this.passwordEncoder = passwordEncoder;
         this.tokenServices = tokenServices;
-    }
-
-    public AuthenticationSuccessHandler adapt(AdaptedAuthenticationHandler handler) {
-        this.handler = handler;
-        return this;
+        this.passwordEncoder = passwordEncoder;
+        this.loginSuccessHandler = loginSuccessHandler;
+        this.loginFailureHandler = loginFailureHandler;
     }
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+    public void onAuthenticationSuccess(HttpServletRequest request,
+                                        HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
         String[] clientInfo = getClientInfo(request);
 
@@ -63,19 +71,17 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
         String clientSecret = clientInfo[1];
         ClientDetails clientDetails = clientDetailsService.loadClientByClientId(clientId);
         if (clientDetails == null) {
-            output(response, Responses.noSuchClient());
+            outputUnauthorized(response, Responses.noSuchClient());
             return;
         }
         if (!authenticateClient(passwordEncoder, clientDetails.getClientSecret(), clientSecret)) {
-            output(response, Responses.badClientCredentials());
+            outputUnauthorized(response, Responses.badClientCredentials());
             return;
         }
 
         TokenRequest tokenRequest = new TokenRequest(Collections.emptyMap(), clientId,
                 clientDetails.getScope(), "custom");
-
         OAuth2Request oAuth2Request = tokenRequest.createOAuth2Request(clientDetails);
-
         OAuth2Authentication oAuth2Authentication = new OAuth2Authentication(oAuth2Request, authentication);
 
         try {
@@ -84,14 +90,33 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
             request.setAttribute(OAuth2AuthenticationDetails.ACCESS_TOKEN_TYPE, token.getTokenType());
             oAuth2Authentication.setDetails(detailsSource.buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(oAuth2Authentication);
-            if (handler != null) {
-                handler.onSuccess(request, response, oAuth2Authentication, token);
-            }
-        } catch (AuthenticationException e) {
-            if (handler != null) {
-                handler.onFailure(request, response, e);
-            }
 
+            onSuccess(request, response, oAuth2Authentication, token);
+        } catch (AuthenticationException e) {
+            onFailure(request, response, e);
+        }
+    }
+
+    public void onSuccess(HttpServletRequest request, HttpServletResponse response,
+                          Authentication authentication, OAuth2AccessToken token) throws IOException, ServletException {
+        boolean isRefresh = "refresh_token".equals(request.getParameter("grant_type"));
+        ResponseData data = isRefresh ? Responses.refreshTokenSuccess() : Responses.getTokenSuccess();
+        data.setData(token);
+        output(response, data);
+        if (loginSuccessHandler != null) {
+            loginSuccessHandler.onAuthenticationSuccess(request, response, authentication);
+        }
+
+    }
+
+    public void onFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException e)
+            throws IOException, ServletException {
+        ResponseData result = new ResponseData()
+                .setCode(HttpStatus.UNAUTHORIZED.value())
+                .setMessage(e.getMessage());
+        outputUnauthorized(response, result);
+        if (loginFailureHandler != null) {
+            loginFailureHandler.onAuthenticationFailure(request, response, e);
         }
     }
 
@@ -130,10 +155,17 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
         return passwordEncoder.matches(inputSecret,storedSecret);
     }
 
-    private void output(HttpServletResponse response, ResponseData data) throws IOException {
+
+    private void output(HttpServletResponse response, ResponseData tokenResult) throws IOException {
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json;charset=UTF-8");
+        response.getWriter().write(objectMapper.writeValueAsString(tokenResult));
+    }
+
+    private void outputUnauthorized(HttpServletResponse response, ResponseData data) throws IOException {
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json,charset=utf-8");
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
-        response.getWriter().write(new ObjectMapper().writeValueAsString(data));
+        response.getWriter().write(objectMapper.writeValueAsString(data));
     }
 }

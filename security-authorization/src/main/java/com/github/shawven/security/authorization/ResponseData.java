@@ -1,5 +1,7 @@
 package com.github.shawven.security.authorization;
 
+import java.io.Serializable;
+
 /**
  * 自定义响应消息体
 
@@ -7,11 +9,12 @@ package com.github.shawven.security.authorization;
  * @author Shoven
  * @since 2019-07-10 14:27
  */
-public class ResponseData {
+public class ResponseData implements Serializable {
+
     /**
      * 状态码
      */
-    private int code;
+    private int code = 200;
 
     /**
      * 消息
@@ -23,9 +26,7 @@ public class ResponseData {
      */
     private Object data;
 
-    public ResponseData() {
-    }
-
+    public ResponseData() { }
 
     public ResponseData(String message) {
         this.message = message;

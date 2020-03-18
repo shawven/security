@@ -18,8 +18,12 @@ public class ConnectAuthorizationConfigureProvider implements AuthorizationConfi
     }
 
     @Override
-    public boolean config(ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry config) {
+    public void config(ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry config) {
         config.antMatchers(configuration.getSignUpUrl()).permitAll();
+    }
+
+    @Override
+    public boolean isAnyRequest() {
         return false;
     }
 }

@@ -96,15 +96,13 @@ public class ConnectAutoConfiguration extends SocialConfigurerAdapter {
 	@Bean
     @ConditionalOnMissingBean(name = "connectSecuritySupportConfigurer")
 	public HttpSecuritySupportConfigurer connectSecuritySupportConfigurer() {
+        ConnectConfigurer configurer = new ConnectConfigurer();
         // 设置过滤器拦截社交登录的url
-		String filterProcessesUrl = connectConfiguration.getFilterProcessesUrl();
-        ConnectConfigurer configurer = new ConnectConfigurer(filterProcessesUrl);
-
+        configurer.setFilterProcessesUrl(connectConfiguration.getFilterProcessesUrl());
 		// 设置社交登录判断是第一次登录时需要跳转的页面，需要引导用户进行注册或绑定
 		// 如果没有配置 connectionSignUp 那么 org.springframework.social.security.SocialAuthenticationFilter.doAuthentication
         // 的方法会跳转到这里配置的注册页面
 		configurer.signupUrl(connectConfiguration.getSignUpUrl());
-
 		// 设置过滤器链的后处理器，例如app环境下的成功处理器与浏览器环境会不同
 		configurer.setConnectAuthenticationFilterPostProcessor(connectAuthenticationFilterPostProcessor);
 		return new ConnectSecuritySupportConfigurer(configurer);
@@ -124,12 +122,7 @@ public class ConnectAutoConfiguration extends SocialConfigurerAdapter {
                 getUsersConnectionRepository(connectionFactoryLocator));
     }
 
-    @Bean
-    @ConditionalOnMissingBean
-    public ConnectController connectController(ConnectionFactoryLocator connectionFactoryLocator,
-                                               ConnectionRepository connectionRepository) {
-        return new ConnectController(connectionFactoryLocator, connectionRepository);
-    }
+
 
 
     @Configuration
@@ -158,7 +151,7 @@ public class ConnectAutoConfiguration extends SocialConfigurerAdapter {
     }
 
     @Bean
-    public AuthorizationConfigureProvider connectAuthorizationConfigurerProvider() {
+    public AuthorizationConfigureProvider connectAuthorizationConfigureProvider() {
         return new ConnectAuthorizationConfigureProvider(connectConfiguration);
     }
 

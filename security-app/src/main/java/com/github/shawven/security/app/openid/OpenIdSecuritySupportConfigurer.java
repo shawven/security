@@ -32,7 +32,6 @@ public class OpenIdSecuritySupportConfigurer extends HttpSecuritySupportConfigur
 
     @Override
 	public void configure(HttpSecurity http) throws Exception {
-
 		OpenIdAuthenticationFilter openIdAuthenticationFilter = new OpenIdAuthenticationFilter();
 		openIdAuthenticationFilter.setAuthenticationManager(http.getSharedObject(AuthenticationManager.class));
 		openIdAuthenticationFilter.setAuthenticationSuccessHandler(authenticationSuccessHandler);

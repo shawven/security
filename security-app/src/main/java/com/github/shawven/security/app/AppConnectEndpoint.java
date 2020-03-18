@@ -1,36 +1,57 @@
 package com.github.shawven.security.app;
 
+import com.github.shawven.security.app.connect.ConnectionDTO;
 import com.github.shawven.security.authorization.ResponseData;
 import com.github.shawven.security.authorization.Responses;
 import com.github.shawven.security.connect.ConnectConstants;
 import com.github.shawven.security.connect.ConnectInfoExtendable;
 import com.github.shawven.security.connect.ConnectUserInfo;
 import com.github.shawven.security.connect.RedisSignInUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.util.Pair;
 import org.springframework.http.ResponseEntity;
-import org.springframework.social.connect.Connection;
+import org.springframework.social.connect.*;
+import org.springframework.social.connect.support.OAuth2ConnectionFactory;
 import org.springframework.social.connect.web.ProviderSignInUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.social.oauth2.AccessGrant;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.ServletWebRequest;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * @author Shoven
  * @date 2019-11-11
  */
 @RestController
-public class AppConnectEndpoint extends ConnectInfoExtendable {
+public class AppConnectEndpoint implements ConnectInfoExtendable {
 
     private RedisSignInUtils redisSignInUtils;
 
     private ProviderSignInUtils providerSignInUtils;
 
-    public AppConnectEndpoint(RedisSignInUtils redisSignInUtils, ProviderSignInUtils providerSignInUtils) {
+    private UsersConnectionRepository usersConnectionRepository;
+
+    private ConnectionRepository connectionRepository;
+
+    private ConnectionFactoryLocator connectionFactoryLocator;
+
+    public AppConnectEndpoint(RedisSignInUtils redisSignInUtils,
+                              ProviderSignInUtils providerSignInUtils,
+                              UsersConnectionRepository usersConnectionRepository,
+                              ConnectionRepository connectionRepository,
+                              ConnectionFactoryLocator connectionFactoryLocator) {
         this.redisSignInUtils = redisSignInUtils;
         this.providerSignInUtils = providerSignInUtils;
+        this.usersConnectionRepository = usersConnectionRepository;
+        this.connectionRepository = connectionRepository;
+        this.connectionFactoryLocator = connectionFactoryLocator;
     }
 
     /**
@@ -39,7 +60,7 @@ public class AppConnectEndpoint extends ConnectInfoExtendable {
      * @param request
      * @return
      */
-    @GetMapping(ConnectConstants.CONNECT_USER_INFO_URL)
+    @GetMapping("connect" + ConnectConstants.CONNECT_USER_INFO_URL)
     public ResponseEntity getSocialUserInfo(HttpServletRequest request) {
         // 从请求中拿用户信息
         Connection<?> connection = providerSignInUtils.getConnectionFromSession(new ServletWebRequest(request));
@@ -48,7 +69,49 @@ public class AppConnectEndpoint extends ConnectInfoExtendable {
         // 构建用户信息
         ConnectUserInfo connectUserInfo = buildSocialUserInfo(connection);
 
-        ResponseData response = Responses.firstLoginNeedBindAccount().setData(connectUserInfo);
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        ResponseData response = Responses.firstLoginNeedBinding().setData(connectUserInfo);
+        return ResponseEntity.unprocessableEntity().body(response);
+    }
+
+    @GetMapping("connect")
+    public ResponseEntity listConnections() {
+        // 用户绑定的所有连接
+        MultiValueMap<String, Connection<?>> map = connectionRepository.findAllConnections();
+        Map<String, List<ConnectionDTO>> result = map.entrySet().stream()
+                .map(e -> Pair.of(e.getKey(), e.getValue().stream().map(ConnectionDTO::from).collect(toList())))
+                .collect(Pair.toMap());
+        return ResponseEntity.ok(new ResponseData().setData(result));
+    }
+
+    @PostMapping("connect/{providerId}")
+    public ResponseEntity connect(HttpServletRequest request, @PathVariable String providerId, String code) {
+        // 获取第三方信息并生成连接信息
+        OAuth2ConnectionFactory<?> connectionFactory = (OAuth2ConnectionFactory<?>) connectionFactoryLocator
+                .getConnectionFactory(providerId);
+        AccessGrant accessGrant = connectionFactory.getOAuthOperations().exchangeForAccess(code,
+                request.getRequestURI(), null);
+        Connection<?> connection = connectionFactory.createConnection(accessGrant);
+
+        // 通过连接信息查找关联的用户ID
+        HashSet<String> providerUserIds = new HashSet<>();
+        providerUserIds.add(connection.getKey().getProviderUserId());
+        Set<String> userIds = usersConnectionRepository.findUserIdsConnectedTo(providerId, providerUserIds);
+        int size = userIds.size();
+        // 不存在
+        if (size <= 0) {
+            // 保存连接信息
+            connectionRepository.addConnection(connection);
+            return ResponseEntity.ok(Responses.bindSuccess());
+        } else {
+            return ResponseEntity.unprocessableEntity().body(Responses.duplicateBinding());
+        }
+    }
+
+    @DeleteMapping("connect/{providerId}/{providerUserId}")
+    public ResponseEntity disconnect(@PathVariable String providerId, @PathVariable String providerUserId) {
+        ConnectionKey connectionKey = new ConnectionKey(providerId, providerUserId);
+        // 删除连接信息
+        connectionRepository.removeConnection(connectionKey);
+        return ResponseEntity.ok(Responses.unbindSuccess());
     }
 }

@@ -13,16 +13,14 @@ public class ConnectConfigurer extends SpringSocialConfigurer {
 
 	private ConnectAuthenticationFilterPostProcessor connectAuthenticationFilterPostProcessor;
 
-	public ConnectConfigurer(String filterProcessesUrl) {
-		this.filterProcessesUrl = filterProcessesUrl;
-	}
-
 
 	@SuppressWarnings("unchecked")
 	@Override
 	protected <T> T postProcess(T object) {
 		SocialAuthenticationFilter filter = (SocialAuthenticationFilter) super.postProcess(object);
-		filter.setFilterProcessesUrl(filterProcessesUrl);
+		if (filterProcessesUrl != null) {
+            filter.setFilterProcessesUrl(filterProcessesUrl);
+        }
 		if (connectAuthenticationFilterPostProcessor != null) {
 			connectAuthenticationFilterPostProcessor.postProcess(filter);
 		}

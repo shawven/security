@@ -54,13 +54,24 @@ public class Responses {
         return new ResponseData().setMessage("无效的refresh_token").setCode(40114);
     }
 
-
     public static ResponseData concurrentLogin() {
         return new ResponseData().setMessage("当前账号已在其地方登录").setCode(40121);
     }
 
-    public static ResponseData firstLoginNeedBindAccount() {
+    public static ResponseData firstLoginNeedBinding() {
         return new ResponseData().setMessage("首次登录需要绑定账号").setCode(40131);
+    }
+
+    public static ResponseData duplicateBinding() {
+        return new ResponseData().setMessage("重复绑定").setCode(40132);
+    }
+
+    public static ResponseData bindSuccess() {
+        return new ResponseData().setMessage("绑定成功");
+    }
+
+    public static ResponseData unbindSuccess() {
+        return new ResponseData().setMessage("解绑成功");
     }
 
     public static ResponseData accessDenied() {

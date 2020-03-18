@@ -9,7 +9,7 @@ import org.springframework.social.connect.Connection;
  * @author Shoven
  * @date 2019-11-08
  */
-public class ConnectInfoExtendable {
+public interface ConnectInfoExtendable {
 
 	/**
 	 * 根据Connection信息构建SocialUserInfo
@@ -17,7 +17,7 @@ public class ConnectInfoExtendable {
 	 * @param connection
 	 * @return
 	 */
-	protected ConnectUserInfo buildSocialUserInfo(Connection<?> connection) {
+	default ConnectUserInfo buildSocialUserInfo(Connection<?> connection) {
 		ConnectUserInfo userInfo = new ConnectUserInfo();
 		userInfo.setProviderId(connection.getKey().getProviderId());
 		userInfo.setProviderUserId(connection.getKey().getProviderUserId());

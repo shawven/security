@@ -6,34 +6,36 @@ import com.github.shawven.security.app.connect.AppConnectAuthenticationFilterPos
 import com.github.shawven.security.app.oauth2.AppOAuth2AccessDeniedHandler;
 import com.github.shawven.security.app.oauth2.AppOAuth2AuthenticationExceptionEntryPoint;
 import com.github.shawven.security.app.oauth2.AppOAuth2AuthenticationFailureHandler;
-import com.github.shawven.security.app.oauth2.AppOAuth2AuthenticationHandler;
+import com.github.shawven.security.app.oauth2.AppOAuth2AuthenticationSuccessHandler;
 import com.github.shawven.security.app.openid.OpenIdSecuritySupportConfigurer;
 import com.github.shawven.security.authorization.HttpSecuritySupportConfigurer;
 import com.github.shawven.security.connect.ConnectAuthenticationFilterPostProcessor;
 import com.github.shawven.security.connect.ConnectAutoConfiguration;
 import com.github.shawven.security.connect.RedisSignInUtils;
-import com.github.shawven.security.oauth2.AuthenticationSuccessHandlerPostProcessor;
 import com.github.shawven.security.verification.security.EnableSmsAuthentication;
 import com.github.shawven.security.verification.security.SmsAuthenticationConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.provider.ClientDetailsService;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.endpoint.TokenEndpoint;
 import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+import org.springframework.social.connect.ConnectionFactoryLocator;
+import org.springframework.social.connect.ConnectionRepository;
 import org.springframework.social.connect.UsersConnectionRepository;
 import org.springframework.social.connect.web.ProviderSignInUtils;
 import org.springframework.social.security.SocialUserDetailsService;
@@ -48,40 +50,48 @@ import org.springframework.social.security.SocialUserDetailsService;
 public class AppAutoConfiguration {
 
     /**
-     * 成功退出处理器
-     *
-     * @return
-     */
-    @Bean
-    @ConditionalOnMissingBean
-    public LogoutSuccessHandler logoutSuccessHandler() {
-        return new AppLogoutSuccessHandler();
-    }
-
-    /**
      * 验证成功处理器后处理器
      *
      * @return
      */
     @Bean
+    @AutoConfigureOrder(2)
     @ConditionalOnMissingBean
-    public AuthenticationSuccessHandlerPostProcessor authenticationSuccessHandlerPostProcessor(
-            @Autowired(required = false) AppLoginSuccessHandler loginSuccessHandler,
-            @Autowired(required = false) AppLoginFailureHandler loginFailureHandler) {
-        return handler -> {
-            handler.adapt(new AppOAuth2AuthenticationHandler(loginSuccessHandler, loginFailureHandler));
-        };
+    public AuthenticationSuccessHandler authenticationSuccessHandler(
+            @Autowired(required = false) AppLoginSuccessHandler loginSuccessHandler) {
+        return new AppAuthenticationSuccessHandler(loginSuccessHandler);
     }
 
+
     @Configuration
+    @AutoConfigureOrder(1)
+    @ConditionalOnClass({OAuth2Authentication.class})
     public static class OAuth2SupportConfiguration {
 
         @Bean
         @ConditionalOnMissingBean
-        public AppOAuth2Endpoint appOAuth2Endpoint(TokenEndpoint tokenEndpoint, AuthorizationServerTokenServices services,
+        public AppOAuth2Endpoint appOAuth2Endpoint(TokenEndpoint tokenEndpoint,
+                                                   AuthorizationServerTokenServices tokenServices,
                                                    @Autowired(required = false) AppLoginSuccessHandler loginSuccessHandler,
                                                    @Autowired(required = false) AppLoginFailureHandler loginFailureHandler) {
-            return new AppOAuth2Endpoint(tokenEndpoint, services, loginSuccessHandler, loginFailureHandler);
+            return new AppOAuth2Endpoint(tokenEndpoint, tokenServices, loginSuccessHandler, loginFailureHandler);
+        }
+
+        /**
+         * 验证成功处理器后处理器
+         *
+         * @return
+         */
+        @Bean
+        @ConditionalOnMissingBean
+        public AuthenticationSuccessHandler authenticationSuccessHandler(
+                ClientDetailsService clientDetailsService,
+                AuthorizationServerTokenServices tokenServices,
+                PasswordEncoder passwordEncoder,
+                @Autowired(required = false) AppLoginSuccessHandler loginSuccessHandler,
+                @Autowired(required = false) AppLoginFailureHandler loginFailureHandler) {
+            return new AppOAuth2AuthenticationSuccessHandler(clientDetailsService, tokenServices, passwordEncoder,
+                    loginSuccessHandler, loginFailureHandler);
         }
 
         /**
@@ -121,38 +131,48 @@ public class AppAutoConfiguration {
 
     @Configuration
     @ConditionalOnClass({ConnectAutoConfiguration.class, RedisTemplate.class})
-    @AutoConfigureAfter(AppAutoConfiguration.class)
+    @AutoConfigureOrder(3)
     public static class ConnectSupportConfiguration {
 
         @Bean
         @ConditionalOnMissingBean
         public AppConnectEndpoint appConnectEndpoint(RedisSignInUtils redisSignInUtils,
-                                                     ProviderSignInUtils providerSignInUtils) {
-            return new AppConnectEndpoint(redisSignInUtils, providerSignInUtils);
+                                                     ProviderSignInUtils providerSignInUtils,
+                                                     UsersConnectionRepository usersConnectionRepository,
+                                                     ConnectionRepository connectionRepository,
+                                                     ConnectionFactoryLocator connectionFactoryLocator) {
+            return new AppConnectEndpoint(redisSignInUtils, providerSignInUtils,
+                    usersConnectionRepository, connectionRepository, connectionFactoryLocator);
         }
 
         @Bean
         @ConditionalOnMissingBean
         public ConnectAuthenticationFilterPostProcessor connectAuthenticationFilterPostProcessor(
-                @Lazy AuthenticationSuccessHandler authenticationSuccessHandler,
+                AuthenticationSuccessHandler authenticationSuccessHandler,
                 @Autowired(required = false) AppLoginFailureHandler loginFailureHandler) {
-
             return new AppConnectAuthenticationFilterPostProcessor(authenticationSuccessHandler,
                     new AppConnectAuthenticationFailureHandler(loginFailureHandler));
         }
-
-        @Bean
-        @ConditionalOnMissingBean(name = "openIdSecuritySupportConfigurer")
-        public HttpSecuritySupportConfigurer openIdSecuritySupportConfigurer(
-                @Lazy AuthenticationSuccessHandler authenticationSuccessHandler,
-                AuthenticationFailureHandler authenticationFailureHandler,
-                SocialUserDetailsService userDetailsService,
-                UsersConnectionRepository usersConnectionRepository) {
-            return new OpenIdSecuritySupportConfigurer(authenticationSuccessHandler,
-                    authenticationFailureHandler, userDetailsService, usersConnectionRepository);
-        }
-
     }
+
+    /**
+     *
+     * OpenId直接验证支持
+     *
+     * @return
+     */
+    @Bean
+    @AutoConfigureOrder(3)
+    @ConditionalOnMissingBean
+    public HttpSecuritySupportConfigurer openIdSecuritySupportConfigurer(
+            AuthenticationSuccessHandler authenticationSuccessHandler,
+            AuthenticationFailureHandler authenticationFailureHandler,
+            SocialUserDetailsService userDetailsService,
+            UsersConnectionRepository usersConnectionRepository) {
+        return new OpenIdSecuritySupportConfigurer(authenticationSuccessHandler,
+                authenticationFailureHandler, userDetailsService, usersConnectionRepository);
+    }
+
 
     @Configuration
     @ConditionalOnClass(SmsAuthenticationConfiguration.class)

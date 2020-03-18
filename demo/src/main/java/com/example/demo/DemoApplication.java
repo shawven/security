@@ -37,8 +37,13 @@ public class DemoApplication {
     public AuthorizationConfigureProvider authorizationConfigurerProvider() {
         return new AuthorizationConfigureProvider() {
             @Override
-            public boolean config(ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry config) {
-                return true;
+            public void config(ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry config) {
+
+            }
+
+            @Override
+            public boolean isAnyRequest() {
+                return false;
             }
         };
     }

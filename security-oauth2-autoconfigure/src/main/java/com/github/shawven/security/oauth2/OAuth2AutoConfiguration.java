@@ -1,7 +1,6 @@
 
 package com.github.shawven.security.oauth2;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -23,27 +22,6 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 @Configuration
 @EnableConfigurationProperties(OAuth2Properties.class)
 public class OAuth2AutoConfiguration {
-
-    /**
-     * 基于OAuth2的验证成功处理器适配器 （短信登录和社交登陆转Token）
-     *
-     * @return
-     */
-    @Bean
-    @ConditionalOnMissingBean
-    public AuthenticationSuccessHandler authenticationSuccessHandler(
-            ClientDetailsService clientDetailsService,
-            PasswordEncoder passwordEncoder,
-            AuthorizationServerTokenServices services,
-            @Autowired(required = false)
-                    AuthenticationSuccessHandlerPostProcessor authenticationSuccessHandlerPostProcessor) {
-        OAuth2AuthenticationSuccessHandler handler = new OAuth2AuthenticationSuccessHandler(clientDetailsService,
-                passwordEncoder, services);
-        if (authenticationSuccessHandlerPostProcessor != null) {
-            authenticationSuccessHandlerPostProcessor.postProcess(handler);
-        }
-        return handler;
-    }
 
     @Configuration
     @ConditionalOnMissingBean(PasswordEncoder.class)

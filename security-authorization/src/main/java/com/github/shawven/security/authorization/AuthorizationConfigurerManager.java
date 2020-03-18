@@ -4,7 +4,7 @@ package com.github.shawven.security.authorization;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
 
-import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -24,15 +24,16 @@ public class AuthorizationConfigurerManager {
 		boolean existAnyRequestConfig = false;
 		String existAnyRequestConfigName = null;
 
-		for (AuthorizationConfigureProvider authorizeConfigProvider : providers) {
-			boolean currentIsAnyRequestConfig = authorizeConfigProvider.config(config);
-
-			if (existAnyRequestConfig && currentIsAnyRequestConfig) {
+        providers.sort(Comparator.comparing(AuthorizationConfigureProvider::isAnyRequest));
+		for (AuthorizationConfigureProvider provider : providers) {
+            provider.config(config);
+            boolean anyRequest = provider.isAnyRequest();
+            if (existAnyRequestConfig && anyRequest) {
 				throw new RuntimeException("重复的anyRequest配置:" + existAnyRequestConfigName + ","
-						+ authorizeConfigProvider.getClass().getSimpleName());
-			} else if (currentIsAnyRequestConfig) {
+						+ provider.getClass().getSimpleName());
+			} else if (anyRequest) {
 				existAnyRequestConfig = true;
-				existAnyRequestConfigName = authorizeConfigProvider.getClass().getSimpleName();
+				existAnyRequestConfigName = provider.getClass().getSimpleName();
 			}
 		}
 		if(!existAnyRequestConfig){

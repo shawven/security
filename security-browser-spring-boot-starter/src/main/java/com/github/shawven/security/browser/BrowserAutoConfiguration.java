@@ -27,6 +27,9 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.session.InvalidSessionStrategy;
 import org.springframework.security.web.session.SessionInformationExpiredStrategy;
+import org.springframework.social.connect.ConnectionFactoryLocator;
+import org.springframework.social.connect.ConnectionRepository;
+import org.springframework.social.connect.web.ConnectController;
 import org.springframework.social.connect.web.ProviderSignInUtils;
 
 /**
@@ -48,12 +51,6 @@ public class BrowserAutoConfiguration {
         this.properties = properties;
     }
 
-    @Bean
-    @ConditionalOnMissingBean
-    public BrowserConnectEndpoint browserConnectEndpoint(ProviderSignInUtils providerSignInUtils,
-                                                         BrowserConfiguration browserConfiguration) {
-	    return new BrowserConnectEndpoint(providerSignInUtils, browserConfiguration);
-    }
 
 	/**
 	 * session失效时的处理策略配置
@@ -157,8 +154,17 @@ public class BrowserAutoConfiguration {
 
     @Configuration
     @ConditionalOnClass(ConnectAutoConfiguration.class)
-    @Import(BrowserConnectEndpoint.class)
     public static class ConnectSupportConfiguration {
+
+        @Bean
+        @ConditionalOnMissingBean
+        public ConnectController connectController(ConnectionFactoryLocator connectionFactoryLocator,
+                                                   ConnectionRepository connectionRepository,
+                                                   ProviderSignInUtils providerSignInUtils,
+                                                   BrowserConfiguration browserConfiguration) {
+            return new BrowserConnectEndpoint(connectionFactoryLocator, connectionRepository,
+                    providerSignInUtils, browserConfiguration);
+        }
 
         @Bean
         @ConditionalOnMissingBean
