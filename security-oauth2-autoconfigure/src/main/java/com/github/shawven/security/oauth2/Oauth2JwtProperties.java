@@ -21,12 +21,12 @@ public class Oauth2JwtProperties {
     /**
      * 非对称加密，别名
      */
-    private String KeyAlias;
+    private String keyAlias;
 
     /**
      * 非对称加密，密钥库的密码
      */
-    private String KeyStorePassword;
+    private String keyStorePassword;
 
     /**
      * 非对称加密，私钥的密码
@@ -50,19 +50,19 @@ public class Oauth2JwtProperties {
     }
 
     public String getKeyAlias() {
-        return KeyAlias;
+        return keyAlias;
     }
 
     public void setKeyAlias(String keyAlias) {
-        KeyAlias = keyAlias;
+        this.keyAlias = keyAlias;
     }
 
     public String getKeyStorePassword() {
-        return KeyStorePassword;
+        return keyStorePassword;
     }
 
     public void setKeyStorePassword(String keyStorePassword) {
-        KeyStorePassword = keyStorePassword;
+        this.keyStorePassword = keyStorePassword;
     }
 
     public String getKeyPassword() {
