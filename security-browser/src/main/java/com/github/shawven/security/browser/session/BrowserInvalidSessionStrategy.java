@@ -13,7 +13,7 @@ import java.io.IOException;
  * 默认的session失效处理策略
  *
  * @author Shoven
- * @since 2019-05-08 21:53
+ * @date 2019-05-08
  */
 public class BrowserInvalidSessionStrategy extends AbstractSessionStrategy implements InvalidSessionStrategy {
 

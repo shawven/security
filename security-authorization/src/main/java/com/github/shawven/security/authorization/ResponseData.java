@@ -7,7 +7,7 @@ import java.io.Serializable;
 
  *
  * @author Shoven
- * @since 2019-07-10 14:27
+ * @date 2019-07-10
  */
 public class ResponseData implements Serializable {
 

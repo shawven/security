@@ -5,7 +5,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 /**
  * @author Shoven
- * @since 2019-04-23 15:51
+ * @date 2019-04-23
  */
 public interface PhoneUserDetailsService {
 

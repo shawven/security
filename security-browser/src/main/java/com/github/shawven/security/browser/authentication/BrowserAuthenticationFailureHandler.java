@@ -20,7 +20,7 @@ import java.io.IOException;
  * 浏览器环境下登录失败的处理器
  *
  * @author Shoven
- * @since 2019-05-08 21:55
+ * @date 2019-05-08
  */
 public class BrowserAuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 

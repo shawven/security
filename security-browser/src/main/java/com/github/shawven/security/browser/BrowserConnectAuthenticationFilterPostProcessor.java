@@ -9,7 +9,7 @@ import org.springframework.social.security.SocialAuthenticationFilter;
  * 浏览器的社交配置器的处理器
  *
  * @author Shoven
- * @since 2019-04-20 15:37
+ * @date 2019-04-20
  */
 public class BrowserConnectAuthenticationFilterPostProcessor implements ConnectAuthenticationFilterPostProcessor {
 

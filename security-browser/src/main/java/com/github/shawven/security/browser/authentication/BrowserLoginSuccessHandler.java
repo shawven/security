@@ -9,7 +9,7 @@ import java.io.IOException;
 
 /**
  * @author Shoven
- * @since 2019-05-10 18:01
+ * @date 2019-05-10
  */
 public interface BrowserLoginSuccessHandler {
 

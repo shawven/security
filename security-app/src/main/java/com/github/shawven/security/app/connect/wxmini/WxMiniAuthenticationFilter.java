@@ -39,7 +39,7 @@ import java.util.Map;
 
 /**
  * @author Shoven
- * @since 2019-04-24 15:27
+ * @date 2019-04-24
  */
 public class WxMiniAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 

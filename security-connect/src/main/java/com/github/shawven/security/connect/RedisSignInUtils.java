@@ -48,7 +48,7 @@ public class RedisSignInUtils {
 	public ConnectionData doPostSignUp(WebRequest request, String userId) {
 		String key = getKey(request);
         ConnectionData connectionData  = (ConnectionData) redisTemplate.opsForValue().get(key);
-        throwExceptionIfTrue(connectionData == null);
+        throwErrorIfConnectionDataIsNull(connectionData);
 
 		Connection<?> connection = connectionFactoryLocator.getConnectionFactory(connectionData.getProviderId())
 				.createConnection(connectionData);
@@ -66,7 +66,7 @@ public class RedisSignInUtils {
     public ConnectionData doPostSignUpForWxMini(WebRequest request, String userId) {
         String key = getKey(request);
         ConnectionData connectionData  = (ConnectionData) redisTemplate.opsForValue().get(key);
-        throwExceptionIfTrue(connectionData == null);
+        throwErrorIfConnectionDataIsNull(connectionData);
         // todo
 
         return null;
@@ -90,15 +90,15 @@ public class RedisSignInUtils {
      * @return
      */
     private String getKey(WebRequest request) {
-        String sid = request.getHeader("sid");
-        if (StringUtils.isBlank(sid)) {
-            throw new IllegalArgumentException("请求头或参数中缺少phone，值可以为代表当前用户的临时身份任意唯一ID");
+        String requestId = request.getHeader("Request-Id");
+        if (StringUtils.isBlank(requestId)) {
+            throw new IllegalArgumentException("请求头缺少Request-Id，值为临时会话唯一ID");
         }
-        return "security:connect:" + sid;
+        return "security:connect:" + requestId;
     }
 
-    private void throwExceptionIfTrue(boolean b) {
-	    if (b) {
+    private void throwErrorIfConnectionDataIsNull(ConnectionData connectionData) {
+	    if (connectionData == null) {
             throw new IllegalArgumentException("长时间未注册该链接已失效，请重新登录在绑定");
         }
     }

@@ -9,7 +9,7 @@ import org.springframework.social.security.SocialAuthenticationFilter;
  * 社交过滤器的后处理器，用于在不同环境下个性化社交登录的配置
  *
  * @author Shoven
- * @since 2019-04-19 10:15
+ * @date 2019-04-19
  */
 public class AppConnectAuthenticationFilterPostProcessor implements ConnectAuthenticationFilterPostProcessor {
 

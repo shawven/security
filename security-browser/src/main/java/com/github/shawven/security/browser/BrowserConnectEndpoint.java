@@ -30,7 +30,7 @@ import java.io.IOException;
  * 浏览器环境下与安全相关的服务
  *
  * @author Shoven
- * @since 2019-05-08 21:54
+ * @date 2019-05-08
  */
 @Controller
 @RequestMapping("/connect")

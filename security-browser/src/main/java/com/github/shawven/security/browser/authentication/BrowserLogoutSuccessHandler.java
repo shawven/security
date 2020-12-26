@@ -18,7 +18,7 @@ import java.io.IOException;
  * 如果没配置，则返回json格式的响应。
  *
  * @author Shoven
- * @since 2019-05-08 21:54
+ * @date 2019-05-08
  */
 public class BrowserLogoutSuccessHandler implements LogoutSuccessHandler {
 

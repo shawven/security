@@ -14,7 +14,7 @@ import java.io.IOException;
  * 默认的退出成功处理器
  *
  * @author Shoven
- * @since 2019-05-08 21:54
+ * @date 2019-05-08
  */
 public class AppLogoutSuccessHandler implements LogoutSuccessHandler {
 

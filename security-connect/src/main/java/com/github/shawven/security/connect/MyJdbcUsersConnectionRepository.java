@@ -14,7 +14,7 @@ import java.util.Set;
 
 /**
  * @author Shoven
- * @since 2019-04-24 20:54
+ * @date 2019-04-24
  */
 public class MyJdbcUsersConnectionRepository implements UsersConnectionRepository {
 

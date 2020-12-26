@@ -21,7 +21,7 @@ import static com.github.shawven.security.verification.VerificationConstants.PHO
  * 基于redis的验证码存取器，避免由于没有session导致无法存取验证码的问题
  *
  * @author Shoven
- * @since 2019-05-08 21:51
+ * @date 2019-05-08
  */
 public class RedisVerificationRepository implements VerificationRepository {
 
@@ -89,7 +89,7 @@ public class RedisVerificationRepository implements VerificationRepository {
             }
         }
         if (StringUtils.isBlank(uniqueId)) {
-            throw new UnsupportedOperationException("当前无法提取存储key值，请自行实现："
+            throw new IllegalArgumentException("当前无法提取存储key值，请自行实现："
                     + RedisVerificationRepository.class.getSimpleName());
         }
         return REDIS_CODE_KEY + ":" + type.getLabel() + ":" + uniqueId;

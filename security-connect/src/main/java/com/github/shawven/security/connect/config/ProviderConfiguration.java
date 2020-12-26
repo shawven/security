@@ -2,7 +2,7 @@ package com.github.shawven.security.connect.config;
 
 /**
  * @author Shoven
- * @since 2019-04-18 10:45
+ * @date 2019-04-18
  */
 public class ProviderConfiguration {
 

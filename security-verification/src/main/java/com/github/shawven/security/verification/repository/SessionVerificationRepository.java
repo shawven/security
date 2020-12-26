@@ -13,7 +13,7 @@ import javax.servlet.http.HttpSession;
  * 基于session的验证码存取器
  *
  * @author Shoven
- * @since 2019-05-08 21:51
+ * @date 2019-05-08
  */
 public class SessionVerificationRepository implements VerificationRepository {
 

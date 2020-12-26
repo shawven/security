@@ -4,7 +4,7 @@ package com.github.shawven.security.connect;
  * 社交配置器的处理器 不同环境下的社交配置不一样
  *
  * @author Shoven
- * @since 2019-04-20 15:32
+ * @date 2019-04-20
  */
 public interface ConnectConfigurerProcessor {
 

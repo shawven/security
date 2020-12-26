@@ -30,7 +30,7 @@ public class VerificationConstants {
     /**
      * request attribute传递
      */
-    public static final String PHONE_ATTRIBUTE_NAME = "verification_phone_attribute";
+    public static final String PHONE_ATTRIBUTE_NAME = "verification_phone";
 
     /**
      * request id参数

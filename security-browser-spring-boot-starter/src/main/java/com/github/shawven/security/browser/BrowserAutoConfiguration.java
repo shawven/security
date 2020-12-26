@@ -37,7 +37,7 @@ import org.springframework.social.connect.web.ProviderSignInUtils;
  * 模块默认的配置。
  *
  * @author Shoven
- * @since 2019-05-08 21:53
+ * @date 2019-05-08
  */
 @Configuration
 @Import(BrowserSecuritySupportConfiguration.class)

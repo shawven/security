@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author Shoven
- * @since 2019-05-10 18:01
+ * @date 2019-05-10
  */
 public interface AppLoginSuccessHandler {
 

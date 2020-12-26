@@ -12,7 +12,7 @@ import java.io.IOException;
  * 并发登录导致session失效时，默认的处理策略
  *
  * @author Shoven
- * @since 2019-05-08 21:54
+ * @date 2019-05-08
  */
 public class BrowserExpiredSessionStrategy extends AbstractSessionStrategy implements SessionInformationExpiredStrategy {
 
