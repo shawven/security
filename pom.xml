@@ -11,7 +11,7 @@
 
     <groupId>com.github.shawven</groupId>
     <artifactId>security</artifactId>
-    <version>2.1.1</version>
+    <version>${security.version}</version>
     <packaging>pom</packaging>
 
     <name>security</name>
@@ -43,6 +43,10 @@
         <developerConnection>scm:git:git@github.com:shawven/security.git</developerConnection>
         <url>https://github.com/shawven/security</url>
     </scm>
+
+    <properties>
+        <security.version>2.2.2</security.version>
+    </properties>
 
     <distributionManagement>
         <snapshotRepository>

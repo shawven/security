@@ -5,12 +5,12 @@
     <parent>
         <groupId>com.github.shawven</groupId>
         <artifactId>security</artifactId>
-        <version>2.1.1</version>
+        <version>${security.version}</version>
         <relativePath>../</relativePath>
     </parent>
 
 	<artifactId>security-connect</artifactId>
-    <version>2.1.1</version>
+    <version>${security.version}</version>
     <description>spring-social 第三方社交登陆</description>
 
     <properties>
@@ -21,7 +21,7 @@
         <dependency>
             <groupId>com.github.shawven</groupId>
             <artifactId>security-authorization</artifactId>
-            <version>2.1.1</version>
+            <version>${security.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>

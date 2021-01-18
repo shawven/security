@@ -5,20 +5,20 @@
     <parent>
         <groupId>com.github.shawven</groupId>
         <artifactId>security</artifactId>
-        <version>2.1.1</version>
+        <version>${security.version}</version>
         <relativePath>../</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>security-verification</artifactId>
-    <version>2.1.1</version>
+    <version>${security.version}</version>
     <description>校验模块</description>
 
     <dependencies>
         <dependency>
             <groupId>com.github.shawven</groupId>
             <artifactId>security-authorization</artifactId>
-            <version>2.1.1</version>
+            <version>${security.version}</version>
         </dependency>
 
         <dependency>
