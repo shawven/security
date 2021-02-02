@@ -37,11 +37,6 @@
     <dependencies>
         <dependency>
             <groupId>com.github.shawven</groupId>
-            <artifactId>security-app</artifactId>
-            <version>${security.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.shawven</groupId>
             <artifactId>security-authorization-autoconfigure</artifactId>
             <version>${security.version}</version>
         </dependency>
@@ -67,6 +62,11 @@
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-redis</artifactId>
             <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
         </dependency>
 
         <!-- Autoconfigure -->

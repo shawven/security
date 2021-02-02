@@ -10,7 +10,7 @@ import com.github.shawven.security.app.oauth2.AppOAuth2AuthenticationSuccessHand
 import com.github.shawven.security.app.openid.OpenIdSecuritySupportConfigurer;
 import com.github.shawven.security.authorization.HttpSecuritySupportConfigurer;
 import com.github.shawven.security.connect.ConnectAuthenticationFilterPostProcessor;
-import com.github.shawven.security.connect.ConnectAutoConfiguration;
+import com.github.shawven.security.connect.autoconfigure.ConnectAutoConfiguration;
 import com.github.shawven.security.connect.RedisSignInUtils;
 import com.github.shawven.security.verification.security.EnableSmsAuthentication;
 import com.github.shawven.security.verification.security.SmsAuthenticationConfiguration;

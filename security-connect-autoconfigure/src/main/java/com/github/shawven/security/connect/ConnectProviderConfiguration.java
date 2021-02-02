@@ -1,5 +1,6 @@
 package com.github.shawven.security.connect;
 
+import com.github.shawven.security.connect.autoconfigure.ConnectProperties;
 import com.github.shawven.security.connect.config.ConnectConfiguration;
 import com.github.shawven.security.connect.config.QQConfiguration;
 import com.github.shawven.security.connect.config.WeixinConfiguration;

@@ -37,11 +37,6 @@
     <dependencies>
         <dependency>
             <groupId>com.github.shawven</groupId>
-            <artifactId>security-browser</artifactId>
-            <version>${security.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.shawven</groupId>
             <artifactId>security-authorization-autoconfigure</artifactId>
             <version>${security.version}</version>
         </dependency>
