@@ -6,7 +6,6 @@
         <groupId>com.github.shawven</groupId>
         <artifactId>security</artifactId>
         <version>${security.version}</version>
-        <relativePath>../</relativePath>
     </parent>
 
     <artifactId>security-connect-autoconfigure</artifactId>
@@ -41,7 +40,7 @@
     <dependencies>
         <dependency>
             <groupId>com.github.shawven</groupId>
-            <artifactId>security-authorization-autoconfigure</artifactId>
+            <artifactId>security-base</artifactId>
             <version>${security.version}</version>
         </dependency>
 

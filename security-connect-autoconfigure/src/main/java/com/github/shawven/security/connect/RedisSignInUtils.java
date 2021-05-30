@@ -16,13 +16,13 @@ import java.util.concurrent.TimeUnit;
  */
 public class RedisSignInUtils {
 
-	private RedisTemplate redisTemplate;
+	private RedisTemplate<String, Object> redisTemplate;
 
 	private UsersConnectionRepository usersConnectionRepository;
 
 	private ConnectionFactoryLocator connectionFactoryLocator;
 
-    public RedisSignInUtils(RedisTemplate redisTemplate,
+    public RedisSignInUtils(RedisTemplate<String, Object> redisTemplate,
                             UsersConnectionRepository usersConnectionRepository,
                             ConnectionFactoryLocator connectionFactoryLocator) {
         this.redisTemplate = redisTemplate;
@@ -72,7 +72,7 @@ public class RedisSignInUtils {
         return null;
     }
 
-    public RedisTemplate getRedisTemplate() {
+    public RedisTemplate<String, Object> getRedisTemplate() {
         return redisTemplate;
     }
 

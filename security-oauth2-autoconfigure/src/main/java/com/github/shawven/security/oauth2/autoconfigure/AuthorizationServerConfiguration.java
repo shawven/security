@@ -3,6 +3,7 @@ package com.github.shawven.security.oauth2.autoconfigure;
 
 import com.github.shawven.security.oauth2.ClientCredentialsTokenEndpointFilterPostProcessor;
 import com.github.shawven.security.oauth2.OAuth2ClientProperties;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.context.annotation.Configuration;
@@ -22,20 +23,21 @@ import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenCo
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
 
+import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * 认证服务器配置
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @EnableAuthorizationServer
 @AutoConfigureAfter(TokenStoreConfiguration.class)
 public class AuthorizationServerConfiguration extends AuthorizationServerConfigurerAdapter {
 
     private UserDetailsService userDetailsService;
 
-    private AuthenticationManager authenticationManager;
+    private ObjectProvider<AuthenticationManager> authenticationManagerProvider;
 
     private TokenStore tokenStore;
 
@@ -51,26 +53,28 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
 
     private TokenEnhancer jwtTokenEnhancer;
 
+    private DataSource dataSource;
+
     public AuthorizationServerConfiguration(UserDetailsService userDetailsService,
-                                            AuthenticationManager authenticationManager,
+                                            ObjectProvider<AuthenticationManager> authenticationManagerProvider,
                                             TokenStore tokenStore,
                                             OAuth2Properties properties,
                                             PasswordEncoder passwordEncoder,
                                             AccessDeniedHandler accessDeniedHandler,
                                             AuthenticationEntryPoint authenticationEntryPoint,
-                                            @Autowired(required = false)
-                                            JwtAccessTokenConverter jwtAccessTokenConverter,
-                                            @Autowired(required = false)
-                                            TokenEnhancer jwtTokenEnhancer) {
+                                            ObjectProvider<JwtAccessTokenConverter> jwtAccessTokenConverterProvider,
+                                            ObjectProvider<TokenEnhancer> jwtTokenEnhancerProvider,
+                                            DataSource dataSource) {
         this.userDetailsService = userDetailsService;
-        this.authenticationManager = authenticationManager;
+        this.authenticationManagerProvider = authenticationManagerProvider;
         this.tokenStore = tokenStore;
         this.properties = properties;
         this.passwordEncoder = passwordEncoder;
         this.accessDeniedHandler = accessDeniedHandler;
         this.authenticationEntryPoint = authenticationEntryPoint;
-        this.jwtAccessTokenConverter = jwtAccessTokenConverter;
-        this.jwtTokenEnhancer = jwtTokenEnhancer;
+        this.jwtAccessTokenConverter = jwtAccessTokenConverterProvider.getIfAvailable();
+        this.jwtTokenEnhancer = jwtTokenEnhancerProvider.getIfAvailable();
+        this.dataSource = dataSource;
     }
 
     /**
@@ -80,7 +84,7 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
 	public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
         endpoints
                 .tokenStore(tokenStore)
-                .authenticationManager(authenticationManager)
+                .authenticationManager(authenticationManagerProvider.getIfAvailable())
                 .userDetailsService(userDetailsService);
 
         if (jwtAccessTokenConverter != null && jwtTokenEnhancer != null) {
@@ -118,16 +122,18 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
 	 */
 	@Override
 	public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-		InMemoryClientDetailsServiceBuilder builder = clients.inMemory();
         List<OAuth2ClientProperties> userClients = properties.getClients();
-        if (userClients.isEmpty()) {
+        if (userClients == null || userClients.isEmpty()) {
+            clients.jdbc(dataSource).passwordEncoder(passwordEncoder);
 			return;
 		}
+
+        InMemoryClientDetailsServiceBuilder memoryClientDetailsServiceBuilder = clients.inMemory();
         for (OAuth2ClientProperties client : userClients) {
             if (client == null) {
                 continue;
             }
-            builder.withClient(client.getClientId())
+            memoryClientDetailsServiceBuilder.withClient(client.getClientId())
                     .secret(passwordEncoder.encode(client.getClientSecret()))
                     .authorizedGrantTypes("password", "authorization_code", "refresh_token", "client_credentials")
                     .accessTokenValiditySeconds(client.getAccessTokenValidateSeconds())

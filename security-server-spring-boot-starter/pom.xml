@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.github.shawven</groupId>
+        <artifactId>security</artifactId>
+        <version>${security.version}</version>
+    </parent>
+
+    <artifactId>security-server-spring-boot-starter</artifactId>
+    <version>${security.version}</version>
+    <name>security-server-spring-boot-starter</name>
+    <description>Auth server for Spring Boot starter</description>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>shoven</name>
+            <email>441653192@qq.com</email>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git@github.com:shawven/security.git</connection>
+        <developerConnection>scm:git:git@github.com:shawven/security.git</developerConnection>
+        <url>https://github.com/shawven/security</url>
+    </scm>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.github.shawven</groupId>
+            <artifactId>security-base</artifactId>
+            <version>${security.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.shawven</groupId>
+            <artifactId>security-oauth2-autoconfigure</artifactId>
+            <version>${security.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.shawven</groupId>
+            <artifactId>security-connect-autoconfigure</artifactId>
+            <version>${security.version}</version>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.shawven</groupId>
+            <artifactId>security-verification-spring-boot-starter</artifactId>
+            <version>${security.version}</version>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-redis</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+        </dependency>
+
+        <!-- Autoconfigure -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure</artifactId>
+        </dependency>
+
+        <!-- @ConfigurationProperties annotation processing (metadata for IDEs) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
+
+</project>

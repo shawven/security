@@ -1,0 +1,6 @@
+# Auto Configure
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.github.shawven.security.server.autoconfigure.GenericAutoConfiguration,\
+com.github.shawven.security.server.autoconfigure.GenericWebSecurityAutoConfiguration,\
+com.github.shawven.security.server.autoconfigure.GenericConnectAutoConfiguration,\
+com.github.shawven.security.server.autoconfigure.GenericSmsSupportAutoConfiguration

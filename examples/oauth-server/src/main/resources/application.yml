@@ -1,0 +1,89 @@
+server:
+  port: 8001
+
+spring:
+  # 数据库连接配置
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/test?useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT%2B8
+    username: root
+    password: root
+    # 连接池及重试配置，防止mysql如果8小时自动断开连接问题
+    tomcat:
+      max-active: 100
+      min-idle: 10
+      min-evictable-idle-time-millis:  1800000
+      test-on-borrow: true
+      test-on-return: true
+      test-while-idle: true
+      validation-query: select 1
+  redis:
+    host: 127.0.0.1
+
+  thymeleaf:
+    cache: false
+
+  resources:
+    static-locations:
+
+app:
+  security:
+    # 验证码配置 参见VerificationProperties
+    verification:
+      # 图片验证码配置项，参见ImageCodeProperties
+      captcha:
+        length: 4
+        width: 100
+        height: 30
+        expireIn: 300
+        # 配置需要图形验证码验证的url, 两个验证码如果配的url中相同部分则短信优先级要高
+        url: /login/form
+      # 短信验证码配置项，参见SmsCodeProperties
+      sms:
+        # 短信验证码登录处理的url
+        login-processing-url: /oauth/phone
+        length: 6
+        expire-in: 60
+        # 配置需要短信验证码验证的url
+        url: /hello
+
+    # 社交登录功能拦截的url,参见SocialProperties
+    connect:
+      # 社交登录功能拦截的url
+      filter-processes-url: /oauth/connect
+      # QQ登录配置，参见QQProperties
+      qq:
+        appId:
+        app-secret:
+        provider-id: qq
+      # 微信登录配置
+      weixin:
+        app-id: wxd99431bbff8305a0
+        app-secret: 60f78681d063590a469f1b297feff3c4
+        provider-id: weixin
+
+    # 认证服务器注册的第三方应用配置项，参见OAuth2ClientProperties
+    oauth2:
+      # 第三方客户端配置
+#      clients:
+#        - client-id: app
+#          access-token-validate-seconds: 2592000
+#          refresh-token-validate-seconds: 2592000
+#        - client-id: test
+      # OAuth2认证服务器的tokenStore的类型，可选值为redis和jwt，值为jwt时发出的token为jwt
+      token-store: jwt
+      jwt:
+        # token签名的对称秘钥
+        signing-key: aXo3t%12_Ao
+        # 非对称密钥 （优先级高）
+        key-store: classpath:/demo.jks
+        key-alias: demo
+        key-store-password: 123456
+
+logging:
+  level:
+    root: info
+    org:
+      springframework:
+        security: DEBUG
+        social: DEBUG

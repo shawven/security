@@ -8,10 +8,8 @@
 
 ## 自动配置
 **spring-boot-starter支持，配置属性即可成功使用**
-### security-app-spring-boot-starter
- app环境支持，单独包
-### security-browser-spring-boot-starter
- 浏览器环境支持，单独包
+### security-server-spring-boot-starter
+ auth server依赖包，无状态，会话主要存储依赖redis，仅支持json响应
 ### security-verification-spring-boot-starter 
  短信、验证码模块，单独包/自动配置包
 ### security-oauth2-autoconfigure
@@ -25,13 +23,6 @@ OAuth2自动配置包，
 - 加载security-oauth2-autoconfigure 具备token登录功能
 - 加载security-connect-autoconfigure 具备第三方登录功能
 - 只要加载security-oauth2-autoconfigure 则，第三方登录和短信登录无缝兼容OAuth2 Token方式
-
-**各模块智适应主要依赖AuthenticationSuccessHandler来处理是浏览器跳转、JSON响应、还是返回token**
-
-**browser环境**
--- 会话保持主要依赖session，支持传统页面跳转，和前后端分离json响应
-**App环境**
--- 无状态，会话主要存储依赖redis，仅支持json响应
 
 ## License
 Security is Open Source software released under the

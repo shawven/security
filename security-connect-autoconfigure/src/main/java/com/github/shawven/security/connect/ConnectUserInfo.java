@@ -42,4 +42,13 @@ public class ConnectUserInfo {
 		this.avatar = avatar;
 	}
 
+    @Override
+    public String toString() {
+        return "ConnectUserInfo{" +
+                "providerId='" + providerId + '\'' +
+                ", providerUserId='" + providerUserId + '\'' +
+                ", nickname='" + nickname + '\'' +
+                ", avatar='" + avatar + '\'' +
+                '}';
+    }
 }

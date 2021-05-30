@@ -54,7 +54,7 @@ public class MyJdbcConnectionRepository implements ConnectionRepository {
 
     @Override
     public MultiValueMap<String, Connection<?>> findAllConnections() {
-        List<Connection<?>> resultList = jdbcTemplate.query(selectFromUserConnection() + " where user_id = ? order by provider_id, rank", connectionMapper, userId);
+        List<Connection<?>> resultList = jdbcTemplate.query(selectFromUserConnection() + " where user_id = ? order by provider_id, `rank`", connectionMapper, userId);
         MultiValueMap<String, Connection<?>> connections = new LinkedMultiValueMap<>();
         Set<String> registeredProviderIds = connectionFactoryLocator.registeredProviderIds();
         for (String registeredProviderId : registeredProviderIds) {
@@ -73,7 +73,7 @@ public class MyJdbcConnectionRepository implements ConnectionRepository {
 
     @Override
     public List<Connection<?>> findConnections(String providerId) {
-        return jdbcTemplate.query(selectFromUserConnection() + " where user_id = ? and provider_id = ? order by rank", connectionMapper, userId, providerId);
+        return jdbcTemplate.query(selectFromUserConnection() + " where user_id = ? and provider_id = ? order by `rank`", connectionMapper, userId, providerId);
     }
 
     @Override
@@ -101,7 +101,7 @@ public class MyJdbcConnectionRepository implements ConnectionRepository {
                 providerUsersCriteriaSql.append(" or " );
             }
         }
-        List<Connection<?>> resultList = new NamedParameterJdbcTemplate(jdbcTemplate).query(selectFromUserConnection() + " where user_id = :userId and " + providerUsersCriteriaSql + " order by providerId, rank", parameters, connectionMapper);
+        List<Connection<?>> resultList = new NamedParameterJdbcTemplate(jdbcTemplate).query(selectFromUserConnection() + " where user_id = :userId and " + providerUsersCriteriaSql + " order by providerId, `rank`", parameters, connectionMapper);
         MultiValueMap<String, Connection<?>> connectionsForUsers = new LinkedMultiValueMap<String, Connection<?>>();
         for (Connection<?> connection : resultList) {
             String providerId = connection.getKey().getProviderId();
@@ -160,8 +160,8 @@ public class MyJdbcConnectionRepository implements ConnectionRepository {
     public void addConnection(Connection<?> connection) {
         try {
             ConnectionData data = connection.createData();
-            int rank = jdbcTemplate.queryForObject("select coalesce(max(rank) + 1, 1) as rank from " + table + " where user_id = ? and provider_id = ?", new Object[]{ userId, data.getProviderId() }, Integer.class);
-            jdbcTemplate.update("insert into " + table + " (user_id, provider_id, provider_user_id, rank, display_name, profile_url, image_url, access_token, secret, refresh_token, expire_time) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            int rank = jdbcTemplate.queryForObject("select coalesce(max(`rank`) + 1, 1) as `rank` from " + table + " where user_id = ? and provider_id = ?", new Object[]{ userId, data.getProviderId() }, Integer.class);
+            jdbcTemplate.update("insert into " + table + " (user_id, provider_id, provider_user_id, `rank`, display_name, profile_url, image_url, access_token, secret, refresh_token, expire_time) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                     userId, data.getProviderId(), data.getProviderUserId(), rank, data.getDisplayName(), data.getProfileUrl(), data.getImageUrl(), encrypt(data.getAccessToken()), encrypt(data.getSecret()), encrypt(data.getRefreshToken()), data.getExpireTime());
         } catch (DuplicateKeyException e) {
             throw new DuplicateConnectionException(connection.getKey());
@@ -200,7 +200,7 @@ public class MyJdbcConnectionRepository implements ConnectionRepository {
     }
 
     private Connection<?> findPrimaryConnection(String providerId) {
-        List<Connection<?>> connections = jdbcTemplate.query(selectFromUserConnection() + " where user_id = ? and provider_id = ? order by rank", connectionMapper, userId, providerId);
+        List<Connection<?>> connections = jdbcTemplate.query(selectFromUserConnection() + " where user_id = ? and provider_id = ? order by `rank`", connectionMapper, userId, providerId);
         if (connections.size() > 0) {
             return connections.get(0);
         } else {

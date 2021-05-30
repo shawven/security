@@ -22,14 +22,14 @@ import java.util.Objects;
 import java.util.Optional;
 
 
-@Configuration
+@Configuration(proxyBeanMethods = false)
 public class TokenStoreConfiguration {
 
 	/**
 	 * 使用redis存储token的配置，只有在security.oauth2.tokenStore配置为redis时生效
 	 *
 	 */
-	@Configuration
+    @Configuration(proxyBeanMethods = false)
     @ConditionalOnClass(RedisConnectionFactory.class)
 	@ConditionalOnProperty(prefix = "app.security.oauth2", name = "token-store", havingValue = "redis")
 	public static class RedisConfig {
@@ -53,7 +53,7 @@ public class TokenStoreConfiguration {
 	/**
 	 * 使用jwt时的配置，默认生效
 	 */
-	@Configuration
+    @Configuration(proxyBeanMethods = false)
 	@ConditionalOnProperty(prefix = "app.security.oauth2", name = "token-store", havingValue = "jwt", matchIfMissing = true)
 	public static class JwtConfig implements ApplicationContextAware {
 

@@ -16,11 +16,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
  * @author Shoven
  * @date 2019-11-08
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(OAuth2Properties.class)
 public class OAuth2AutoConfiguration {
 
-    @Configuration
+    @Configuration(proxyBeanMethods = false)
     @ConditionalOnMissingBean(PasswordEncoder.class)
     public static class BaseConfiguration {
 

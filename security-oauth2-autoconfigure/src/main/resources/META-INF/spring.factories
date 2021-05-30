@@ -2,5 +2,4 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
 com.github.shawven.security.oauth2.autoconfigure.OAuth2AutoConfiguration,\
 com.github.shawven.security.oauth2.autoconfigure.AuthorizationServerConfiguration,\
-com.github.shawven.security.oauth2.autoconfigure.ResourceServerConfiguration,\
 com.github.shawven.security.oauth2.autoconfigure.TokenStoreConfiguration

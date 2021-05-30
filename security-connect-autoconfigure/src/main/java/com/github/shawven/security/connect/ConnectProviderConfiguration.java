@@ -1,9 +1,8 @@
 package com.github.shawven.security.connect;
 
-import com.github.shawven.security.connect.autoconfigure.ConnectProperties;
-import com.github.shawven.security.connect.config.ConnectConfiguration;
-import com.github.shawven.security.connect.config.QQConfiguration;
-import com.github.shawven.security.connect.config.WeixinConfiguration;
+import com.github.shawven.security.connect.config.ConnectProperties;
+import com.github.shawven.security.connect.config.QQConfig;
+import com.github.shawven.security.connect.config.WeixinConfig;
 import com.github.shawven.security.connect.provider.qq.connet.QQConnectionFactory;
 import com.github.shawven.security.connect.provider.weixin.connect.WeixinConnectionFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -15,7 +14,7 @@ import org.springframework.social.connect.ConnectionFactory;
  * @author Shoven
  * @date 2019-12-15
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 public class ConnectProviderConfiguration {
 
     private ConnectProperties properties;
@@ -27,7 +26,7 @@ public class ConnectProviderConfiguration {
     @Bean
     @ConditionalOnProperty(prefix = "app.security.connect.weixin", name = "app-id")
     public ConnectionFactory<?> createWeixinConnectionFactory() {
-        WeixinConfiguration weixinConfig = getConnectConfiguration().getWeixin();
+        WeixinConfig weixinConfig = properties.getWeixin();
         return new WeixinConnectionFactory(weixinConfig.getProviderId(), weixinConfig.getAppId(),
                 weixinConfig.getAppSecret());
     }
@@ -35,17 +34,8 @@ public class ConnectProviderConfiguration {
     @Bean
     @ConditionalOnProperty(prefix = "app.security.connect.qq", name = "app-id")
     public ConnectionFactory<?> createQqConnectionFactory() {
-        QQConfiguration qqConfig = getConnectConfiguration().getQq();
+        QQConfig qqConfig = properties.getQq();
         return new QQConnectionFactory(qqConfig.getProviderId(), qqConfig.getAppId(),
                 qqConfig.getAppSecret());
-    }
-
-    @Bean
-    public ConnectConfiguration getConnectConfiguration() {
-        ConnectConfiguration cfg = new ConnectConfiguration();
-        cfg.setFilterProcessesUrl(properties.getFilterProcessesUrl());
-        cfg.setQq(properties.getQq());
-        cfg.setWeixin(properties.getWeixin());
-        return cfg;
     }
 }

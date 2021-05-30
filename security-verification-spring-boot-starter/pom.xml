@@ -6,7 +6,6 @@
         <groupId>com.github.shawven</groupId>
         <artifactId>security</artifactId>
         <version>${security.version}</version>
-        <relativePath>../</relativePath>
     </parent>
 
     <artifactId>security-verification-spring-boot-starter</artifactId>
@@ -37,40 +36,21 @@
     <dependencies>
         <dependency>
             <groupId>com.github.shawven</groupId>
-            <artifactId>security-authorization-autoconfigure</artifactId>
+            <artifactId>security-base</artifactId>
             <version>${security.version}</version>
+            <optional>true</optional>
         </dependency>
 
         <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-web</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-config</artifactId>
-            <optional>true</optional>
+            <groupId>com.github.shawven</groupId>
+            <artifactId>security-verification</artifactId>
+            <version>${security.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-redis</artifactId>
             <optional>true</optional>
-        </dependency>
-
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
         </dependency>
 
         <!-- Autoconfigure -->

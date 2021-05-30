@@ -1,0 +1,41 @@
+server:
+  port: 8010
+
+spring:
+  # 数据库连接配置
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/test?useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT%2B8
+    username: root
+    password: root
+    # 连接池及重试配置，防止mysql如果8小时自动断开连接问题
+    tomcat:
+      max-active: 100
+      min-idle: 10
+      min-evictable-idle-time-millis:  1800000
+      test-on-borrow: true
+      test-on-return: true
+      test-while-idle: true
+      validation-query: select 1
+  redis:
+    host: 127.0.0.1
+
+
+logging:
+  level:
+    root: info
+    org:
+      springframework:
+        security: DEBUG
+        social: DEBUG
+
+security:
+  oauth2:
+    resource:
+      jwt:
+        key-uri: http://localhost:8001/oauth/token_key
+      id: user-service
+    client:
+      client-id: user-service
+      client-secret: 123456
+      grant-type: client_credentials

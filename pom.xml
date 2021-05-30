@@ -45,7 +45,7 @@
     </scm>
 
     <properties>
-        <security.version>2.2.2</security.version>
+        <security.version>2.3.0</security.version>
     </properties>
 
     <distributionManagement>
@@ -66,7 +66,7 @@
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
-                <version>Greenwich.SR3</version>
+                <version>Hoxton.SR3</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -134,11 +134,11 @@
     </profiles>
 
     <modules>
-        <module>security-app-spring-boot-starter</module>
-        <module>security-browser-spring-boot-starter</module>
+        <module>security-base</module>
+        <module>security-server-spring-boot-starter</module>
         <module>security-connect-autoconfigure</module>
         <module>security-oauth2-autoconfigure</module>
-        <module>security-authorization-autoconfigure</module>
+        <module>security-verification</module>
         <module>security-verification-spring-boot-starter</module>
     </modules>
 </project>

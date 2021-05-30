@@ -1,10 +1,10 @@
 
 package com.github.shawven.security.connect.autoconfigure;
 
-import com.github.shawven.security.authorization.AuthorizationConfigureProvider;
-import com.github.shawven.security.authorization.HttpSecuritySupportConfigurer;
+import com.github.shawven.security.authorization.HttpSecurityConfigurer;
 import com.github.shawven.security.connect.*;
-import com.github.shawven.security.connect.config.ConnectConfiguration;
+import com.github.shawven.security.connect.config.ConnectProperties;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -30,7 +30,7 @@ import java.util.List;
 /**
  * 社交登录配置主类
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @EnableSocial
 @EnableConfigurationProperties(ConnectProperties.class)
 @Import(ConnectProviderConfiguration.class)
@@ -38,25 +38,24 @@ public class ConnectAutoConfiguration extends SocialConfigurerAdapter {
 
 	private DataSource dataSource;
 
-	private ConnectConfiguration connectConfiguration;
+	private ConnectProperties connectProperties;
 
     private List<ConnectionFactory<?>> connectionFactories;
 
 	private ConnectionSignUp connectionSignUp;
 
-	private ConnectAuthenticationFilterPostProcessor connectAuthenticationFilterPostProcessor;
+	private ObjectProvider<ConnectAuthenticationFilterPostProcessor> connectAuthenticationFilterPostProcessorProvider;
 
     public ConnectAutoConfiguration(DataSource dataSource,
                                     List<ConnectionFactory<?>> connectionFactories,
-                                    ConnectConfiguration connectConfiguration,
-                                    @Autowired(required = false) ConnectionSignUp connectionSignUp,
-                                    @Autowired(required = false)
-                                    ConnectAuthenticationFilterPostProcessor connectAuthenticationFilterPostProcessor) {
+                                    ConnectProperties connectProperties,
+                                    ObjectProvider<ConnectionSignUp> connectionSignUpProvider,
+                                    ObjectProvider<ConnectAuthenticationFilterPostProcessor> connectAuthenticationFilterPostProcessorProvider) {
         this.dataSource = dataSource;
-        this.connectConfiguration = connectConfiguration;
+        this.connectProperties = connectProperties;
         this.connectionFactories = connectionFactories;
-        this.connectionSignUp = connectionSignUp;
-        this.connectAuthenticationFilterPostProcessor = connectAuthenticationFilterPostProcessor;
+        this.connectionSignUp = connectionSignUpProvider.getIfAvailable();
+        this.connectAuthenticationFilterPostProcessorProvider = connectAuthenticationFilterPostProcessorProvider;
     }
 
     @Override
@@ -94,18 +93,18 @@ public class ConnectAutoConfiguration extends SocialConfigurerAdapter {
 	 * @return
 	 */
 	@Bean
-    @ConditionalOnMissingBean(name = "connectSecuritySupportConfigurer")
-	public HttpSecuritySupportConfigurer connectSecuritySupportConfigurer() {
+    @ConditionalOnMissingBean(name = "connectSecurityConfigurer")
+	public HttpSecurityConfigurer connectSecuritySupportConfigurer() {
         ConnectConfigurer configurer = new ConnectConfigurer();
         // 设置过滤器拦截社交登录的url
-        configurer.setFilterProcessesUrl(connectConfiguration.getFilterProcessesUrl());
+        configurer.setFilterProcessesUrl(connectProperties.getFilterProcessesUrl());
 		// 设置社交登录判断是第一次登录时需要跳转的页面，需要引导用户进行注册或绑定
 		// 如果没有配置 connectionSignUp 那么 org.springframework.social.security.SocialAuthenticationFilter.doAuthentication
         // 的方法会跳转到这里配置的注册页面
-		configurer.signupUrl(connectConfiguration.getSignUpUrl());
+		configurer.signupUrl(connectProperties.getSignUpUrl());
 		// 设置过滤器链的后处理器，例如app环境下的成功处理器与浏览器环境会不同
-		configurer.setConnectAuthenticationFilterPostProcessor(connectAuthenticationFilterPostProcessor);
-		return new ConnectSecuritySupportConfigurer(configurer);
+		configurer.setConnectAuthenticationFilterPostProcessor(connectAuthenticationFilterPostProcessorProvider);
+		return new ConnectSecurityConfigurer(configurer);
 	}
 
 
@@ -125,13 +124,13 @@ public class ConnectAutoConfiguration extends SocialConfigurerAdapter {
 
 
 
-    @Configuration
+    @Configuration(proxyBeanMethods = false)
     @ConditionalOnClass(RedisTemplate.class)
     public static class RedisSupportConfiguration {
 
         @Bean
         @ConditionalOnMissingBean
-        public RedisSignInUtils redisSignInUtils(RedisTemplate redisTemplate,
+        public RedisSignInUtils redisSignInUtils(RedisTemplate<String, Object> redisTemplate,
                                                  UsersConnectionRepository usersConnectionRepository,
                                                  ConnectionFactoryLocator connectionFactoryLocator) {
             return new RedisSignInUtils(redisTemplate, usersConnectionRepository, connectionFactoryLocator);
@@ -148,11 +147,6 @@ public class ConnectAutoConfiguration extends SocialConfigurerAdapter {
     @ConditionalOnMissingBean
     public SocialUserDetailsService socialUserDetailsService() {
         return new DefaultSocialUserDetailsService();
-    }
-
-    @Bean
-    public AuthorizationConfigureProvider connectAuthorizationConfigureProvider() {
-        return new ConnectAuthorizationConfigureProvider(connectConfiguration);
     }
 
 }
